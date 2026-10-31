@@ -1,0 +1,3 @@
+C:/AimTrainer/build/CMakeFiles/AimTrainer.dir
+C:/AimTrainer/build/CMakeFiles/ALL_BUILD.dir
+C:/AimTrainer/build/CMakeFiles/ZERO_CHECK.dir
