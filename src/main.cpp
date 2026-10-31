@@ -7,11 +7,9 @@
 #include "App.h"
 
 int main() {
-    const int INIT_SCREEN_W = 1280;
-    const int INIT_SCREEN_H = 720;
-
-    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT | FLAG_WINDOW_RESIZABLE);
-    InitWindow(INIT_SCREEN_W, INIT_SCREEN_H, "Valorant Aim Trainer");
+    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT | FLAG_FULLSCREEN_MODE);
+    
+    InitWindow(0, 0, "Valorant Aim Trainer");
     SetTargetFPS(144);
     
     SetExitKey(KEY_NULL); 
@@ -30,9 +28,8 @@ int main() {
 
     App app;
 
-    while (!WindowShouldClose()) {
-        if (IsKeyPressed(KEY_F11)) ToggleFullscreen();
-
+    // Добавлена проверка !app.ShouldExit()
+    while (!WindowShouldClose() && !app.ShouldExit()) {
         app.Update();
 
         BeginDrawing();

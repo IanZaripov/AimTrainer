@@ -1,6 +1,6 @@
 #include "HUD.h"
 
-void HUD::Draw(Font font, const CrosshairConfig& cfg, int score, int shots, int hits, float timer, bool hitMarker) const {
+void HUD::Draw(Font font, const CrosshairConfig& cfg, int score, float accuracy, float timer, bool hitMarker) const {
     float cx = GetScreenWidth() / 2.0f;
     float cy = GetScreenHeight() / 2.0f;
 
@@ -12,20 +12,21 @@ void HUD::Draw(Font font, const CrosshairConfig& cfg, int score, int shots, int 
     
     if (cfg.outline) {
         Color out = BLACK;
-        float outThic = thic + 2.0f;
-        DrawRectangle(cx - outThic/2, cy - gap - len - 1, outThic, len + 2, out);
-        DrawRectangle(cx - outThic/2, cy + gap - 1, outThic, len + 2, out);
-        DrawRectangle(cx - gap - len - 1, cy - outThic/2, len + 2, outThic, out);
-        DrawRectangle(cx + gap - 1, cy - outThic/2, len + 2, outThic, out);
+        float oT = thic + 2.0f;
+        float oL = len + 2.0f;
+        DrawRectanglePro({cx, cy - gap - len/2.0f, oT, oL}, {oT/2.0f, oL/2.0f}, 0.0f, out);
+        DrawRectanglePro({cx, cy + gap + len/2.0f, oT, oL}, {oT/2.0f, oL/2.0f}, 0.0f, out);
+        DrawRectanglePro({cx - gap - len/2.0f, cy, oL, oT}, {oL/2.0f, oT/2.0f}, 0.0f, out);
+        DrawRectanglePro({cx + gap + len/2.0f, cy, oL, oT}, {oL/2.0f, oT/2.0f}, 0.0f, out);
     }
 
-    DrawRectangle(cx - thic/2, cy - gap - len, thic, len, col);
-    DrawRectangle(cx - thic/2, cy + gap, thic, len, col);
-    DrawRectangle(cx - gap - len, cy - thic/2, len, thic, col);
-    DrawRectangle(cx + gap, cy - thic/2, len, thic, col);
+    DrawRectanglePro({cx, cy - gap - len/2.0f, thic, len}, {thic/2.0f, len/2.0f}, 0.0f, col);
+    DrawRectanglePro({cx, cy + gap + len/2.0f, thic, len}, {thic/2.0f, len/2.0f}, 0.0f, col);
+    DrawRectanglePro({cx - gap - len/2.0f, cy, len, thic}, {len/2.0f, thic/2.0f}, 0.0f, col);
+    DrawRectanglePro({cx + gap + len/2.0f, cy, len, thic}, {len/2.0f, thic/2.0f}, 0.0f, col);
 
     if (cfg.dot) {
-        DrawRectangle(cx - thic/2, cy - thic/2, thic, thic, col);
+        DrawRectanglePro({cx, cy, thic, thic}, {thic/2.0f, thic/2.0f}, 0.0f, col);
     }
 
     // --- ХИТМАРКЕР ---
@@ -46,11 +47,10 @@ void HUD::Draw(Font font, const CrosshairConfig& cfg, int score, int shots, int 
 
     int mins = (int)timer / 60;
     int secs = (int)timer % 60;
-    float accuracy = (shots > 0) ? 100.0f * hits / shots : 0.0f;
 
     const char* strTime = TextFormat("%02d:%02d", mins, secs);
     const char* strScore = TextFormat("%d", score);
-    const char* strAcc = TextFormat("%.0f%%", accuracy);
+    const char* strAcc = TextFormat("%.1f%%", accuracy); // Теперь с дробной частью, так как трекинг точнее
 
     float timeW = MeasureTextEx(font, strTime, 28, 1).x;
     float scoreW = MeasureTextEx(font, strScore, 28, 1).x;

@@ -1,29 +1,28 @@
-#include "Target.h"
-#include "raymath.h"
-#include <cmath>
-#include <cstdlib>
+#include "Settings.h"
+#include <fstream>
 
-float RandomFloat(float min, float max) {
-    return min + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (max - min)));
+void Settings::Load(const char* filename) {
+    std::ifstream file(filename);
+    if (file.is_open()) {
+        file >> mouse.valorantSens >> fovDegrees >> headRadius >> mouse.sensMultiplier;
+        
+        int r, g, b;
+        file >> crosshair.length >> crosshair.thickness >> crosshair.gap 
+             >> crosshair.outline >> crosshair.dot >> crosshair.hitmarker;
+        file >> r >> g >> b;
+        crosshair.color = { (unsigned char)r, (unsigned char)g, (unsigned char)b, 255 };
+
+        if (headRadius > 1.0f) headRadius = 0.4f;
+        if (mouse.sensMultiplier <= 0.0f) mouse.sensMultiplier = 1.0f;
+    }
 }
 
-bool IsInsideFOV(Vector2 point, Vector2 center, float halfFovRad) {
-    Vector2 dir = { point.x - center.x, point.y - center.y };
-    float angle = std::atan2(dir.y, dir.x);
-    return std::fabs(angle) <= halfFovRad;
-}
-
-Vector2 SpawnTargetPosition(const Settings& settings, int arenaWidth, int arenaHeight) {
-    Vector2 center = { arenaWidth / 2.0f, arenaHeight / 2.0f };
-    float halfFovRad = (settings.fovDegrees * DEG2RAD) / 2.0f;
-    
-    Vector2 pos;
-    int attempts = 0;
-    do {
-        pos.x = RandomFloat(settings.headRadius, arenaWidth - settings.headRadius);
-        pos.y = RandomFloat(settings.headRadius, arenaHeight - settings.headRadius);
-        attempts++;
-    } while (!IsInsideFOV(pos, center, halfFovRad) && attempts < 100);
-    
-    return pos;
+void Settings::Save(const char* filename) const {
+    std::ofstream file(filename);
+    if (file.is_open()) {
+        file << mouse.valorantSens << "\n" << fovDegrees << "\n" << headRadius << "\n" << mouse.sensMultiplier << "\n";
+        file << crosshair.length << "\n" << crosshair.thickness << "\n" << crosshair.gap << "\n" 
+             << crosshair.outline << "\n" << crosshair.dot << "\n" << crosshair.hitmarker << "\n";
+        file << (int)crosshair.color.r << " " << (int)crosshair.color.g << " " << (int)crosshair.color.b << "\n";
+    }
 }

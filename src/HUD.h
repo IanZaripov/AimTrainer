@@ -4,6 +4,5 @@
 
 class HUD {
 public:
-    // Передаем только конфиг прицела
-    void Draw(Font font, const CrosshairConfig& cfg, int score, int shots, int hits, float timer, bool hitMarker) const;
+    void Draw(Font font, const CrosshairConfig& cfg, int score, float accuracy, float timer, bool hitMarker) const;
 };
