@@ -19,7 +19,8 @@ void App::Update() {
 }
 
 void App::Draw(Font uiFont) {
-    ClearBackground(Color{ 200, 205, 210, 255 });
+    // Темный фон в стиле Valorant
+    ClearBackground(Color{ 18, 22, 28, 255 });
 
     if (currentScreen == AppScreen::PLAYING) {
         game.Draw(uiFont);
@@ -32,13 +33,15 @@ void App::Draw(Font uiFont) {
 }
 
 void App::DrawTopBar(Font uiFont) {
-    DrawRectangle(0, 0, GetScreenWidth(), 60, Color{ 30, 35, 40, 255 });
+    DrawRectangle(0, 0, GetScreenWidth(), 60, Color{ 25, 30, 35, 255 });
     DrawLine(0, 60, GetScreenWidth(), 60, Color{ 255, 70, 85, 255 });
 
     GuiSetStyle(DEFAULT, TEXT_SIZE, 18);
-    GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, 0x252530ff); 
-    GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, 0xd0d0d0ff);
-    GuiSetStyle(BUTTON, BASE_COLOR_PRESSED, 0xff4655ff); 
+    // Стилизация кнопок raygui (темные с рамкой)
+    GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, 0x1E2328FF); 
+    GuiSetStyle(BUTTON, BORDER_COLOR_NORMAL, 0x3A424AFF);
+    GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, 0xD0D0D0FF);
+    GuiSetStyle(BUTTON, BASE_COLOR_PRESSED, 0xFF4655FF); 
     
     if (GuiButton({ 20, 15, 120, 30 }, "Тренировки")) currentScreen = AppScreen::ROUTINES;
     if (GuiButton({ 150, 15, 120, 30 }, "Мышь")) currentScreen = AppScreen::SETTINGS_MOUSE;
@@ -50,19 +53,18 @@ void App::DrawTopBar(Font uiFont) {
 }
 
 void App::DrawRoutinesScreen(Font uiFont) {
-    DrawTextEx(uiFont, "ВЫБЕРИТЕ РУТИНУ:", { 40, 100 }, 20, 1, DARKGRAY);
+    DrawTextEx(uiFont, "ВЫБЕРИТЕ РУТИНУ:", { 40, 100 }, 20, 1, LIGHTGRAY);
 
     Rectangle card = { 40, 150, 250, 350 };
     bool hovered = CheckCollisionPointRec(GetMousePosition(), card);
     
-    Color cardColor = hovered ? Color{ 240, 240, 240, 255 } : Color{ 220, 220, 220, 255 };
-    DrawRectangleRec(card, cardColor);
-    DrawRectangleLinesEx(card, hovered ? 3.0f : 1.0f, hovered ? Color{ 0, 150, 200, 255 } : GRAY);
+    DrawRectangleRec(card, hovered ? Color{ 35, 45, 55, 255 } : Color{ 25, 30, 35, 255 });
+    DrawRectangleLinesEx(card, hovered ? 3.0f : 1.0f, hovered ? Color{ 0, 220, 255, 255 } : Color{ 50, 60, 70, 255 });
 
     DrawCircle(40 + 125, 150 + 150, 40, Color{ 0, 220, 255, 255 });
     
-    DrawTextEx(uiFont, "3D Арена", { 60, 150 + 260 }, 22, 1, BLACK);
-    DrawTextEx(uiFont, "Статичные цели", { 60, 150 + 290 }, 16, 1, DARKGRAY);
+    DrawTextEx(uiFont, "3D Арена", { 60, 150 + 260 }, 22, 1, WHITE);
+    DrawTextEx(uiFont, "Статичные цели", { 60, 150 + 290 }, 16, 1, GRAY);
 
     if (hovered && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         currentScreen = AppScreen::PLAYING;
@@ -71,15 +73,15 @@ void App::DrawRoutinesScreen(Font uiFont) {
 }
 
 void App::DrawMouseSettings(Font uiFont) {
-    DrawTextEx(uiFont, "НАСТРОЙКИ МЫШИ", { 40, 100 }, 24, 1, Color{ 200, 50, 60, 255 });
+    DrawTextEx(uiFont, "НАСТРОЙКИ МЫШИ", { 40, 100 }, 24, 1, Color{ 255, 70, 85, 255 });
 
-    DrawTextEx(uiFont, "Сенса (Valorant):", { 40, 160 }, 18, 1, DARKGRAY);
+    DrawTextEx(uiFont, "Сенса (Valorant):", { 40, 160 }, 18, 1, LIGHTGRAY);
     GuiSlider({ 40, 200, 300, 30 }, "0.1", "8.0", &settings.mouse.valorantSens, 0.1f, 8.0f);
     
-    DrawTextEx(uiFont, "Множитель (подгонка):", { 40, 250 }, 18, 1, DARKGRAY);
+    DrawTextEx(uiFont, "Множитель:", { 40, 250 }, 18, 1, LIGHTGRAY);
     GuiSlider({ 40, 290, 300, 30 }, "0.5", "5.0", &settings.mouse.sensMultiplier, 0.5f, 5.0f);
 
-    DrawTextEx(uiFont, "Точное значение сенсы:", { 40, 350 }, 18, 1, DARKGRAY);
+    DrawTextEx(uiFont, "Точное значение:", { 40, 350 }, 18, 1, LIGHTGRAY);
     if (!sensEditMode) {
         snprintf(sensBuffer, sizeof(sensBuffer), "%.3f", settings.mouse.valorantSens);
     }
@@ -97,33 +99,66 @@ void App::DrawMouseSettings(Font uiFont) {
 }
 
 void App::DrawCrosshairSettings(Font uiFont) {
-    DrawTextEx(uiFont, "НАСТРОЙКА ПРИЦЕЛА", { 40, 100 }, 24, 1, Color{ 200, 50, 60, 255 });
+    DrawTextEx(uiFont, "НАСТРОЙКИ ПРИЦЕЛА", { 40, 90 }, 24, 1, Color{ 255, 70, 85, 255 });
 
-    DrawTextEx(uiFont, "Длина:", { 40, 160 }, 18, 1, DARKGRAY);
-    GuiSlider({ 40, 185, 200, 25 }, "0", "20", &settings.crosshair.length, 0.0f, 20.0f);
+    // --- ЛЕВАЯ ПАНЕЛЬ (НАСТРОЙКИ) ---
+    int px = 40;
+    int py = 140;
 
-    DrawTextEx(uiFont, "Толщина:", { 260, 160 }, 18, 1, DARKGRAY);
-    GuiSlider({ 260, 185, 200, 25 }, "1", "10", &settings.crosshair.thickness, 1.0f, 10.0f);
+    // Линии
+    DrawTextEx(uiFont, "ЛИНИИ", { (float)px, (float)py }, 18, 1, Color{ 0, 220, 255, 255 });
+    py += 30;
+    GuiSlider({ (float)px, (float)py, 150, 20 }, "0", "10", &settings.crosshair.thickness, 1.0f, 10.0f);
+    DrawTextEx(uiFont, "Толщина", { (float)px + 160, (float)py }, 14, 1, LIGHTGRAY);
+    py += 30;
+    GuiSlider({ (float)px, (float)py, 150, 20 }, "0", "20", &settings.crosshair.length, 0.0f, 20.0f);
+    DrawTextEx(uiFont, "Длина", { (float)px + 160, (float)py }, 14, 1, LIGHTGRAY);
+    py += 30;
+    GuiSlider({ (float)px, (float)py, 150, 20 }, "0", "20", &settings.crosshair.gap, 0.0f, 20.0f);
+    DrawTextEx(uiFont, "Отступ", { (float)px + 160, (float)py }, 14, 1, LIGHTGRAY);
+    py += 40;
 
-    DrawTextEx(uiFont, "Отступ (Gap):", { 40, 230 }, 18, 1, DARKGRAY);
-    GuiSlider({ 40, 255, 200, 25 }, "0", "20", &settings.crosshair.gap, 0.0f, 20.0f);
+    // Точка и Обводка
+    DrawTextEx(uiFont, "ДОПОЛНИТЕЛЬНО", { (float)px, (float)py }, 18, 1, Color{ 0, 220, 255, 255 });
+    py += 30;
+    GuiCheckBox({ (float)px, (float)py, 20, 20 }, "Центральная точка", &settings.crosshair.dot);
+    py += 30;
+    GuiCheckBox({ (float)px, (float)py, 20, 20 }, "Обводка (Outline)", &settings.crosshair.outline);
+    py += 30;
+    GuiCheckBox({ (float)px, (float)py, 20, 20 }, "Хитмаркер", &settings.crosshair.hitmarker);
+    py += 40;
 
-    GuiCheckBox({ 40, 310, 20, 20 }, "Обводка (Outline)", &settings.crosshair.outline);
-    GuiCheckBox({ 40, 340, 20, 20 }, "Точка в центре", &settings.crosshair.dot);
-    GuiCheckBox({ 40, 370, 20, 20 }, "Хитмаркер при попадании", &settings.crosshair.hitmarker);
+    // Цвет (RGB)
+    DrawTextEx(uiFont, "ЦВЕТ", { (float)px, (float)py }, 18, 1, Color{ 0, 220, 255, 255 });
+    py += 30;
+    
+    int r = settings.crosshair.color.r, g = settings.crosshair.color.g, b = settings.crosshair.color.b;
+    GuiSlider({ (float)px, (float)py, 150, 15 }, "R", "", (float*)&r, 0.0f, 255.0f); // Костыль raygui для int
+    py += 20;
+    GuiSlider({ (float)px, (float)py, 150, 15 }, "G", "", (float*)&g, 0.0f, 255.0f);
+    py += 20;
+    GuiSlider({ (float)px, (float)py, 150, 15 }, "B", "", (float*)&b, 0.0f, 255.0f);
+    
+    // Обновляем цвет, если ползунки сдвинули
+    settings.crosshair.color = { (unsigned char)r, (unsigned char)g, (unsigned char)b, 255 };
 
-    DrawTextEx(uiFont, "Цвет:", { 40, 410 }, 18, 1, DARKGRAY);
-    GuiColorPicker({ 40, 440, 150, 150 }, nullptr, &settings.crosshair.color);
-
+    // Автосохранение
     static float lastSaveTime = 0.0f;
     if (GetTime() - lastSaveTime > 2.0f) { 
         settings.Save();
         lastSaveTime = GetTime();
     }
 
-    // Превью
-    DrawTextEx(uiFont, "Превью:", { 400, 160 }, 18, 1, DARKGRAY);
-    float cx = 450, cy = 300;
+    // --- ПРАВАЯ ПАНЕЛЬ (ПРЕВЬЮ) ---
+    Rectangle previewBox = { 350, 140, 500, 300 };
+    // Фон "стены"
+    DrawRectangleRec(previewBox, Color{ 150, 150, 150, 255 });
+    DrawRectangleLinesEx(previewBox, 2.0f, Color{ 50, 60, 70, 255 });
+    
+    // Отрисовка прицела по центру превью
+    float cx = previewBox.x + previewBox.width / 2.0f;
+    float cy = previewBox.y + previewBox.height / 2.0f;
+    
     Color col = settings.crosshair.color;
     float len = settings.crosshair.length;
     float thic = settings.crosshair.thickness;
@@ -141,5 +176,8 @@ void App::DrawCrosshairSettings(Font uiFont) {
     DrawRectangle(cx - thic/2, cy + gap, thic, len, col);
     DrawRectangle(cx - gap - len, cy - thic/2, len, thic, col);
     DrawRectangle(cx + gap, cy - thic/2, len, thic, col);
-    if (settings.crosshair.dot) DrawRectangle(cx - thic/2, cy - thic/2, thic, thic, col);
+    
+    if (settings.crosshair.dot) {
+        DrawRectangle(cx - thic/2, cy - thic/2, thic, thic, col);
+    }
 }

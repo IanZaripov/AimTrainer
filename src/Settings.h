@@ -7,12 +7,12 @@ struct MouseConfig {
 };
 
 struct CrosshairConfig {
-    Color color = { 0, 255, 0, 255 };
-    float length = 6.0f;
-    float thickness = 2.0f;
-    float gap = 4.0f;
-    bool  outline = true;
-    bool  dot = true;
+    Color color = { 0, 255, 255, 255 }; // Циан (c;5)
+    float length = 4.0f;                // 0l;4
+    float thickness = 1.0f;             // 0t;1
+    float gap = 0.0f;                   // 0o;0
+    bool  outline = true;               // o;1
+    bool  dot = true;                   // d;1
     bool  hitmarker = true;
 };
 
