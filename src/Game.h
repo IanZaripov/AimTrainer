@@ -1,10 +1,12 @@
 #pragma once
 #include "raylib.h"
+#include "raymath.h"
 #include "Settings.h"
+#include "Arena.h"
 #include <vector>
 
-struct Target {
-    Vector2 position;
+struct Target3D {
+    Vector3 position;
     bool    active = true;
 };
 
@@ -13,7 +15,7 @@ public:
     Game(Settings& settings);
     void Init();
     void Update();
-    void Draw(Font uiFont) const; // Передаем шрифт для кириллицы
+    void Draw(Font uiFont) const;
 
     bool IsTrainingActive() const { return trainingActive; }
     void StartTraining();
@@ -22,15 +24,18 @@ public:
 private:
     void SpawnNewTarget();
     void HandleShoot();
-    void DrawArena() const;
     void DrawTargets() const;
-    void DrawCrosshair() const;
-    void DrawHitMarker() const;
+    void DrawUI(Font uiFont) const;
+    void UpdateCameraAngles();
 
     Settings& settings;
-    std::vector<Target> targets;
+    Arena     arena;
+    std::vector<Target3D> targets;
+    
+    Camera3D camera;
+    float yaw = 0.0f;   
+    float pitch = 0.0f; 
 
-    Vector2 crosshair = { 0, 0 };
     int   poppedCount   = 0;
     int   shotsFired    = 0;
     int   hits          = 0;

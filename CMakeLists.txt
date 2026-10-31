@@ -12,6 +12,7 @@ add_executable(AimTrainer
     src/Game.cpp
     src/App.cpp
     src/Settings.cpp
+    src/Arena.cpp    # <-- ДОБАВЛЕНО
 )
 
 target_include_directories(AimTrainer PRIVATE 

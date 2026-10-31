@@ -14,7 +14,6 @@ int main() {
     InitWindow(INIT_SCREEN_W, INIT_SCREEN_H, "Valorant Aim Trainer");
     SetTargetFPS(144);
     
-    // Отключаем закрытие по ESC на уровне raylib
     SetExitKey(KEY_NULL); 
 
     const char* textToLoad = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,:-%()[] "

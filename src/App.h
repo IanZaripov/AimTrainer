@@ -16,7 +16,6 @@ private:
     Game     game;
     AppScreen currentScreen = AppScreen::ROUTINES;
 
-    // Для ручного ввода сенсы
     char sensBuffer[16] = "0.255";
     bool sensEditMode = false;
 

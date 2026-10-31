@@ -19,7 +19,8 @@ void App::Update() {
 }
 
 void App::Draw(Font uiFont) {
-    ClearBackground(Color{ 18, 18, 22, 255 });
+    // Темно-синеватый фон, если смотреть за пределы арены
+    ClearBackground(Color{ 20, 25, 35, 255 });
 
     if (currentScreen == AppScreen::PLAYING) {
         game.Draw(uiFont);
@@ -31,20 +32,17 @@ void App::Draw(Font uiFont) {
 }
 
 void App::DrawTopBar(Font uiFont) {
-    // Темный фон, красная линия снизу (в стиле Valorant)
     DrawRectangle(0, 0, GetScreenWidth(), 60, Color{ 25, 25, 30, 255 });
     DrawLine(0, 60, GetScreenWidth(), 60, Color{ 255, 70, 85, 255 });
 
-    // Кнопки слева
     GuiSetStyle(DEFAULT, TEXT_SIZE, 18);
-    GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, 0x252530ff); // Темно-серый фон
+    GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, 0x252530ff); 
     GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, 0xd0d0d0ff);
-    GuiSetStyle(BUTTON, BASE_COLOR_PRESSED, 0xff4655ff); // Красный при нажатии
+    GuiSetStyle(BUTTON, BASE_COLOR_PRESSED, 0xff4655ff); 
     
     if (GuiButton({ 20, 15, 120, 30 }, "Тренировки")) currentScreen = AppScreen::ROUTINES;
     if (GuiButton({ 150, 15, 120, 30 }, "Настройки")) currentScreen = AppScreen::SETTINGS;
 
-    // Заголовок по центру
     const char* title = "AIM TRAINER";
     float titleWidth = MeasureTextEx(uiFont, title, 24, 1).x;
     DrawTextEx(uiFont, title, { (GetScreenWidth() - titleWidth) / 2.0f, 18 }, 24, 1, WHITE);
@@ -62,7 +60,7 @@ void App::DrawRoutinesScreen(Font uiFont) {
 
     DrawCircle(40 + 125, 150 + 150, 40, Color{ 220, 60, 60, 255 });
     
-    DrawTextEx(uiFont, "Голова бота", { 60, 150 + 260 }, 22, 1, WHITE);
+    DrawTextEx(uiFont, "3D Арена", { 60, 150 + 260 }, 22, 1, WHITE);
     DrawTextEx(uiFont, "Статичные цели", { 60, 150 + 290 }, 16, 1, GRAY);
 
     if (hovered && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
@@ -74,15 +72,12 @@ void App::DrawRoutinesScreen(Font uiFont) {
 void App::DrawSettingsScreen(Font uiFont) {
     DrawTextEx(uiFont, "НАСТРОЙКИ МЫШИ", { 40, 100 }, 24, 1, Color{ 255, 70, 85, 255 });
 
-    DrawTextEx(uiFont, "Сенса (Valorant):", { 40, 160 }, 18, 1, LIGHTGRAY);
+    DrawTextEx(uiFont, "Сенса (Valorant 0.1 - 8.0):", { 40, 160 }, 18, 1, LIGHTGRAY);
     
-    // Слайдер (от 0.01 до 2.0)
-    GuiSlider({ 40, 200, 300, 30 }, "0.01", "2.0", &settings.valorantSens, 0.01f, 2.0f);
+    GuiSlider({ 40, 200, 300, 30 }, "0.1", "8.0", &settings.valorantSens, 0.1f, 8.0f);
     
-    // Ручной ввод (TextBox)
     DrawTextEx(uiFont, "Точное значение:", { 40, 250 }, 18, 1, LIGHTGRAY);
     
-    // Обновляем буфер, если тянули слайдер
     if (!sensEditMode) {
         snprintf(sensBuffer, sizeof(sensBuffer), "%.3f", settings.valorantSens);
     }
@@ -91,14 +86,13 @@ void App::DrawSettingsScreen(Font uiFont) {
     if (GuiTextBox(textBoxRec, sensBuffer, 16, sensEditMode)) {
         sensEditMode = !sensEditMode;
         if (!sensEditMode) {
-            // Когда нажали Enter или кликнули вне поля — парсим число
             float val = atof(sensBuffer);
-            if (val >= 0.01f && val <= 2.0f) {
+            if (val >= 0.1f && val <= 8.0f) {
                 settings.valorantSens = val;
-                settings.Save(); // Автосохранение
+                settings.Save();
             }
         }
     }
 
-    DrawTextEx(uiFont, "Сенса сохранена и адаптирована под FOV 103.", { 40, 330 }, 16, 1, DARKGRAY);
+    DrawTextEx(uiFont, "Сенса адаптирована под 3D и FOV 103.", { 40, 330 }, 16, 1, DARKGRAY);
 }
