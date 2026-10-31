@@ -37,7 +37,7 @@ int main() {
         app.Update();
 
         BeginDrawing();
-        app.Draw(font); // Передаем шрифт в App
+        app.Draw(font);
         EndDrawing();
     }
 
