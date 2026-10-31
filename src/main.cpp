@@ -4,9 +4,7 @@
 #include "raygui.h"
 #undef RAYGUI_IMPLEMENTATION 
 
-#include "Game.h"
-#include "UiPanel.h"
-#include "Settings.h"
+#include "App.h"
 
 int main() {
     const int INIT_SCREEN_W = 1280;
@@ -16,29 +14,33 @@ int main() {
     InitWindow(INIT_SCREEN_W, INIT_SCREEN_H, "Valorant Aim Trainer");
     SetTargetFPS(144);
 
-    // Загружаем системный шрифт Arial (он есть на любой Windows) для поддержки кириллицы
-    Font font = LoadFontEx("C:/Windows/Fonts/arial.ttf", 20, 0, 0);
+    // --- ФИКС КИРИЛЛИЦЫ ---
+    // Загружаем нужные нам символы: ASCII + Кириллица + спецсимволы
+    const char* textToLoad = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,:-%()[] "
+                             "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
+                             "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
+    
+    int codepointCount = 0;
+    int* codepoints = LoadCodepoints(textToLoad, &codepointCount);
+    
+    // Загружаем Arial с нашими кодовыми точками
+    Font font = LoadFontEx("C:/Windows/Fonts/arial.ttf", 32, codepoints, codepointCount);
+    UnloadCodepoints(codepoints);
+
     GuiSetFont(font);
     GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
 
-    Settings settings;
-    
-    Game    game(settings);
-    UiPanel ui(game, settings);
-    game.Init();
+    App app;
 
     while (!WindowShouldClose()) {
-        // Переключение на полный экран по F11
         if (IsKeyPressed(KEY_F11)) {
             ToggleFullscreen();
         }
 
-        game.Update();
+        app.Update();
 
         BeginDrawing();
-        ClearBackground(BLACK);
-        game.Draw();
-        ui.Draw();
+        app.Draw();
         EndDrawing();
     }
 

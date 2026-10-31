@@ -1,23 +1,19 @@
 #pragma once
 #include "raylib.h"
 #include "Target.h"
+#include "Settings.h"
 #include <vector>
 
 class Game {
 public:
-    Game(int screenWidth, int screenHeight, int panelWidth);
+    Game(Settings& settings);
+    ~Game() = default;
 
     void Init();
     void Update();
     void Draw() const;
 
-    // Геттеры для UI
-    bool  IsTrainingActive() const { return trainingActive; }
-    int   GetPoppedCount()   const { return poppedCount; }
-    int   GetShotsFired()    const { return shotsFired; }
-    int   GetHits()          const { return hits; }
-    Vector2 GetCrosshair()   const { return crosshair; }
-
+    bool IsTrainingActive() const { return trainingActive; }
     void StartTraining();
     void StopTraining();
 
@@ -29,17 +25,14 @@ private:
     void DrawCrosshair() const;
     void DrawHitMarker() const;
 
-    int screenWidth;
-    int screenHeight;
-    int panelWidth;
-    int arenaWidth() const { return screenWidth - panelWidth; }
+    Settings& settings;
+    std::vector<Target> targets;
 
     Vector2 crosshair = { 0, 0 };
-    std::vector<Target> targets;
-    int  poppedCount   = 0;
-    int  shotsFired    = 0;
-    int  hits          = 0;
-    bool trainingActive = false;
-    bool showHitMarker  = false;
+    int   poppedCount   = 0;
+    int   shotsFired    = 0;
+    int   hits          = 0;
+    bool  trainingActive = false;
+    bool  showHitMarker  = false;
     float hitMarkerTimer = 0.0f;
 };

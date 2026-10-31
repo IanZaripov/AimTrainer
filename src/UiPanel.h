@@ -1,15 +1,16 @@
 #pragma once
 #include "Game.h"
+#include "Settings.h"
 #include "raygui.h"
 
 class UiPanel {
 public:
-    explicit UiPanel(Game& game, int screenWidth, int panelWidth);
+    UiPanel(Game& game, Settings& settings);
     void Draw();
 
 private:
-    Game& game;
-    int   screenWidth;
-    int   panelWidth;
-    int   panelX() const { return screenWidth - panelWidth; }
+    Game&     game;
+    Settings& settings;
+    
+    int panelX() const { return GetScreenWidth() - settings.panelWidth; }
 };

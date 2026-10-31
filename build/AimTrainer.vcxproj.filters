@@ -10,7 +10,7 @@
     <ClCompile Include="C:\AimTrainer\src\Target.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\AimTrainer\src\UiPanel.cpp">
+    <ClCompile Include="C:\AimTrainer\src\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

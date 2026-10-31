@@ -13,14 +13,17 @@ bool IsInsideFOV(Vector2 point, Vector2 center, float halfFovRad) {
     return std::fabs(angle) <= halfFovRad;
 }
 
-Vector2 SpawnTargetPosition(int arenaWidth, int arenaHeight) {
+Vector2 SpawnTargetPosition(const Settings& settings, int arenaWidth, int arenaHeight) {
     Vector2 center = { arenaWidth / 2.0f, arenaHeight / 2.0f };
+    float halfFovRad = (settings.fovDegrees * DEG2RAD) / 2.0f;
+    
     Vector2 pos;
     int attempts = 0;
     do {
-        pos.x = RandomFloat(HEAD_RADIUS, arenaWidth - HEAD_RADIUS);
-        pos.y = RandomFloat(HEAD_RADIUS, arenaHeight - HEAD_RADIUS);
+        pos.x = RandomFloat(settings.headRadius, arenaWidth - settings.headRadius);
+        pos.y = RandomFloat(settings.headRadius, arenaHeight - settings.headRadius);
         attempts++;
-    } while (!IsInsideFOV(pos, center, HALF_FOV_RAD) && attempts < 100);
+    } while (!IsInsideFOV(pos, center, halfFovRad) && attempts < 100);
+    
     return pos;
 }

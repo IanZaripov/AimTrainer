@@ -1,0 +1,16 @@
+
+build/
+out/
+
+raylib-5.5_win64_msvc16/
+
+
+.vs/
+.vscode/
+*.vcxproj*
+*.sln
+*.user
+
+
+Thumbs.db
+.DS_Store
