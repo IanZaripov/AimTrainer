@@ -12,7 +12,9 @@ add_executable(AimTrainer
     src/Game.cpp
     src/App.cpp
     src/Settings.cpp
-    src/Arena.cpp    # <-- ДОБАВЛЕНО
+    src/Arena.cpp
+    src/Weapon.cpp
+    src/HUD.cpp
 )
 
 target_include_directories(AimTrainer PRIVATE 
@@ -26,12 +28,7 @@ target_link_directories(AimTrainer PRIVATE
 )
 
 target_link_libraries(AimTrainer PRIVATE 
-    raylib 
-    winmm 
-    gdi32 
-    opengl32 
-    user32 
-    shell32
+    raylib winmm gdi32 opengl32 user32 shell32
 )
 
 if(WIN32)
@@ -39,7 +36,6 @@ if(WIN32)
     if(MSVC)
         set_target_properties(AimTrainer PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
     endif()
-    
     add_custom_command(TARGET AimTrainer POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${RAYLIB_PATH}/lib/raylib.dll"

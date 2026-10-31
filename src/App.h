@@ -3,7 +3,7 @@
 #include "Game.h"
 #include "Settings.h"
 
-enum class AppScreen { ROUTINES, SETTINGS, PLAYING };
+enum class AppScreen { ROUTINES, SETTINGS_MOUSE, SETTINGS_CROSSHAIR, PLAYING };
 
 class App {
 public:
@@ -21,5 +21,6 @@ private:
 
     void DrawTopBar(Font uiFont);
     void DrawRoutinesScreen(Font uiFont);
-    void DrawSettingsScreen(Font uiFont);
+    void DrawMouseSettings(Font uiFont);
+    void DrawCrosshairSettings(Font uiFont);
 };

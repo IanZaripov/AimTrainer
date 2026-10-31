@@ -3,6 +3,8 @@
 #include "raymath.h"
 #include "Settings.h"
 #include "Arena.h"
+#include "Weapon.h"
+#include "HUD.h"
 #include <vector>
 
 struct Target3D {
@@ -25,13 +27,14 @@ private:
     void SpawnNewTarget();
     void HandleShoot();
     void DrawTargets() const;
-    void DrawUI(Font uiFont) const;
     void UpdateCameraAngles();
 
     Settings& settings;
     Arena     arena;
-    std::vector<Target3D> targets;
+    Weapon    weapon;
+    HUD       hud;
     
+    std::vector<Target3D> targets;
     Camera3D camera;
     float yaw = 0.0f;   
     float pitch = 0.0f; 
@@ -39,6 +42,7 @@ private:
     int   poppedCount   = 0;
     int   shotsFired    = 0;
     int   hits          = 0;
+    float sessionTime   = 0.0f;
     bool  trainingActive = false;
     bool  showHitMarker  = false;
     float hitMarkerTimer = 0.0f;
