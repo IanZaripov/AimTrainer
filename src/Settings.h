@@ -1,11 +1,10 @@
 #pragma once
 
 struct Settings {
-    // Настройки мыши
-    float sensitivity = 2.0f; // Множитель (подбирается индивидуально под DPI)
-    
-    // Настройки арены и мишеней
-    float fovDegrees  = 103.0f; // Горизонтальный FOV как в Valorant
-    float headRadius  = 22.0f;  // Радиус головы бота
-    int   panelWidth  = 280;    // Ширина панели UI
+    float valorantSens = 0.255f; // Ваша сенса из игры
+    float fovDegrees   = 103.0f;
+    float headRadius   = 22.0f;
+
+    void Load(const char* filename = "settings.cfg");
+    void Save(const char* filename = "settings.cfg") const;
 };

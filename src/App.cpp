@@ -1,105 +1,104 @@
 #include "App.h"
 #include "raygui.h"
+#include <cstdio>
+#include <cstdlib>
 
 App::App() : game(settings) {
+    settings.Load();
+    snprintf(sensBuffer, sizeof(sensBuffer), "%.3f", settings.valorantSens);
     game.Init();
 }
 
 void App::Update() {
     if (currentScreen == AppScreen::PLAYING) {
         game.Update();
-        
-        // Если игра остановилась (например, нажат ESC), возвращаемся в меню
         if (!game.IsTrainingActive()) {
             currentScreen = AppScreen::ROUTINES;
         }
     }
 }
 
-void App::Draw() {
-    ClearBackground(Color{ 18, 18, 22, 255 }); // Темный фон в стиле Valorant
+void App::Draw(Font uiFont) {
+    ClearBackground(Color{ 18, 18, 22, 255 });
 
     if (currentScreen == AppScreen::PLAYING) {
-        game.Draw();
+        game.Draw(uiFont);
     } else {
-        DrawTopBar();
-        
-        if (currentScreen == AppScreen::ROUTINES) {
-            DrawRoutinesScreen();
-        } else if (currentScreen == AppScreen::SETTINGS) {
-            DrawSettingsScreen();
-        }
+        DrawTopBar(uiFont);
+        if (currentScreen == AppScreen::ROUTINES) DrawRoutinesScreen(uiFont);
+        else if (currentScreen == AppScreen::SETTINGS) DrawSettingsScreen(uiFont);
     }
 }
 
-void App::DrawTopBar() {
-    // Фон топбара
+void App::DrawTopBar(Font uiFont) {
+    // Темный фон, красная линия снизу (в стиле Valorant)
     DrawRectangle(0, 0, GetScreenWidth(), 60, Color{ 25, 25, 30, 255 });
-    DrawLine(0, 60, GetScreenWidth(), 60, Color{ 50, 50, 60, 255 });
-    
-    // Заголовок
-    GuiSetStyle(DEFAULT, TEXT_SIZE, 24);
-    GuiLabel({ 20, 15, 200, 30 }, "AIM TRAINER");
+    DrawLine(0, 60, GetScreenWidth(), 60, Color{ 255, 70, 85, 255 });
 
-    // Кнопки навигации
+    // Кнопки слева
     GuiSetStyle(DEFAULT, TEXT_SIZE, 18);
+    GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, 0x252530ff); // Темно-серый фон
+    GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, 0xd0d0d0ff);
+    GuiSetStyle(BUTTON, BASE_COLOR_PRESSED, 0xff4655ff); // Красный при нажатии
     
-    // Вкладка Routine
-    if (GuiButton({ 250, 15, 120, 30 }, "Тренировки")) {
-        currentScreen = AppScreen::ROUTINES;
-    }
-    
-    // Вкладка Settings
-    if (GuiButton({ 380, 15, 120, 30 }, "Настройки")) {
-        currentScreen = AppScreen::SETTINGS;
-    }
+    if (GuiButton({ 20, 15, 120, 30 }, "Тренировки")) currentScreen = AppScreen::ROUTINES;
+    if (GuiButton({ 150, 15, 120, 30 }, "Настройки")) currentScreen = AppScreen::SETTINGS;
+
+    // Заголовок по центру
+    const char* title = "AIM TRAINER";
+    float titleWidth = MeasureTextEx(uiFont, title, 24, 1).x;
+    DrawTextEx(uiFont, title, { (GetScreenWidth() - titleWidth) / 2.0f, 18 }, 24, 1, WHITE);
 }
 
-void App::DrawRoutinesScreen() {
-    GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
-    GuiLabel({ 40, 100, 300, 30 }, "Выберите рутину:");
+void App::DrawRoutinesScreen(Font uiFont) {
+    DrawTextEx(uiFont, "ВЫБЕРИТЕ РУТИНУ:", { 40, 100 }, 20, 1, GRAY);
 
-    // Карточка тренировки (как выбор карты в CS)
     Rectangle card = { 40, 150, 250, 350 };
     bool hovered = CheckCollisionPointRec(GetMousePosition(), card);
     
-    Color cardColor = hovered ? Color{ 60, 60, 70, 255 } : Color{ 40, 40, 50, 255 };
+    Color cardColor = hovered ? Color{ 60, 60, 70, 255 } : Color{ 35, 35, 45, 255 };
     DrawRectangleRec(card, cardColor);
-    DrawRectangleLinesEx(card, 2, hovered ? GREEN : Color{ 80, 80, 90, 255 });
+    DrawRectangleLinesEx(card, hovered ? 3.0f : 1.0f, hovered ? Color{ 255, 70, 85, 255 } : Color{ 80, 80, 90, 255 });
 
-    // Превью тренировки (красный шарик)
     DrawCircle(40 + 125, 150 + 150, 40, Color{ 220, 60, 60, 255 });
     
-    // Название карточки
-    GuiSetStyle(DEFAULT, TEXT_SIZE, 22);
-    GuiLabel({ 40 + 20, 150 + 260, 200, 30 }, "Голова бота");
-    GuiSetStyle(DEFAULT, TEXT_SIZE, 16);
-    GuiLabel({ 40 + 20, 150 + 290, 200, 30 }, "Статичные цели");
+    DrawTextEx(uiFont, "Голова бота", { 60, 150 + 260 }, 22, 1, WHITE);
+    DrawTextEx(uiFont, "Статичные цели", { 60, 150 + 290 }, 16, 1, GRAY);
 
-    // Обработка клика
     if (hovered && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         currentScreen = AppScreen::PLAYING;
         game.StartTraining();
     }
 }
 
-void App::DrawSettingsScreen() {
-    GuiSetStyle(DEFAULT, TEXT_SIZE, 24);
-    GuiLabel({ 40, 100, 300, 30 }, "НАСТРОЙКИ МЫШИ");
+void App::DrawSettingsScreen(Font uiFont) {
+    DrawTextEx(uiFont, "НАСТРОЙКИ МЫШИ", { 40, 100 }, 24, 1, Color{ 255, 70, 85, 255 });
 
-    GuiSetStyle(DEFAULT, TEXT_SIZE, 18);
-    GuiLabel({ 40, 160, 300, 30 }, "Сенса (Множитель):");
+    DrawTextEx(uiFont, "Сенса (Valorant):", { 40, 160 }, 18, 1, LIGHTGRAY);
     
-    // Слайдер сенсы с минимальным и максимальным значением
-    float sens = settings.sensitivity;
-    GuiSlider({ 40, 200, 300, 30 }, "0.1", "10.0", &sens, 0.1f, 10.0f);
-    settings.sensitivity = sens;
+    // Слайдер (от 0.01 до 2.0)
+    GuiSlider({ 40, 200, 300, 30 }, "0.01", "2.0", &settings.valorantSens, 0.01f, 2.0f);
+    
+    // Ручной ввод (TextBox)
+    DrawTextEx(uiFont, "Точное значение:", { 40, 250 }, 18, 1, LIGHTGRAY);
+    
+    // Обновляем буфер, если тянули слайдер
+    if (!sensEditMode) {
+        snprintf(sensBuffer, sizeof(sensBuffer), "%.3f", settings.valorantSens);
+    }
 
-    // Вывод текущего значения (как в Valorant)
-    GuiLabel({ 40, 240, 300, 30 }, TextFormat("Текущее значение: %.2f", settings.sensitivity));
+    Rectangle textBoxRec = { 40, 280, 100, 30 };
+    if (GuiTextBox(textBoxRec, sensBuffer, 16, sensEditMode)) {
+        sensEditMode = !sensEditMode;
+        if (!sensEditMode) {
+            // Когда нажали Enter или кликнули вне поля — парсим число
+            float val = atof(sensBuffer);
+            if (val >= 0.01f && val <= 2.0f) {
+                settings.valorantSens = val;
+                settings.Save(); // Автосохранение
+            }
+        }
+    }
 
-    // Пояснение для пользователя
-    GuiSetStyle(DEFAULT, TEXT_SIZE, 16);
-    GuiLabel({ 40, 300, 500, 30 }, "Настройте ползунок так, чтобы ощущения от движения");
-    GuiLabel({ 40, 325, 500, 30 }, "мышью совпадали с игрой (DPI 800, Sens 0.255).");
+    DrawTextEx(uiFont, "Сенса сохранена и адаптирована под FOV 103.", { 40, 330 }, 16, 1, DARKGRAY);
 }

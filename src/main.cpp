@@ -13,17 +13,16 @@ int main() {
     SetConfigFlags(FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT | FLAG_WINDOW_RESIZABLE);
     InitWindow(INIT_SCREEN_W, INIT_SCREEN_H, "Valorant Aim Trainer");
     SetTargetFPS(144);
+    
+    // Отключаем закрытие по ESC на уровне raylib
+    SetExitKey(KEY_NULL); 
 
-    // --- ФИКС КИРИЛЛИЦЫ ---
-    // Загружаем нужные нам символы: ASCII + Кириллица + спецсимволы
     const char* textToLoad = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,:-%()[] "
                              "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
                              "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
     
     int codepointCount = 0;
     int* codepoints = LoadCodepoints(textToLoad, &codepointCount);
-    
-    // Загружаем Arial с нашими кодовыми точками
     Font font = LoadFontEx("C:/Windows/Fonts/arial.ttf", 32, codepoints, codepointCount);
     UnloadCodepoints(codepoints);
 
@@ -33,14 +32,12 @@ int main() {
     App app;
 
     while (!WindowShouldClose()) {
-        if (IsKeyPressed(KEY_F11)) {
-            ToggleFullscreen();
-        }
+        if (IsKeyPressed(KEY_F11)) ToggleFullscreen();
 
         app.Update();
 
         BeginDrawing();
-        app.Draw();
+        app.Draw(font); // Передаем шрифт в App
         EndDrawing();
     }
 

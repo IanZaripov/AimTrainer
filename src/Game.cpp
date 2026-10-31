@@ -2,8 +2,12 @@
 #include "raymath.h"
 #include <cmath>
 #include <algorithm>
+#include <cstdlib>
+#include <ctime> // Добавлено для функции time()
 
-Game::Game(Settings& s) : settings(s) {}
+Game::Game(Settings& s) : settings(s) {
+    srand(static_cast<unsigned>(time(nullptr)));
+}
 
 void Game::Init() {
     targets.clear();
@@ -16,13 +20,13 @@ void Game::Init() {
 void Game::StartTraining() {
     Init();
     trainingActive = true;
-    DisableCursor(); // Скрываем курсор
+    DisableCursor();
     SpawnNewTarget();
 }
 
 void Game::StopTraining() {
     trainingActive = false;
-    EnableCursor(); // Возвращаем курсор
+    EnableCursor();
 }
 
 void Game::Update() {
@@ -33,10 +37,16 @@ void Game::Update() {
         return;
     }
 
-    // Сырой ввод мыши
+    // --- МАТЕМАТИКА СЕНСЫ VALORANT ---
+    // Valorant: 0.022 * sens = градусы за 1 count мыши.
+    // Переводим градусы в пиксели экрана в зависимости от FOV.
+    float degreesPerCount = 0.022f * settings.valorantSens;
+    float pixelsPerDegree = (float)GetScreenWidth() / settings.fovDegrees;
+    float pixelsPerCount = degreesPerCount * pixelsPerDegree;
+
     Vector2 delta = GetMouseDelta();
-    crosshair.x += delta.x * settings.sensitivity;
-    crosshair.y += delta.y * settings.sensitivity;
+    crosshair.x += delta.x * pixelsPerCount;
+    crosshair.y += delta.y * pixelsPerCount;
 
     // Ограничиваем прицел экраном
     crosshair.x = std::clamp(crosshair.x, 0.0f, (float)GetScreenWidth());
@@ -60,62 +70,56 @@ void Game::HandleShoot() {
             t.active = false;
             poppedCount++;
             hits++;
-            
             SpawnNewTarget();
-            showHitMarker   = true;
+            showHitMarker = true;
             hitMarkerTimer = 0.12f;
             break; 
         }
     }
-
-    targets.erase(
-        std::remove_if(targets.begin(), targets.end(),
-                       [](const Target& t) { return !t.active; }),
-        targets.end());
+    targets.erase(std::remove_if(targets.begin(), targets.end(), [](const Target& t) { return !t.active; }), targets.end());
 }
 
 void Game::SpawnNewTarget() {
-    Target t;
-    t.position = SpawnTargetPosition(settings, GetScreenWidth(), GetScreenHeight());
-    t.active   = true;
-    targets.push_back(t);
+    Vector2 center = { GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f };
+    float halfFovRad = (settings.fovDegrees * DEG2RAD) / 2.0f;
+    
+    Vector2 pos;
+    int attempts = 0;
+    do {
+        pos.x = (float)GetRandomValue(settings.headRadius, GetScreenWidth() - settings.headRadius);
+        pos.y = (float)GetRandomValue(settings.headRadius, GetScreenHeight() - settings.headRadius);
+        attempts++;
+    } while (std::fabs(std::atan2(pos.y - center.y, pos.x - center.x)) > halfFovRad && attempts < 100);
+    
+    targets.push_back({pos, true});
 }
 
-void Game::Draw() const {
+void Game::Draw(Font uiFont) const {
     DrawArena();
     DrawTargets();
     DrawCrosshair();
     DrawHitMarker();
 
-    // Отрисовка статистики прямо на экране (как в спортивных тренажерах)
-    DrawRectangle(20, 20, 250, 100, Fade(BLACK, 0.5f));
-    DrawText(TextFormat("Попаданий: %d", poppedCount), 30, 30, 20, GREEN);
-    
+    // Отрисовка статистики с поддержкой русского языка
+    DrawRectangle(20, 20, 250, 100, Fade(BLACK, 0.7f));
+    DrawTextEx(uiFont, TextFormat("Попаданий: %d", poppedCount), {30, 30}, 20, 1, GREEN);
     float accuracy = (shotsFired > 0) ? 100.0f * hits / shotsFired : 0.0f;
-    DrawText(TextFormat("Точность: %.1f%%", accuracy), 30, 60, 20, WHITE);
-    DrawText(TextFormat("Выстрелов: %d", shotsFired), 30, 90, 20, LIGHTGRAY);
+    DrawTextEx(uiFont, TextFormat("Точность: %.1f%%", accuracy), {30, 60}, 20, 1, WHITE);
+    DrawTextEx(uiFont, TextFormat("Выстрелов: %d", shotsFired), {30, 90}, 20, 1, LIGHTGRAY);
     
-    DrawText("ESC - выйти в меню", 20, GetScreenHeight() - 30, 16, GRAY);
+    DrawTextEx(uiFont, "ESC - выйти в меню", {20, (float)GetScreenHeight() - 30}, 16, 1, GRAY);
 }
 
 void Game::DrawArena() const {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Color{ 30, 30, 35, 255 });
-
-    for (int x = 0; x < GetScreenWidth(); x += 80)
-        DrawLine(x, 0, x, GetScreenHeight(), Color{ 50, 50, 55, 255 });
-    for (int y = 0; y < GetScreenHeight(); y += 80)
-        DrawLine(0, y, GetScreenWidth(), y, Color{ 50, 50, 55, 255 });
+    for (int x = 0; x < GetScreenWidth(); x += 80) DrawLine(x, 0, x, GetScreenHeight(), Color{ 50, 50, 55, 255 });
+    for (int y = 0; y < GetScreenHeight(); y += 80) DrawLine(0, y, GetScreenWidth(), y, Color{ 50, 50, 55, 255 });
 
     Vector2 center = { GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f };
     float halfFovRad = (settings.fovDegrees * DEG2RAD) / 2.0f;
     float radius = 400.0f;
-    
-    DrawLineV(center,
-              { center.x + cosf(-halfFovRad) * radius, center.y + sinf(-halfFovRad) * radius },
-              Color{ 80, 80, 90, 120 });
-    DrawLineV(center,
-              { center.x + cosf(halfFovRad) * radius, center.y + sinf(halfFovRad) * radius },
-              Color{ 80, 80, 90, 120 });
+    DrawLineV(center, { center.x + cosf(-halfFovRad) * radius, center.y + sinf(-halfFovRad) * radius }, Color{ 80, 80, 90, 120 });
+    DrawLineV(center, { center.x + cosf(halfFovRad) * radius, center.y + sinf(halfFovRad) * radius }, Color{ 80, 80, 90, 120 });
 }
 
 void Game::DrawTargets() const {

@@ -1,17 +1,19 @@
 #pragma once
 #include "raylib.h"
-#include "Target.h"
 #include "Settings.h"
 #include <vector>
+
+struct Target {
+    Vector2 position;
+    bool    active = true;
+};
 
 class Game {
 public:
     Game(Settings& settings);
-    ~Game() = default;
-
     void Init();
     void Update();
-    void Draw() const;
+    void Draw(Font uiFont) const; // Передаем шрифт для кириллицы
 
     bool IsTrainingActive() const { return trainingActive; }
     void StartTraining();
