@@ -91,68 +91,65 @@ void App::DrawTopBar(Font uiFont) {
 void App::DrawRoutinesScreen(Font uiFont) {
     DrawTextEx(uiFont, "ВЫБЕРИТЕ РУТИНУ:", { 40, 100 }, 20, 1, COL_TEXT_DIM);
 
-    float cw = 240.0f;
-    float ch = 350.0f; // Уменьшили высоту карточек, чтобы влезли кнопки сложности
+    float cw = 210.0f;
+    float ch = 350.0f;
+    float spacing = 20.0f;
 
     // --- КАРТОЧКА 1: СТАТИЧНЫЕ ---
     Rectangle card1 = { 40, 150, cw, ch };
-    bool hover1 = CheckCollisionPointRec(GetMousePosition(), card1);
-    if (hover1 && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+    if (CheckCollisionPointRec(GetMousePosition(), card1) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         currentScreen = AppScreen::PLAYING;
         game.StartTraining(GameMode::STATIC);
     }
-    DrawRectangleRec(card1, hover1 ? Color{ 30, 35, 45, 255 } : COL_PANEL);
-    DrawRectangleLinesEx(card1, hover1 ? 2.0f : 1.0f, hover1 ? COL_ACCENT : COL_BORDER);
+    DrawRectangleRec(card1, CheckCollisionPointRec(GetMousePosition(), card1) ? Color{ 30, 35, 45, 255 } : COL_PANEL);
+    DrawRectangleLinesEx(card1, CheckCollisionPointRec(GetMousePosition(), card1) ? 2.0f : 1.0f, CheckCollisionPointRec(GetMousePosition(), card1) ? COL_ACCENT : COL_BORDER);
     DrawCircle(40 + cw/2, 150 + 120, 40, settings.arena.ballColor);
-    DrawTextEx(uiFont, "Статичные цели", { card1.x + 20, 150 + 220 }, 22, 1, WHITE);
-    DrawTextEx(uiFont, "Появляются после", { card1.x + 20, 150 + 250 }, 14, 1, COL_TEXT_DIM);
-    DrawTextEx(uiFont, "уничтожения", { card1.x + 20, 150 + 270 }, 14, 1, COL_TEXT_DIM);
+    DrawTextEx(uiFont, "Статичные", { card1.x + 20, 150 + 220 }, 20, 1, WHITE);
+    DrawTextEx(uiFont, "Появляются после", { card1.x + 15, 150 + 250 }, 12, 1, COL_TEXT_DIM);
+    DrawTextEx(uiFont, "уничтожения", { card1.x + 15, 150 + 270 }, 12, 1, COL_TEXT_DIM);
 
     // --- КАРТОЧКА 2: ДВИЖУЩАЯСЯ ---
-    Rectangle card2 = { 40 + cw + 30, 150, cw, ch };
-    bool hover2 = CheckCollisionPointRec(GetMousePosition(), card2);
-    if (hover2 && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+    Rectangle card2 = { 40 + (cw + spacing), 150, cw, ch };
+    if (CheckCollisionPointRec(GetMousePosition(), card2) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         currentScreen = AppScreen::PLAYING;
         game.StartTraining(GameMode::MOVING);
     }
-    DrawRectangleRec(card2, hover2 ? Color{ 30, 35, 45, 255 } : COL_PANEL);
-    DrawRectangleLinesEx(card2, hover2 ? 2.0f : 1.0f, hover2 ? COL_ACCENT : COL_BORDER);
+    DrawRectangleRec(card2, CheckCollisionPointRec(GetMousePosition(), card2) ? Color{ 30, 35, 45, 255 } : COL_PANEL);
+    DrawRectangleLinesEx(card2, CheckCollisionPointRec(GetMousePosition(), card2) ? 2.0f : 1.0f, CheckCollisionPointRec(GetMousePosition(), card2) ? COL_ACCENT : COL_BORDER);
     DrawCircle(card2.x + cw/2, 150 + 120, 40, settings.arena.ballColor);
     DrawTriangle({card2.x + cw/2 + 50, 150 + 120}, {card2.x + cw/2 + 70, 150 + 110}, {card2.x + cw/2 + 70, 150 + 130}, WHITE);
     DrawTriangle({card2.x + cw/2 - 50, 150 + 120}, {card2.x + cw/2 - 70, 150 + 110}, {card2.x + cw/2 - 70, 150 + 130}, WHITE);
-    DrawTextEx(uiFont, "Движущаяся цель", { card2.x + 20, 150 + 220 }, 22, 1, WHITE);
-    DrawTextEx(uiFont, "Один шар, летающий", { card2.x + 20, 150 + 250 }, 14, 1, COL_TEXT_DIM);
-    DrawTextEx(uiFont, "влево и вправо", { card2.x + 20, 150 + 270 }, 14, 1, COL_TEXT_DIM);
+    DrawTextEx(uiFont, "Движущаяся", { card2.x + 20, 150 + 220 }, 20, 1, WHITE);
+    DrawTextEx(uiFont, "Летает влево", { card2.x + 15, 150 + 250 }, 12, 1, COL_TEXT_DIM);
+    DrawTextEx(uiFont, "и вправо", { card2.x + 15, 150 + 270 }, 12, 1, COL_TEXT_DIM);
 
     // --- КАРТОЧКА 3: ПРЫГАЮЩАЯ ---
-    Rectangle card3 = { 40 + (cw + 30) * 2, 150, cw, ch };
-    bool hover3 = CheckCollisionPointRec(GetMousePosition(), card3);
-    if (hover3 && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+    Rectangle card3 = { 40 + (cw + spacing) * 2, 150, cw, ch };
+    if (CheckCollisionPointRec(GetMousePosition(), card3) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         currentScreen = AppScreen::PLAYING;
         game.StartTraining(GameMode::BOUNCING);
     }
-    DrawRectangleRec(card3, hover3 ? Color{ 30, 35, 45, 255 } : COL_PANEL);
-    DrawRectangleLinesEx(card3, hover3 ? 2.0f : 1.0f, hover3 ? COL_ACCENT : COL_BORDER);
+    DrawRectangleRec(card3, CheckCollisionPointRec(GetMousePosition(), card3) ? Color{ 30, 35, 45, 255 } : COL_PANEL);
+    DrawRectangleLinesEx(card3, CheckCollisionPointRec(GetMousePosition(), card3) ? 2.0f : 1.0f, CheckCollisionPointRec(GetMousePosition(), card3) ? COL_ACCENT : COL_BORDER);
     DrawCircle(card3.x + cw/2, 150 + 120, 40, settings.arena.ballColor);
     DrawTriangle({card3.x + cw/2 + 50, 150 + 120}, {card3.x + cw/2 + 70, 150 + 110}, {card3.x + cw/2 + 70, 150 + 130}, WHITE);
     DrawTriangle({card3.x + cw/2 - 50, 150 + 120}, {card3.x + cw/2 - 70, 150 + 110}, {card3.x + cw/2 - 70, 150 + 130}, WHITE);
     DrawTriangle({card3.x + cw/2, 150 + 120 - 50}, {card3.x + cw/2 - 10, 150 + 120 - 70}, {card3.x + cw/2 + 10, 150 + 120 - 70}, WHITE);
     DrawTriangle({card3.x + cw/2, 150 + 120 + 50}, {card3.x + cw/2 - 10, 150 + 120 + 70}, {card3.x + cw/2 + 10, 150 + 120 + 70}, WHITE);
-    DrawTextEx(uiFont, "Прыгающая цель", { card3.x + 20, 150 + 220 }, 22, 1, WHITE);
-    DrawTextEx(uiFont, "Отскакивает от пола", { card3.x + 20, 150 + 250 }, 14, 1, COL_TEXT_DIM);
-    DrawTextEx(uiFont, "и стен", { card3.x + 20, 150 + 270 }, 14, 1, COL_TEXT_DIM);
+    DrawTextEx(uiFont, "Прыгающая", { card3.x + 20, 150 + 220 }, 20, 1, WHITE);
+    DrawTextEx(uiFont, "Отскакивает от", { card3.x + 15, 150 + 250 }, 12, 1, COL_TEXT_DIM);
+    DrawTextEx(uiFont, "пола и стен", { card3.x + 15, 150 + 270 }, 12, 1, COL_TEXT_DIM);
 
     // --- КАРТОЧКА 4: НА ВРЕМЯ ---
-    Rectangle card4 = { 40 + (cw + 30) * 3, 150, cw, ch };
+    Rectangle card4 = { 40 + (cw + spacing) * 3, 150, cw, ch };
     bool hover4 = CheckCollisionPointRec(GetMousePosition(), card4);
     
-    // Кнопки сложности ВЫНЕСЕНЫ ПОД карточку, чтобы не мешать клику
     float diffY = 520; 
     const char* diffNames[] = { "Легко", "Сред", "Сложно" };
     bool clickedDiff = false;
     
     for (int i = 0; i < 3; i++) {
-        Rectangle btn = { card4.x + 20 + i * 65.0f, diffY, 60, 25 };
+        Rectangle btn = { card4.x + 15 + i * 60.0f, diffY, 55, 25 };
         if (CheckCollisionPointRec(GetMousePosition(), btn) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             settings.arena.timedDifficulty = i;
             settings.Save();
@@ -167,24 +164,38 @@ void App::DrawRoutinesScreen(Font uiFont) {
 
     DrawRectangleRec(card4, hover4 ? Color{ 30, 35, 45, 255 } : COL_PANEL);
     DrawRectangleLinesEx(card4, hover4 ? 2.0f : 1.0f, hover4 ? COL_ACCENT : COL_BORDER);
-    
     DrawCircle(card4.x + cw/2, 150 + 120, 40, settings.arena.ballColor);
     DrawCircleLines(card4.x + cw/2, 150 + 120, 40, WHITE);
     DrawLineEx({card4.x + cw/2, 150 + 120}, {card4.x + cw/2, 150 + 95}, 3.0f, WHITE);
+    DrawTextEx(uiFont, "На время", { card4.x + 15, 150 + 190 }, 20, 1, WHITE);
     
-    DrawTextEx(uiFont, "На время", { card4.x + 20, 150 + 190 }, 22, 1, WHITE);
-    
-    // Отрисовка кнопок сложности
     for (int i = 0; i < 3; i++) {
-        Rectangle btn = { card4.x + 20 + i * 65.0f, diffY, 60, 25 };
+        Rectangle btn = { card4.x + 15 + i * 60.0f, diffY, 55, 25 };
         bool btnHover = CheckCollisionPointRec(GetMousePosition(), btn);
-        
         DrawRectangleRec(btn, settings.arena.timedDifficulty == i ? COL_ACCENT : COL_BG);
         DrawRectangleLinesEx(btn, 1.0f, btnHover ? WHITE : COL_BORDER);
-        
-        float tw = MeasureTextEx(uiFont, diffNames[i], 14, 1).x;
-        DrawTextEx(uiFont, diffNames[i], { btn.x + (btn.width - tw)/2, btn.y + 5 }, 14, 1, WHITE);
+        float tw = MeasureTextEx(uiFont, diffNames[i], 12, 1).x;
+        DrawTextEx(uiFont, diffNames[i], { btn.x + (btn.width - tw)/2, btn.y + 5 }, 12, 1, WHITE);
     }
+
+    // --- КАРТОЧКА 5: МУЛЬТИ-ЦЕЛЬ ---
+    Rectangle card5 = { 40 + (cw + spacing) * 4, 150, cw, ch };
+    bool hover5 = CheckCollisionPointRec(GetMousePosition(), card5);
+    if (hover5 && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        currentScreen = AppScreen::PLAYING;
+        game.StartTraining(GameMode::MULTI_STATIC);
+    }
+    DrawRectangleRec(card5, hover5 ? Color{ 30, 35, 45, 255 } : COL_PANEL);
+    DrawRectangleLinesEx(card5, hover5 ? 2.0f : 1.0f, hover5 ? COL_ACCENT : COL_BORDER);
+    DrawCircle(card5.x + cw/2 - 30, 150 + 100, 15, settings.arena.ballColor);
+    DrawCircle(card5.x + cw/2 + 30, 150 + 100, 15, settings.arena.ballColor);
+    DrawCircle(card5.x + cw/2, 150 + 140, 15, settings.arena.ballColor);
+    DrawCircle(card5.x + cw/2 - 20, 150 + 180, 15, settings.arena.ballColor);
+    DrawCircle(card5.x + cw/2 + 20, 150 + 180, 15, settings.arena.ballColor);
+
+    DrawTextEx(uiFont, "Мульти-цель", { card5.x + 15, 150 + 220 }, 20, 1, WHITE);
+    DrawTextEx(uiFont, "8 шаров одновременно", { card5.x + 15, 150 + 250 }, 12, 1, COL_TEXT_DIM);
+    DrawTextEx(uiFont, "(Тренировка спрея)", { card5.x + 15, 150 + 270 }, 12, 1, COL_TEXT_DIM);
 }
 
 void DrawSliderBox(Font font, float x, float y, const char* label, float* value, float min, float max, char* buffer, bool* editMode, bool isInt = false, int precision = 2) {
@@ -275,15 +286,15 @@ void App::DrawCrosshairSettings(Font uiFont) {
     DrawSliderBox(uiFont, 60, 230, "Толщина", &settings.crosshair.thickness, 1.0f, 10.0f, thicBuffer, &thicEdit, true);
     DrawSliderBox(uiFont, 60, 280, "Отступ (Gap)", &settings.crosshair.gap, 0.0f, 20.0f, gapBuffer, &gapEdit, true);
 
-    DrawPanel(uiFont, { 40, 370, 350, 130 }, "ДОПОЛНИТЕЛЬНО");
+    DrawPanel(uiFont, { 40, 370, 350, 100 }, "ДОПОЛНИТЕЛЬНО");
     GuiCheckBox({ 60, 400, 20, 20 }, "Центральная точка", &settings.crosshair.dot);
     GuiCheckBox({ 60, 430, 20, 20 }, "Обводка (Outline)", &settings.crosshair.outline);
-    GuiCheckBox({ 60, 460, 20, 20 }, "Хитмаркер", &settings.crosshair.hitmarker);
+    // Чекбокс Хитмаркера удален
 
-    DrawPanel(uiFont, { 40, 520, 350, 90 }, "ЦВЕТ ПРИЦЕЛА");
+    DrawPanel(uiFont, { 40, 490, 350, 90 }, "ЦВЕТ ПРИЦЕЛА");
     Color colors[] = { WHITE, BLACK, YELLOW, PINK, SKYBLUE, ORANGE, RED };
     for (int i = 0; i < 7; i++) {
-        Rectangle btn = { 60.0f + i * 40.0f, 550, 30, 30 };
+        Rectangle btn = { 60.0f + i * 40.0f, 520, 30, 30 };
         DrawRectangleRec(btn, colors[i]);
         DrawRectangleLinesEx(btn, (settings.crosshair.color.r == colors[i].r && settings.crosshair.color.g == colors[i].g) ? 2.0f : 1.0f, (settings.crosshair.color.r == colors[i].r && settings.crosshair.color.g == colors[i].g) ? COL_ACCENT : COL_BORDER);
         if (CheckCollisionPointRec(GetMousePosition(), btn) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) settings.crosshair.color = colors[i];

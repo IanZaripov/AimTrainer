@@ -6,16 +6,14 @@ void Settings::Load(const char* filename) {
     if (file.is_open()) {
         file >> mouse.valorantSens >> fovDegrees >> headRadius >> mouse.sensMultiplier;
         
-        int out, dt, hm, r, g, b;
-        file >> crosshair.length >> crosshair.thickness >> crosshair.gap >> out >> dt >> hm;
+        int out, dt, r, g, b;
+        file >> crosshair.length >> crosshair.thickness >> crosshair.gap >> out >> dt;
         crosshair.outline = (out != 0);
         crosshair.dot = (dt != 0);
-        crosshair.hitmarker = (hm != 0);
 
         file >> r >> g >> b;
         crosshair.color = { (unsigned char)r, (unsigned char)g, (unsigned char)b, 255 };
 
-        // Загружаем арену (дистанция, радиус, сложность, цвет)
         if (file >> arena.distance >> arena.targetRadius >> arena.timedDifficulty >> r >> g >> b) {
             arena.ballColor = { (unsigned char)r, (unsigned char)g, (unsigned char)b, 255 };
         }
@@ -31,7 +29,7 @@ void Settings::Save(const char* filename) const {
     if (file.is_open()) {
         file << mouse.valorantSens << "\n" << fovDegrees << "\n" << headRadius << "\n" << mouse.sensMultiplier << "\n";
         file << crosshair.length << "\n" << crosshair.thickness << "\n" << crosshair.gap << "\n" 
-             << crosshair.outline << "\n" << crosshair.dot << "\n" << crosshair.hitmarker << "\n";
+             << crosshair.outline << "\n" << crosshair.dot << "\n";
         file << (int)crosshair.color.r << " " << (int)crosshair.color.g << " " << (int)crosshair.color.b << "\n";
         
         file << arena.distance << "\n" << arena.targetRadius << "\n" << arena.timedDifficulty << "\n";

@@ -22,7 +22,6 @@ void Game::Init() {
     trackTimeOnTarget = 0.0f;
     trackTimeTotal = 0.0f;
     trainingActive = false;
-    showHitMarker = false;
     yaw = 0.0f;
     pitch = 0.0f;
 }
@@ -32,7 +31,14 @@ void Game::StartTraining(GameMode mode) {
     Init();
     trainingActive = true;
     DisableCursor();
-    SpawnNewTarget();
+
+    if (currentMode == GameMode::MULTI_STATIC) {
+        for (int i = 0; i < 8; i++) {
+            SpawnNewTarget();
+        }
+    } else {
+        SpawnNewTarget();
+    }
 }
 
 void Game::StopTraining() {
@@ -50,7 +56,6 @@ void Game::Update() {
 
     sessionTime += GetFrameTime();
 
-    // Таймер и завершение ТОЛЬКО для режима TIMED
     if (currentMode == GameMode::TIMED && sessionTime >= 60.0f) {
         sessionTime = 60.0f;
         StopTraining();
@@ -59,11 +64,9 @@ void Game::Update() {
 
     UpdateCameraAngles();
 
-    // Обновление эффектов лопания
     for (auto& e : effects) e.life -= GetFrameTime();
     effects.erase(std::remove_if(effects.begin(), effects.end(), [](const PopEffect& e) { return e.life <= 0.0f; }), effects.end());
 
-    // Трекинг точности (только для MOVING и BOUNCING)
     if (currentMode == GameMode::MOVING || currentMode == GameMode::BOUNCING) {
         trackTimeTotal += GetFrameTime();
         Vector2 screenCenter = { (float)GetScreenWidth() / 2.0f, (float)GetScreenHeight() / 2.0f };
@@ -76,18 +79,16 @@ void Game::Update() {
         }
     }
 
-    // Выносим переменные наверх, чтобы компилятор не ругался на пропуск инициализации
     float floorY = settings.arena.targetRadius + 0.1f;
     float ceilingY = 8.0f - settings.arena.targetRadius - 0.1f;
     if (ceilingY <= floorY) ceilingY = floorY + 1.0f;
 
-    // Логика движения и жизни целей в зависимости от режима
     for (auto& t : targets) {
         if (!t.active) continue;
 
         switch (currentMode) {
             case GameMode::STATIC:
-                // В статике шар просто стоит на месте
+            case GameMode::MULTI_STATIC:
                 break;
 
             case GameMode::MOVING:
@@ -126,11 +127,6 @@ void Game::Update() {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         HandleShoot();
     }
-
-    if (showHitMarker) {
-        hitMarkerTimer -= GetFrameTime();
-        if (hitMarkerTimer <= 0.0f) showHitMarker = false;
-    }
 }
 
 void Game::UpdateCameraAngles() {
@@ -164,11 +160,10 @@ void Game::HandleShoot() {
 
             effects.push_back({ t.position });
             
-            // В движущихся режимах и на время шар пересоздается, в статике - просто добавляется новый
-            if (currentMode != GameMode::STATIC) targets.clear();
+            if (currentMode != GameMode::STATIC && currentMode != GameMode::MULTI_STATIC) {
+                targets.clear();
+            }
             SpawnNewTarget();
-            showHitMarker = true;
-            hitMarkerTimer = 0.12f;
             break; 
         }
     }
@@ -200,6 +195,12 @@ void Game::SpawnNewTarget() {
                 else if (settings.arena.timedDifficulty == 1) t.lifeTimer = 1.0f;
                 else t.lifeTimer = 0.6f;
             }
+            break;
+
+        case GameMode::MULTI_STATIC:
+            t.position.y = (float)GetRandomValue((int)(minY*100), (int)(maxY*100)) / 100.0f;
+            t.position.x = (float)GetRandomValue(-600, 600) / 100.0f; 
+            t.position.z += (float)GetRandomValue(-200, 200) / 100.0f;
             break;
 
         case GameMode::MOVING:
@@ -235,7 +236,7 @@ void Game::Draw(Font uiFont) const {
     EndMode3D();
 
     float accuracy = 0.0f;
-    if (currentMode == GameMode::STATIC) {
+    if (currentMode == GameMode::STATIC || currentMode == GameMode::MULTI_STATIC) {
         accuracy = (shotsFired > 0) ? 100.0f * hits / shotsFired : 0.0f;
     } else if (currentMode == GameMode::TIMED) {
         accuracy = (spawnedBalls > 0) ? 100.0f * poppedCount / spawnedBalls : 0.0f;
@@ -243,7 +244,8 @@ void Game::Draw(Font uiFont) const {
         accuracy = (trackTimeTotal > 0.0f) ? 100.0f * trackTimeOnTarget / trackTimeTotal : 0.0f;
     }
 
-    hud.Draw(uiFont, settings.crosshair, poppedCount, accuracy, sessionTime, showHitMarker);
+    // Убрали showHitMarker из вызова
+    hud.Draw(uiFont, settings.crosshair, poppedCount, accuracy, sessionTime);
 }
 
 void Game::DrawTargets() const {

@@ -2,7 +2,7 @@
 #include "raylib.h"
 
 struct MouseConfig {
-    float valorantSens = 0.255f; 
+    float valorantSens = 0.55f; 
     float sensMultiplier = 3.15f;
 };
 
@@ -13,14 +13,13 @@ struct CrosshairConfig {
     float gap = 0.0f;                   
     bool  outline = true;               
     bool  dot = true;                   
-    bool  hitmarker = true;
 };
 
 struct ArenaConfig {
     Color ballColor = { 0, 220, 255, 255 };
     float distance = 15.0f;
     float targetRadius = 0.11f; 
-    int   timedDifficulty = 1; // 0: Легко, 1: Средне, 2: Сложно
+    int   timedDifficulty = 1;
 };
 
 struct Settings {

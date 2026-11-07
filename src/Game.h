@@ -11,7 +11,8 @@ enum class GameMode {
     STATIC,
     MOVING,
     BOUNCING,
-    TIMED
+    TIMED,
+    MULTI_STATIC 
 };
 
 struct Target3D {
@@ -23,10 +24,9 @@ struct Target3D {
     float   lifeTimer = 0.0f;  
 };
 
-// Структура для анимации лопания
 struct PopEffect {
     Vector3 position;
-    float   life = 0.2f; // Живет 0.2 секунды
+    float   life = 0.2f;
 };
 
 class Game {
@@ -40,7 +40,6 @@ public:
     void StartTraining(GameMode mode);
     void StopTraining();
 
-    // Геттеры для экрана результатов
     GameMode GetCurrentMode() const { return currentMode; }
     int GetPoppedCount() const { return poppedCount; }
     int GetSpawnedBalls() const { return spawnedBalls; }
@@ -52,7 +51,7 @@ private:
     void SpawnNewTarget();
     void HandleShoot();
     void DrawTargets() const;
-    void DrawEffects() const; // Отрисовка анимации
+    void DrawEffects() const;
     void UpdateCameraAngles();
 
     Settings& settings;
@@ -62,14 +61,14 @@ private:
     
     GameMode currentMode = GameMode::STATIC;
     std::vector<Target3D> targets;
-    std::vector<PopEffect> effects; // Вектор активных анимаций
+    std::vector<PopEffect> effects;
     
     Camera3D camera;
     float yaw = 0.0f;   
     float pitch = 0.0f; 
 
     int   poppedCount   = 0;
-    int   spawnedBalls  = 0; // Сколько всего шаров появилось
+    int   spawnedBalls  = 0;
     int   shotsFired    = 0;
     int   hits          = 0;
     int   misses        = 0;
@@ -79,6 +78,4 @@ private:
     float trackTimeTotal    = 0.0f;
 
     bool  trainingActive = false;
-    bool  showHitMarker  = false;
-    float hitMarkerTimer = 0.0f;
 };

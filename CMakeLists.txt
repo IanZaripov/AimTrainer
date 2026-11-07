@@ -15,6 +15,7 @@ add_executable(AimTrainer
     src/Arena.cpp
     src/Weapon.cpp
     src/HUD.cpp
+    src/Application.cpp
 )
 
 target_include_directories(AimTrainer PRIVATE 
