@@ -9,13 +9,14 @@ set(RAYLIB_PATH "C:/AimTrainer/raylib-5.5_win64_msvc16")
 
 add_executable(AimTrainer
     src/main.cpp
+    src/Application.cpp
     src/Game.cpp
     src/App.cpp
     src/Settings.cpp
     src/Arena.cpp
     src/Weapon.cpp
     src/HUD.cpp
-    src/Application.cpp
+    src/SystemStats.cpp
 )
 
 target_include_directories(AimTrainer PRIVATE 
@@ -28,8 +29,15 @@ target_link_directories(AimTrainer PRIVATE
     "${RAYLIB_PATH}/lib"
 )
 
+# Добавили pdh (Performance Data Helper) для чтения загрузки GPU
 target_link_libraries(AimTrainer PRIVATE 
-    raylib winmm gdi32 opengl32 user32 shell32
+    raylib 
+    winmm 
+    gdi32 
+    opengl32 
+    user32 
+    shell32
+    pdh
 )
 
 if(WIN32)
@@ -37,6 +45,7 @@ if(WIN32)
     if(MSVC)
         set_target_properties(AimTrainer PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
     endif()
+    
     add_custom_command(TARGET AimTrainer POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${RAYLIB_PATH}/lib/raylib.dll"

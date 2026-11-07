@@ -55,6 +55,7 @@ void Game::Update() {
     }
 
     sessionTime += GetFrameTime();
+    hud.UpdateStats();
 
     if (currentMode == GameMode::TIMED && sessionTime >= 60.0f) {
         sessionTime = 60.0f;
