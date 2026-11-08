@@ -79,7 +79,7 @@ void App::DrawRoutinesScreen(Font uiFont) {
 
 void App::DrawCardStatic(Font font, Rectangle rect) {
     bool hovered = CheckCollisionPointRec(GetMousePosition(), rect);
-    UITheme::DrawCardFrame(rect, hovered);
+    UITheme::DrawCardBackground(rect, hovered);
 
     DrawCircle(rect.x + rect.width/2, rect.y + 120, 40, settings.arena.ballColor);
     DrawTextEx(font, "Статичные", { rect.x + 20, rect.y + 220 }, 20, 1, WHITE);
@@ -94,7 +94,7 @@ void App::DrawCardStatic(Font font, Rectangle rect) {
 
 void App::DrawCardMoving(Font font, Rectangle rect) {
     bool hovered = CheckCollisionPointRec(GetMousePosition(), rect);
-    UITheme::DrawCardFrame(rect, hovered);
+    UITheme::DrawCardBackground(rect, hovered);
 
     DrawCircle(rect.x + rect.width/2, rect.y + 120, 40, settings.arena.ballColor);
     DrawTriangle({rect.x + rect.width/2 + 50, rect.y + 120}, {rect.x + rect.width/2 + 70, rect.y + 110}, {rect.x + rect.width/2 + 70, rect.y + 130}, WHITE);
@@ -112,7 +112,7 @@ void App::DrawCardMoving(Font font, Rectangle rect) {
 
 void App::DrawCardBouncing(Font font, Rectangle rect) {
     bool hovered = CheckCollisionPointRec(GetMousePosition(), rect);
-    UITheme::DrawCardFrame(rect, hovered);
+    UITheme::DrawCardBackground(rect, hovered);
 
     DrawCircle(rect.x + rect.width/2, rect.y + 120, 40, settings.arena.ballColor);
     DrawTriangle({rect.x + rect.width/2 + 50, rect.y + 120}, {rect.x + rect.width/2 + 70, rect.y + 110}, {rect.x + rect.width/2 + 70, rect.y + 130}, WHITE);
@@ -151,7 +151,7 @@ void App::DrawCardTimed(Font font, Rectangle rect) {
         game.StartTraining(GameMode::TIMED);
     }
 
-    UITheme::DrawCardFrame(rect, hovered);
+    UITheme::DrawCardBackground(rect, hovered);
     
     DrawCircle(rect.x + rect.width/2, rect.y + 120, 40, settings.arena.ballColor);
     DrawCircleLines(rect.x + rect.width/2, rect.y + 120, 40, WHITE);
@@ -171,7 +171,7 @@ void App::DrawCardTimed(Font font, Rectangle rect) {
 
 void App::DrawCardMulti(Font font, Rectangle rect) {
     bool hovered = CheckCollisionPointRec(GetMousePosition(), rect);
-    UITheme::DrawCardFrame(rect, hovered);
+    UITheme::DrawCardBackground(rect, hovered);
 
     DrawCircle(rect.x + rect.width/2 - 30, rect.y + 100, 15, settings.arena.ballColor);
     DrawCircle(rect.x + rect.width/2 + 30, rect.y + 100, 15, settings.arena.ballColor);
@@ -229,12 +229,12 @@ void App::DrawColorPickerRow(float x, float y, Color* targetColor, const Color* 
 void App::DrawMouseSettings(Font uiFont) {
     DrawTextEx(uiFont, "НАСТРОЙКИ МЫШИ", { 40, 90 }, 24, 1, UITheme::ACCENT);
     
-    UITheme::DrawPanel(uiFont, { 40, 140, 350, 100 }, "СЕНСА (VALORANT)");
+    UITheme::DrawTitledGroup(uiFont, { 40, 140, 350, 100 }, "СЕНСА (VALORANT)");
     DrawSliderBox(uiFont, 60, 180, "Чувствительность", &settings.mouse.valorantSens, 0.1f, 8.0f, sensBuffer, &sensEditMode, false, 3);
 
     static char multBuffer[16] = "3.15";
     static bool multEditMode = false;
-    UITheme::DrawPanel(uiFont, { 40, 260, 350, 100 }, "МНОЖИТЕЛЬ (ПОДГОНКА)");
+    UITheme::DrawTitledGroup(uiFont, { 40, 260, 350, 100 }, "МНОЖИТЕЛЬ (ПОДГОНКА)");
     DrawSliderBox(uiFont, 60, 300, "Множитель", &settings.mouse.sensMultiplier, 0.5f, 5.0f, multBuffer, &multEditMode);
 
     static float lastSaveTime = 0.0f;
@@ -246,16 +246,16 @@ void App::DrawArenaSettings(Font uiFont) {
     
     static char distBuffer[16] = "15";
     static bool distEdit = false;
-    UITheme::DrawPanel(uiFont, { 40, 140, 350, 100 }, "ДИСТАНЦИЯ ДО ЦЕЛЕЙ");
+    UITheme::DrawTitledGroup(uiFont, { 40, 140, 350, 100 }, "ДИСТАНЦИЯ ДО ЦЕЛЕЙ");
     DrawSliderBox(uiFont, 60, 180, "Метры", &settings.arena.distance, 5.0f, 30.0f, distBuffer, &distEdit, true);
 
-    UITheme::DrawPanel(uiFont, { 40, 260, 350, 100 }, "ЦВЕТ ШАРОВ");
+    UITheme::DrawTitledGroup(uiFont, { 40, 260, 350, 100 }, "ЦВЕТ ШАРОВ");
     Color colors[] = { { 0, 220, 255, 255 }, WHITE, YELLOW, PINK, ORANGE, RED, GREEN };
     DrawColorPickerRow(60, 300, &settings.arena.ballColor, colors, 7);
 
     static char sizeBuffer[16] = "0.11";
     static bool sizeEdit = false;
-    UITheme::DrawPanel(uiFont, { 40, 380, 350, 100 }, "РАЗМЕР ШАРОВ");
+    UITheme::DrawTitledGroup(uiFont, { 40, 380, 350, 100 }, "РАЗМЕР ШАРОВ");
     DrawSliderBox(uiFont, 60, 420, "Радиус (метры)", &settings.arena.targetRadius, 0.02f, 2.0f, sizeBuffer, &sizeEdit, false);
 
     // Превью
@@ -283,18 +283,18 @@ void App::DrawArenaSettings(Font uiFont) {
 void App::DrawCrosshairSettings(Font uiFont) {
     DrawTextEx(uiFont, "НАСТРОЙКИ ПРИЦЕЛА", { 40, 90 }, 24, 1, UITheme::ACCENT);
     
-    UITheme::DrawPanel(uiFont, { 40, 140, 350, 210 }, "ФОРМА");
+    UITheme::DrawTitledGroup(uiFont, { 40, 140, 350, 210 }, "ФОРМА");
     static char lenBuffer[16] = "4", thicBuffer[16] = "1", gapBuffer[16] = "0";
     static bool lenEdit = false, thicEdit = false, gapEdit = false;
     DrawSliderBox(uiFont, 60, 180, "Длина линий", &settings.crosshair.length, 0.0f, 20.0f, lenBuffer, &lenEdit, true);
     DrawSliderBox(uiFont, 60, 230, "Толщина", &settings.crosshair.thickness, 1.0f, 10.0f, thicBuffer, &thicEdit, true);
     DrawSliderBox(uiFont, 60, 280, "Отступ (Gap)", &settings.crosshair.gap, 0.0f, 20.0f, gapBuffer, &gapEdit, true);
 
-    UITheme::DrawPanel(uiFont, { 40, 370, 350, 100 }, "ДОПОЛНИТЕЛЬНО");
+    UITheme::DrawTitledGroup(uiFont, { 40, 370, 350, 100 }, "ДОПОЛНИТЕЛЬНО");
     GuiCheckBox({ 60, 400, 20, 20 }, "Центральная точка", &settings.crosshair.dot);
     GuiCheckBox({ 60, 430, 20, 20 }, "Обводка (Outline)", &settings.crosshair.outline);
 
-    UITheme::DrawPanel(uiFont, { 40, 490, 350, 90 }, "ЦВЕТ ПРИЦЕЛА");
+    UITheme::DrawTitledGroup(uiFont, { 40, 490, 350, 90 }, "ЦВЕТ ПРИЦЕЛА");
     Color colors[] = { WHITE, BLACK, YELLOW, PINK, SKYBLUE, ORANGE, RED };
     DrawColorPickerRow(60, 520, &settings.crosshair.color, colors, 7);
 
