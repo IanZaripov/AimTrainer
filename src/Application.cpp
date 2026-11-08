@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "UITheme.h"
 
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
@@ -45,6 +46,7 @@ void Application::LoadResources() {
 void Application::SetupUI() {
     GuiSetFont(uiFont);
     GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
+    UITheme::Setup();
 }
 
 void Application::Shutdown() {

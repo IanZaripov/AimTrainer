@@ -21,6 +21,7 @@ set(CORE_SOURCES
     src/Weapon.cpp
     src/HUD.cpp
     src/SystemStats.cpp
+    src/UITheme.cpp
 )
 
 set(MODE_SOURCES
@@ -48,6 +49,7 @@ set(HEADERS
     src/BouncingMode.h
     src/TimedMode.h
     src/MultiStaticMode.h
+    src/UITheme.h
 )
 
 # --- 2. Создание исполняемого файла и добавление исходников ---

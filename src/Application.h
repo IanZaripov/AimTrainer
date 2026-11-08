@@ -1,5 +1,5 @@
 #pragma once
-#include <memory> // Для std::unique_ptr
+#include <memory>
 #include "raylib.h"
 #include "App.h"
 
