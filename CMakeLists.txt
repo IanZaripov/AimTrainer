@@ -24,6 +24,7 @@ add_executable(AimTrainer
     src/TimedMode.cpp
     src/MultiStaticMode.cpp
     src/GameConfig.h
+    src/WeaponConfig.h
 )
 
 target_include_directories(AimTrainer PRIVATE 

@@ -1,14 +1,16 @@
 #include "StaticMode.h"
-#include "raymath.h"
 
 void StaticMode::OnStart(std::vector<Target3D>& targets, const Settings& settings) {
-    targets.push_back(SpawnBall(settings, GetRandomValue(-700, 700) / 100.0f, GetRandomValue(150, 250) / 100.0f, -settings.arena.distance));
+    targets.push_back(SpawnRandomBall(settings));
 }
 
-void StaticMode::OnUpdate(float dt, std::vector<Target3D>& targets, const Settings& settings) {}
+int StaticMode::OnUpdate(float dt, std::vector<Target3D>& targets, const Settings& settings) {
+    return 0;
+}
 
-void StaticMode::OnHit(std::vector<Target3D>& targets, const Settings& settings) {
-    targets.push_back(SpawnBall(settings, GetRandomValue(-700, 700) / 100.0f, GetRandomValue(150, 250) / 100.0f, -settings.arena.distance));
+int StaticMode::OnHit(std::vector<Target3D>& targets, const Settings& settings) {
+    targets.push_back(SpawnRandomBall(settings));
+    return 1;
 }
 
 float StaticMode::GetAccuracy(int shots, int hits, int spawned, float trackTime, float trackTotal) const {

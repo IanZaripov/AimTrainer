@@ -2,14 +2,14 @@
 #include "raymath.h"
 
 void BouncingMode::OnStart(std::vector<Target3D>& targets, const Settings& settings) {
-    Target3D t = SpawnBall(settings, GetRandomValue(-600, 600) / 100.0f, GetRandomValue(150, 250) / 100.0f, -settings.arena.distance);
-    float vx = GetRandomValue(300, 800) / 100.0f;
-    float vy = GetRandomValue(300, 800) / 100.0f;
+    Target3D t = SpawnRandomBall(settings);
+    float vx = (float)GetRandomValue(300, 800) / 100.0f;
+    float vy = (float)GetRandomValue(300, 800) / 100.0f;
     t.velocity = { (GetRandomValue(0, 1) == 0 ? 1.0f : -1.0f) * vx, (GetRandomValue(0, 1) == 0 ? 1.0f : -1.0f) * vy };
     targets.push_back(t);
 }
 
-void BouncingMode::OnUpdate(float dt, std::vector<Target3D>& targets, const Settings& settings) {
+int BouncingMode::OnUpdate(float dt, std::vector<Target3D>& targets, const Settings& settings) {
     float floorY = settings.arena.targetRadius + 0.1f;
     float ceilingY = 6.0f - settings.arena.targetRadius;
 
@@ -22,11 +22,13 @@ void BouncingMode::OnUpdate(float dt, std::vector<Target3D>& targets, const Sett
         if (t.position.y >= ceilingY) { t.position.y = ceilingY; t.velocity.y *= -1; }
         else if (t.position.y <= floorY) { t.position.y = floorY; t.velocity.y *= -1; }
     }
+    return 0;
 }
 
-void BouncingMode::OnHit(std::vector<Target3D>& targets, const Settings& settings) {
+int BouncingMode::OnHit(std::vector<Target3D>& targets, const Settings& settings) {
     targets.clear();
     OnStart(targets, settings);
+    return 1;
 }
 
 float BouncingMode::GetAccuracy(int shots, int hits, int spawned, float trackTime, float trackTotal) const {

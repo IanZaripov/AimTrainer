@@ -1,28 +1,37 @@
 #include "TimedMode.h"
-#include "GameConfig.h"
 #include "raymath.h"
 
+float TimedMode::GetLifetime(const Settings& settings) const {
+    if (settings.arena.timedDifficulty == 0) return GameConfig::TimedLifeEasy;
+    if (settings.arena.timedDifficulty == 1) return GameConfig::TimedLifeMedium;
+    return GameConfig::TimedLifeHard;
+}
+
 void TimedMode::OnStart(std::vector<Target3D>& targets, const Settings& settings) {
-    Target3D t = SpawnBall(settings, GetRandomValue(-700, 700) / 100.0f, GetRandomValue(150, 250) / 100.0f, -settings.arena.distance);
-    t.lifeTimer = (settings.arena.timedDifficulty == 0) ? 1.5f : (settings.arena.timedDifficulty == 1) ? 1.0f : 0.6f;
+    Target3D t = SpawnRandomBall(settings);
+    t.lifeTimer = GetLifetime(settings);
     targets.push_back(t);
 }
 
-void TimedMode::OnUpdate(float dt, std::vector<Target3D>& targets, const Settings& settings) {
+int TimedMode::OnUpdate(float dt, std::vector<Target3D>& targets, const Settings& settings) {
+    int spawned = 0;
     for (auto& t : targets) {
         t.lifeTimer -= dt;
         if (t.lifeTimer <= 0.0f) {
-            t.active = false;
-            Target3D newT = SpawnBall(settings, GetRandomValue(-700, 700) / 100.0f, GetRandomValue(150, 250) / 100.0f, -settings.arena.distance);
-            newT.lifeTimer = t.lifeTimer;
-            targets.push_back(newT);
+            // Перерождаем шар НА МЕСТЕ (не меняем размер вектора!)
+            t.position.x = (float)GetRandomValue(GameConfig::SpawnXMin, GameConfig::SpawnXMax) / GameConfig::SpawnScale;
+            t.position.y = (float)GetRandomValue(GameConfig::SpawnYMin, GameConfig::SpawnYMax) / GameConfig::SpawnScale;
+            t.lifeTimer = GetLifetime(settings);
+            spawned++;
         }
     }
+    return spawned; // Возвращаем 1, если был промах по времени
 }
 
-void TimedMode::OnHit(std::vector<Target3D>& targets, const Settings& settings) {
+int TimedMode::OnHit(std::vector<Target3D>& targets, const Settings& settings) {
     targets.clear();
     OnStart(targets, settings);
+    return 1;
 }
 
 float TimedMode::GetAccuracy(int shots, int hits, int spawned, float trackTime, float trackTotal) const {

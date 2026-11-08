@@ -82,7 +82,8 @@ void Game::Update() {
     UpdateCameraAngles();
     UpdateEffects(dt);
     UpdateTracking(dt);
-    activeMode->OnUpdate(dt, targets, settings);
+    int newSpawns = activeMode->OnUpdate(dt, targets, settings);
+    session.spawnedBalls += newSpawns;
     CleanupTargets();
 
     // 5. И только теперь обрабатываем выстрел
@@ -143,7 +144,8 @@ void Game::HandleShoot() {
             session.hits++;
             effects.push_back({ t.position });
             
-            activeMode->OnHit(targets, settings);
+            int newSpawns = activeMode->OnHit(targets, settings);
+            session.spawnedBalls += newSpawns;
             break; 
         }
     }
