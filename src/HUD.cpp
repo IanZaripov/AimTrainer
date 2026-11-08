@@ -1,4 +1,5 @@
 #include "HUD.h"
+#include <cstdio>
 
 void HUD::UpdateStats() {
     sysStats.Update(GetFrameTime());
@@ -84,8 +85,11 @@ void HUD::DrawSystemStats(Font font) const {
 void HUD::DrawStatBox(Font font, const char* label, const char* value, float x, float y) const {
     Rectangle boxRect = { x, y, 110.0f, 30.0f };
     DrawStatFrame(boxRect);
-    const char* text = TextFormat("%s: %s", label, value);
-    DrawCenteredText(font, text, boxRect, 16.0f, WHITE);
+
+    char textBuffer[64];
+    snprintf(textBuffer, sizeof(textBuffer), "%s: %s", label, value);
+    
+    DrawCenteredText(font, textBuffer, boxRect, 16.0f, WHITE);
 }
 
 void HUD::DrawStatFrame(Rectangle rect) const {

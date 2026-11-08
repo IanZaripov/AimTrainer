@@ -17,6 +17,13 @@ add_executable(AimTrainer
     src/Weapon.cpp
     src/HUD.cpp
     src/SystemStats.cpp
+    # Режимы тренировок
+    src/StaticMode.cpp
+    src/MovingMode.cpp
+    src/BouncingMode.cpp
+    src/TimedMode.cpp
+    src/MultiStaticMode.cpp
+    src/GameConfig.h
 )
 
 target_include_directories(AimTrainer PRIVATE 
@@ -29,15 +36,8 @@ target_link_directories(AimTrainer PRIVATE
     "${RAYLIB_PATH}/lib"
 )
 
-# Добавили pdh (Performance Data Helper) для чтения загрузки GPU
 target_link_libraries(AimTrainer PRIVATE 
-    raylib 
-    winmm 
-    gdi32 
-    opengl32 
-    user32 
-    shell32
-    pdh
+    raylib winmm gdi32 opengl32 user32 shell32 pdh
 )
 
 if(WIN32)

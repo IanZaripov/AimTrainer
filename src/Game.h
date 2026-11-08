@@ -1,32 +1,43 @@
 #pragma once
+#include <memory>
 #include "raylib.h"
 #include "raymath.h"
 #include "Settings.h"
 #include "Arena.h"
 #include "Weapon.h"
 #include "HUD.h"
-#include <vector>
+#include "ITrainingMode.h"
+#include "GameConfig.h"
 
-enum class GameMode {
-    STATIC,
-    MOVING,
-    BOUNCING,
-    TIMED,
-    MULTI_STATIC 
-};
-
-struct Target3D {
-    Vector3 position;
-    bool    active = true;
-    float   speed = 0.0f;      
-    int     direction = 1;     
-    Vector2 velocity = { 0.0f, 0.0f };
-    float   lifeTimer = 0.0f;  
-};
+enum class GameMode { STATIC, MOVING, BOUNCING, TIMED, MULTI_STATIC };
 
 struct PopEffect {
     Vector3 position;
-    float   life = 0.2f;
+    float   life = GameConfig::EffectLifetime;
+
+    float GetProgress() const { return 1.0f - (life / GameConfig::EffectLifetime); }
+    float GetRadius(float baseRadius) const { return baseRadius * (1.0f + GetProgress() * GameConfig::EffectMaxScale); }
+    Color GetColor(Color baseColor) const {
+        Color col = baseColor;
+        col.a = (unsigned char)(255 * (1.0f - GetProgress()));
+        return col;
+    }
+};
+
+struct SessionData {
+    int   poppedCount   = 0;
+    int   spawnedBalls  = 0;
+    int   shotsFired    = 0;
+    int   hits          = 0;
+    float sessionTime   = 0.0f;
+    float trackTimeOnTarget = 0.0f;
+    float trackTimeTotal    = 0.0f;
+    bool  isActive      = false;
+};
+
+struct CameraAngles {
+    float yaw = 0.0f;
+    float pitch = 0.0f;
 };
 
 class Game {
@@ -36,46 +47,46 @@ public:
     void Update();
     void Draw(Font uiFont) const;
 
-    bool IsTrainingActive() const { return trainingActive; }
+    bool IsTrainingActive() const { return session.isActive; }
     void StartTraining(GameMode mode);
     void StopTraining();
 
-    GameMode GetCurrentMode() const { return currentMode; }
-    int GetPoppedCount() const { return poppedCount; }
-    int GetSpawnedBalls() const { return spawnedBalls; }
-    int GetShotsFired() const { return shotsFired; }
-    int GetHits() const { return hits; }
-    float GetSessionTime() const { return sessionTime; }
+    GameMode GetCurrentMode() const { return currentModeType; }
+    int GetPoppedCount() const { return session.poppedCount; }
+    int GetSpawnedBalls() const { return session.spawnedBalls; }
+    int GetShotsFired() const { return session.shotsFired; }
+    int GetHits() const { return session.hits; }
+    float GetSessionTime() const { return session.sessionTime; }
 
 private:
-    void SpawnNewTarget();
+    // --- Предикаты (проверки) ---
+    bool IsPauseRequested() const;
+    bool IsShootRequested() const;
+
+    // --- Действия и обновления ---
+    void UpdateCameraAngles();
+    void UpdateEffects(float dt);
+    void UpdateTracking(float dt);
+    void CleanupTargets();
     void HandleShoot();
+
+    // --- Отрисовка ---
     void DrawTargets() const;
     void DrawEffects() const;
-    void UpdateCameraAngles();
+    void DrawSingleEffect(const PopEffect& effect) const;
 
     Settings& settings;
     Arena     arena;
     Weapon    weapon;
     HUD       hud;
     
-    GameMode currentMode = GameMode::STATIC;
+    GameMode currentModeType = GameMode::STATIC;
+    std::unique_ptr<TrainingMode> activeMode; 
+    
     std::vector<Target3D> targets;
     std::vector<PopEffect> effects;
     
-    Camera3D camera;
-    float yaw = 0.0f;   
-    float pitch = 0.0f; 
-
-    int   poppedCount   = 0;
-    int   spawnedBalls  = 0;
-    int   shotsFired    = 0;
-    int   hits          = 0;
-    int   misses        = 0;
-    float sessionTime   = 0.0f;
-    
-    float trackTimeOnTarget = 0.0f;
-    float trackTimeTotal    = 0.0f;
-
-    bool  trainingActive = false;
+    SessionData  session;
+    CameraAngles camAngles;
+    Camera3D     camera;
 };
