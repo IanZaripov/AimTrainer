@@ -13,8 +13,10 @@ public:
 private:
     Font uiFont;
     std::unique_ptr<App> gameApp;
+    RenderTexture2D renderTarget;
 
     void InitWindowAndContext();
+    void SetupRenderTarget();
     void LoadResources();
     void SetupUI();
     void Shutdown();

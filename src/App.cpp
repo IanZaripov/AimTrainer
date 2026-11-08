@@ -11,20 +11,27 @@ App::App() : game(settings) {
     game.Init();
 }
 
-void App::Update() {
+void App::UpdateLogic() {
     if (currentScreen == AppScreen::PLAYING) {
         game.Update();
         if (!game.IsTrainingActive()) {
-            if (game.GetCurrentMode() == GameMode::TIMED && game.GetSessionTime() >= GameConfig::SessionTimeLimit) {
-                currentScreen = AppScreen::RESULTS;
-            } else {
-                currentScreen = AppScreen::ROUTINES;
-            }
+            HandleGameExit(game.GetExitReason());
         }
     }
 }
 
-void App::Draw(Font uiFont) {
+void App::HandleGameExit(GameExitReason reason) {
+    switch (reason) {
+        case GameExitReason::TimeExpired:
+            currentScreen = AppScreen::RESULTS;
+            break;
+        default:
+            currentScreen = AppScreen::ROUTINES;
+            break;
+    }
+}
+
+void App::DrawUI(Font uiFont) {
     ClearBackground(UITheme::BG);
 
     if (currentScreen == AppScreen::PLAYING) {
@@ -32,36 +39,41 @@ void App::Draw(Font uiFont) {
     } else if (currentScreen == AppScreen::RESULTS) {
         DrawResultsScreen(uiFont);
     } else {
-        DrawTopBar(uiFont);
-        switch (currentScreen) {
-            case AppScreen::ROUTINES:           DrawRoutinesScreen(uiFont); break;
-            case AppScreen::SETTINGS_MOUSE:     DrawMouseSettings(uiFont); break;
-            case AppScreen::SETTINGS_CROSSHAIR: DrawCrosshairSettings(uiFont); break;
-            case AppScreen::SETTINGS_ARENA:     DrawArenaSettings(uiFont); break;
-            default: break;
-        }
+        DrawMenuLayout(uiFont);
+    }
+}
+
+void App::DrawMenuLayout(Font uiFont) {
+    DrawTopBar(uiFont);
+    switch (currentScreen) {
+        case AppScreen::ROUTINES:           DrawRoutinesScreen(uiFont); break;
+        case AppScreen::SETTINGS_MOUSE:     DrawMouseSettings(uiFont); break;
+        case AppScreen::SETTINGS_CROSSHAIR: DrawCrosshairSettings(uiFont); break;
+        case AppScreen::SETTINGS_ARENA:     DrawArenaSettings(uiFont); break;
+        default: break;
     }
 }
 
 void App::DrawTopBar(Font uiFont) {
-    DrawRectangle(0, 0, GetScreenWidth(), 60, Color{ 20, 25, 30, 255 });
-    DrawLine(0, 60, GetScreenWidth(), 60, UITheme::ACCENT);
+    DrawRectangle(0, 0, GetRenderWidth(), (int)UITheme::TopBarHeight, Color{ 20, 25, 30, 255 });
+    DrawLine(0, (int)UITheme::TopBarHeight, GetRenderWidth(), (int)UITheme::TopBarHeight, UITheme::ACCENT);
 
-    if (GuiButton({ 20, 15, 120, 30 }, "Тренировки")) currentScreen = AppScreen::ROUTINES;
-    if (GuiButton({ 150, 15, 120, 30 }, "Арена")) currentScreen = AppScreen::SETTINGS_ARENA;
-    if (GuiButton({ 280, 15, 120, 30 }, "Мышь")) currentScreen = AppScreen::SETTINGS_MOUSE;
-    if (GuiButton({ 410, 15, 120, 30 }, "Прицел")) currentScreen = AppScreen::SETTINGS_CROSSHAIR;
+    if (GuiButton({ UITheme::NavButton1X, UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "Тренировки")) 
+        currentScreen = AppScreen::ROUTINES;
+    if (GuiButton({ UITheme::NavButton2X, UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "Арена")) 
+        currentScreen = AppScreen::SETTINGS_ARENA;
+    if (GuiButton({ UITheme::NavButton3X, UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "Мышь")) 
+        currentScreen = AppScreen::SETTINGS_MOUSE;
+    if (GuiButton({ UITheme::NavButton4X, UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "Прицел")) 
+        currentScreen = AppScreen::SETTINGS_CROSSHAIR;
 
     const char* title = "AIM TRAINER";
     float titleWidth = MeasureTextEx(uiFont, title, 24, 1).x;
-    DrawTextEx(uiFont, title, { (GetScreenWidth() - titleWidth) / 2.0f, 18 }, 24, 1, WHITE);
+    DrawTextEx(uiFont, title, { (GetRenderWidth() - titleWidth) / 2.0f, 18 }, 24, 1, WHITE);
 
-    if (GuiButton({ (float)GetScreenWidth() - 140, 15, 120, 30 }, "ВЫХОД")) shouldExit = true;
+    if (GuiButton({ UITheme::GetRightButtonX(), UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "ВЫХОД")) 
+        shouldExit = true;
 }
-
-// ==========================================
-// ЭКРАН ВЫБОРА ТРЕНИРОВКИ
-// ==========================================
 
 void App::DrawRoutinesScreen(Font uiFont) {
     DrawTextEx(uiFont, "ВЫБЕРИТЕ РУТИНУ:", { 40, 100 }, 20, 1, UITheme::TEXT_DIM);
@@ -136,7 +148,6 @@ void App::DrawCardTimed(Font font, Rectangle rect) {
     const char* diffNames[] = { "Легко", "Сред", "Сложно" };
     bool clickedDiff = false;
     
-    // Проверяем клики по кнопкам сложности ДО клика по карточке
     for (int i = 0; i < 3; i++) {
         Rectangle btn = { rect.x + 15 + i * 60.0f, diffY, 55, 25 };
         if (CheckCollisionPointRec(GetMousePosition(), btn) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
@@ -188,10 +199,6 @@ void App::DrawCardMulti(Font font, Rectangle rect) {
         game.StartTraining(GameMode::MULTI_STATIC);
     }
 }
-
-// ==========================================
-// НАСТРОЙКИ
-// ==========================================
 
 void App::DrawSliderBox(Font font, float x, float y, const char* label, float* value, float min, float max, char* buffer, bool* editMode, bool isInt, int precision) {
     DrawTextEx(font, label, { x, y }, 16, 1, UITheme::TEXT);
@@ -258,16 +265,15 @@ void App::DrawArenaSettings(Font uiFont) {
     UITheme::DrawTitledGroup(uiFont, { 40, 380, 350, 100 }, "РАЗМЕР ШАРОВ");
     DrawSliderBox(uiFont, 60, 420, "Радиус (метры)", &settings.arena.targetRadius, 0.02f, 2.0f, sizeBuffer, &sizeEdit, false);
 
-    // Превью
     Rectangle previewBox = { 420, 140, 500, 340 };
     DrawRectangleRounded(previewBox, 0.02f, 4, Color{ 30, 35, 40, 255 });
     DrawRectangleLinesEx(previewBox, 2.0f, UITheme::BORDER);
     DrawLineEx({previewBox.x, previewBox.y + 250}, {previewBox.x + previewBox.width, previewBox.y + 250}, 2.0f, UITheme::BORDER);
     
     float cx = previewBox.x + previewBox.width / 2.0f, cy = previewBox.y + previewBox.height / 2.0f - 30;
-    float aspect = (float)GetScreenWidth() / (float)GetScreenHeight();
+    float aspect = (float)GetRenderWidth() / (float)GetRenderHeight();
     float vFovRad = 2.0f * atanf(tanf((settings.fovDegrees * DEG2RAD) / 2.0f) / aspect);
-    float pxRadius = (settings.arena.targetRadius / settings.arena.distance) * (GetScreenHeight() / 2.0f) / tanf(vFovRad / 2.0f);
+    float pxRadius = (settings.arena.targetRadius / settings.arena.distance) * (GetRenderHeight() / 2.0f) / tanf(vFovRad / 2.0f);
     if (pxRadius < 0.5f) pxRadius = 0.5f; 
 
     DrawCircle(cx, cy, pxRadius, settings.arena.ballColor);
@@ -298,7 +304,6 @@ void App::DrawCrosshairSettings(Font uiFont) {
     Color colors[] = { WHITE, BLACK, YELLOW, PINK, SKYBLUE, ORANGE, RED };
     DrawColorPickerRow(60, 520, &settings.crosshair.color, colors, 7);
 
-    // Превью прицела
     Rectangle previewBox = { 420, 140, 500, 440 };
     DrawRectangleRounded(previewBox, 0.02f, 4, Color{ 30, 35, 40, 255 });
     DrawRectangleLinesEx(previewBox, 2.0f, UITheme::BORDER);
@@ -326,10 +331,10 @@ void App::DrawCrosshairSettings(Font uiFont) {
 }
 
 void App::DrawResultsScreen(Font uiFont) {
-    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.8f));
+    DrawRectangle(0, 0, GetRenderWidth(), GetRenderHeight(), Fade(BLACK, 0.8f));
     
     float pw = 500, ph = 450;
-    Rectangle panel = { (GetScreenWidth() - pw) / 2.0f, (GetScreenHeight() - ph) / 2.0f, pw, ph };
+    Rectangle panel = { (GetRenderWidth() - pw) / 2.0f, (GetRenderHeight() - ph) / 2.0f, pw, ph };
     DrawRectangleRounded(panel, 0.05f, 4, UITheme::PANEL);
     DrawRectangleLinesEx(panel, 2.0f, UITheme::ACCENT);
 

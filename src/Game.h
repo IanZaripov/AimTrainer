@@ -25,6 +25,12 @@ struct PopEffect {
     }
 };
 
+enum class GameExitReason { 
+    None, 
+    UserQuit, 
+    TimeExpired
+};
+
 struct SessionData {
     int   poppedCount   = 0;
     int   spawnedBalls  = 0;
@@ -34,6 +40,7 @@ struct SessionData {
     float trackTimeOnTarget = 0.0f;
     float trackTimeTotal    = 0.0f;
     bool  isActive      = false;
+    GameExitReason exitReason = GameExitReason::None;
 };
 
 struct CameraAngles {
@@ -50,7 +57,7 @@ public:
 
     bool IsTrainingActive() const { return session.isActive; }
     void StartTraining(GameMode mode);
-    void StopTraining();
+    void Game::EndSession(GameExitReason reason);
 
     GameMode GetCurrentMode() const { return currentModeType; }
     int GetPoppedCount() const { return session.poppedCount; }
@@ -58,6 +65,7 @@ public:
     int GetShotsFired() const { return session.shotsFired; }
     int GetHits() const { return session.hits; }
     float GetSessionTime() const { return session.sessionTime; }
+    GameExitReason GetExitReason() const { return session.exitReason; }
 
 private:
     bool IsPauseRequested() const;

@@ -12,7 +12,8 @@ Game::Game(Settings& s) : settings(s), arena(roomConfig) {
     camera.target = { 0.0f, 1.6f, -1.0f };
     camera.up = { 0.0f, 1.0f, 0.0f };
     
-    float aspect = (float)GetScreenWidth() / (float)GetScreenHeight();
+    // Соотношение сторон совпадает у окна и RenderTexture, поэтому можно использовать любой
+    float aspect = (float)GetRenderWidth() / (float)GetRenderHeight();
     float hFovRad = settings.fovDegrees * DEG2RAD;
     camera.fovy = 2.0f * atanf(tanf(hFovRad / 2.0f) / aspect) * RAD2DEG;
     camera.projection = CAMERA_PERSPECTIVE;
@@ -43,51 +44,40 @@ void Game::StartTraining(GameMode mode) {
     session.spawnedBalls += (int)targets.size();
 }
 
-void Game::StopTraining() {
+void Game::EndSession(GameExitReason reason) {
     session.isActive = false;
+    session.exitReason = reason;
     EnableCursor();
 }
 
-bool Game::IsPauseRequested() const {
-    return IsKeyPressed(KEY_ESCAPE);
-}
-
-bool Game::IsShootRequested() const {
-    return IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
-}
-
-// --- ГЛАВНЫЙ ЦИКЛ ---
 void Game::Update() {
     if (!session.isActive) return;
 
-    // 1. Проверяем паузу
-    if (IsPauseRequested()) {
-        StopTraining();
+    if (IsKeyPressed(KEY_ESCAPE)) {
+        EndSession(GameExitReason::UserQuit);
         return;
     }
 
-    // 2. Обновляем время и статы
     float dt = GetFrameTime();
     session.sessionTime += dt;
     hud.UpdateStats();
 
-    // 3. Проверяем условия завершения
     if (activeMode->IsFinished(session.sessionTime)) {
         session.sessionTime = GameConfig::SessionTimeLimit;
-        StopTraining();
+        EndSession(GameExitReason::TimeExpired);
         return;
     }
 
-    // 4. Обновляем мир
     UpdateCameraAngles();
     UpdateEffects(dt);
     UpdateTracking(dt);
+
     int newSpawns = activeMode->OnUpdate(dt, targets, settings);
     session.spawnedBalls += newSpawns;
+
     CleanupTargets();
 
-    // 5. И только теперь обрабатываем выстрел
-    if (IsShootRequested()) {
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         HandleShoot();
     }
 }
@@ -116,7 +106,8 @@ void Game::UpdateTracking(float dt) {
     if (!activeMode->UsesTracking()) return;
 
     session.trackTimeTotal += dt;
-    Vector2 screenCenter = { (float)GetScreenWidth() / 2.0f, (float)GetScreenHeight() / 2.0f };
+    // Используем GetRenderWidth/Height, так как рендер идет в текстуру
+    Vector2 screenCenter = { (float)GetRenderWidth() / 2.0f, (float)GetRenderHeight() / 2.0f };
     Ray ray = GetScreenToWorldRay(screenCenter, camera);
     
     for (auto& t : targets) {
@@ -133,7 +124,7 @@ void Game::CleanupTargets() {
 
 void Game::HandleShoot() {
     session.shotsFired++;
-    Vector2 screenCenter = { (float)GetScreenWidth() / 2.0f, (float)GetScreenHeight() / 2.0f };
+    Vector2 screenCenter = { (float)GetRenderWidth() / 2.0f, (float)GetRenderHeight() / 2.0f };
     Ray ray = GetScreenToWorldRay(screenCenter, camera);
 
     for (auto& t : targets) {
@@ -151,7 +142,6 @@ void Game::HandleShoot() {
     }
 }
 
-// --- ОТРИСОВКА ---
 void Game::Draw(Font uiFont) const {
     BeginMode3D(camera);
     arena.Draw();

@@ -12,8 +12,8 @@ void HUD::Draw(Font font, const CrosshairConfig& cfg, int score, float accuracy,
 }
 
 void HUD::DrawCrosshair(const CrosshairConfig& cfg) const {
-    float cx = GetScreenWidth() / 2.0f;
-    float cy = GetScreenHeight() / 2.0f;
+    float cx = GetRenderWidth() / 2.0f;
+    float cy = GetRenderHeight() / 2.0f;
 
     Color col = cfg.color;
     float len = cfg.length;
@@ -41,7 +41,7 @@ void HUD::DrawCrosshair(const CrosshairConfig& cfg) const {
 }
 
 void HUD::DrawTopPanel(Font font, int score, float accuracy, float timer) const {
-    float cx = GetScreenWidth() / 2.0f;
+    float cx = GetRenderWidth() / 2.0f;
     float panelWidth = 500.0f;
     float panelHeight = 60.0f;
     float panelX = cx - panelWidth / 2.0f;
