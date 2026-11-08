@@ -1,53 +1,87 @@
 #include "Arena.h"
 
-Arena::Arena() {}
+Arena::Arena(const RoomConfig& cfg) : config(cfg) {}
 
-// Теперь Draw() читается как оглавление
 void Arena::Draw() const {
     DrawFloor();
-    DrawWalls();
     DrawCeiling();
-    DrawGrid();
+    DrawBackWall();
+    DrawFrontWall();
+    DrawLeftWall();
+    DrawRightWall();
+    DrawGridLines();
     DrawNeonLines();
 }
 
 void Arena::DrawFloor() const {
-    DrawCube({0.0f, -0.5f, 0.0f}, width, 1.0f, depth, floorColor);
-}
-
-void Arena::DrawWalls() const {
-    DrawCube({0.0f, height / 2.0f, -depth / 2.0f}, width, height, 1.0f, wallColor); // Задняя
-    DrawCube({0.0f, height / 2.0f, depth / 2.0f}, width, height, 1.0f, wallColor);  // Передняя
-    DrawCube({-width / 2.0f, height / 2.0f, 0.0f}, 1.0f, height, depth, wallColor); // Левая
-    DrawCube({width / 2.0f, height / 2.0f, 0.0f}, 1.0f, height, depth, wallColor);  // Правая
+    float floorY = -config.floorThickness / 2.0f;
+    DrawCube({0.0f, floorY, 0.0f}, config.width, config.floorThickness, config.depth, config.floorColor);
 }
 
 void Arena::DrawCeiling() const {
-    DrawCube({0.0f, height, 0.0f}, width, 1.0f, depth, ceilingColor);
+    DrawCube({0.0f, config.height, 0.0f}, config.width, config.floorThickness, config.depth, config.ceilingColor);
 }
 
-void Arena::DrawGrid() const {
-    // Сетка (шаг 4 метра)
-    for (int x = (int)-width/2; x <= width/2; x += 4) {
-        DrawLine3D({(float)x, 0, -depth/2}, {(float)x, height, -depth/2}, gridColor);
-        DrawLine3D({(float)x, 0, depth/2}, {(float)x, height, depth/2}, gridColor);
+void Arena::DrawBackWall() const {
+    DrawCube({0.0f, config.height / 2.0f, -config.depth / 2.0f}, config.width, config.height, config.wallThickness, config.wallColor);
+}
+
+void Arena::DrawFrontWall() const {
+    DrawCube({0.0f, config.height / 2.0f, config.depth / 2.0f}, config.width, config.height, config.wallThickness, config.wallColor);
+}
+
+void Arena::DrawLeftWall() const {
+    DrawCube({-config.width / 2.0f, config.height / 2.0f, 0.0f}, config.wallThickness, config.height, config.depth, config.wallColor);
+}
+
+void Arena::DrawRightWall() const {
+    DrawCube({config.width / 2.0f, config.height / 2.0f, 0.0f}, config.wallThickness, config.height, config.depth, config.wallColor);
+}
+
+void Arena::DrawGridLines() const {
+    float halfW = config.width / 2.0f;
+    float halfD = config.depth / 2.0f;
+    int h = (int)config.height;
+
+    DrawGridLinesAlongX(halfW, halfD, h);
+    DrawGridLinesAlongY(halfW, halfD, h);
+    DrawGridLinesAlongZ(halfW, halfD, h);
+}
+
+void Arena::DrawGridLinesAlongX(float halfW, float halfD, int h) const {
+    int startX = (int)-halfW;
+    int endX = (int)halfW;
+    for (int x = startX; x <= endX; x += config.gridStep) {
+        DrawLine3D({(float)x, 0, -halfD}, {(float)x, (float)h, -halfD}, config.gridColor);
+        DrawLine3D({(float)x, 0, halfD}, {(float)x, (float)h, halfD}, config.gridColor);
     }
-    for (int y = 0; y <= height; y += 4) {
-        DrawLine3D({-width/2, (float)y, -depth/2}, {width/2, (float)y, -depth/2}, gridColor);
-        DrawLine3D({-width/2, (float)y, depth/2}, {width/2, (float)y, depth/2}, gridColor);
-        DrawLine3D({-width/2, (float)y, -depth/2}, {-width/2, (float)y, depth/2}, gridColor);
-        DrawLine3D({width/2, (float)y, -depth/2}, {width/2, (float)y, depth/2}, gridColor);
+}
+
+void Arena::DrawGridLinesAlongY(float halfW, float halfD, int h) const {
+    for (int y = 0; y <= h; y += config.gridStep) {
+        DrawLine3D({-halfW, (float)y, -halfD}, {halfW, (float)y, -halfD}, config.gridColor);
+        DrawLine3D({-halfW, (float)y, halfD}, {halfW, (float)y, halfD}, config.gridColor);
+        DrawLine3D({-halfW, (float)y, -halfD}, {-halfW, (float)y, halfD}, config.gridColor);
+        DrawLine3D({halfW, (float)y, -halfD}, {halfW, (float)y, halfD}, config.gridColor);
     }
-    for (int z = (int)-depth/2; z <= depth/2; z += 4) {
-        DrawLine3D({-width/2, 0, (float)z}, {-width/2, height, (float)z}, gridColor);
-        DrawLine3D({width/2, 0, (float)z}, {width/2, height, (float)z}, gridColor);
+}
+
+void Arena::DrawGridLinesAlongZ(float halfW, float halfD, int h) const {
+    int startZ = (int)-halfD;
+    int endZ = (int)halfD;
+    for (int z = startZ; z <= endZ; z += config.gridStep) {
+        DrawLine3D({-halfW, 0, (float)z}, {-halfW, (float)h, (float)z}, config.gridColor);
+        DrawLine3D({halfW, 0, (float)z}, {halfW, (float)h, (float)z}, config.gridColor);
     }
 }
 
 void Arena::DrawNeonLines() const {
-    // Красные линии по периметру пола
-    DrawLine3D({-width/2, 0.05f, -depth/2}, {width/2, 0.05f, -depth/2}, neonColor);
-    DrawLine3D({-width/2, 0.05f, depth/2}, {width/2, 0.05f, depth/2}, neonColor);
-    DrawLine3D({-width/2, 0.05f, -depth/2}, {-width/2, 0.05f, depth/2}, neonColor);
-    DrawLine3D({width/2, 0.05f, -depth/2}, {width/2, 0.05f, depth/2}, neonColor);
+    float halfW = config.width / 2.0f;
+    float halfD = config.depth / 2.0f;
+    float y = config.neonHeightOffset;
+
+    DrawLine3D({-halfW, y, -halfD}, {halfW, y, -halfD}, config.neonColor);
+    DrawLine3D({-halfW, y, halfD}, {halfW, y, halfD}, config.neonColor);
+    DrawLine3D({-halfW, y, -halfD}, {-halfW, y, halfD}, config.neonColor);
+    DrawLine3D({halfW, y, -halfD}, {halfW, y, halfD}, config.neonColor);
 }

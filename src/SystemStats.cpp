@@ -20,7 +20,6 @@ void SystemStats::Update(float deltaTime) {
         float newCPU = FetchCPULoad();
         float newGPU = FetchGPULoad();
         
-        // Сглаживание (Lerp)
         cpu = cpu + (newCPU - cpu) * 0.3f;
         gpu = gpu + (newGPU - gpu) * 0.3f;
         

@@ -3,6 +3,7 @@
 #include "raylib.h"
 #include "raymath.h"
 #include "Settings.h"
+#include "RoomConfig.h" 
 #include "Arena.h"
 #include "Weapon.h"
 #include "HUD.h"
@@ -59,33 +60,28 @@ public:
     float GetSessionTime() const { return session.sessionTime; }
 
 private:
-    // --- Предикаты (проверки) ---
     bool IsPauseRequested() const;
     bool IsShootRequested() const;
 
-    // --- Действия и обновления ---
     void UpdateCameraAngles();
     void UpdateEffects(float dt);
     void UpdateTracking(float dt);
     void CleanupTargets();
     void HandleShoot();
 
-    // --- Отрисовка ---
     void DrawTargets() const;
     void DrawEffects() const;
     void DrawSingleEffect(const PopEffect& effect) const;
 
     Settings& settings;
-    Arena     arena;
-    Weapon    weapon;
-    HUD       hud;
-    
+    RoomConfig roomConfig;
+    Arena       arena;
+    Weapon      weapon;
+    HUD         hud;
     GameMode currentModeType = GameMode::STATIC;
     std::unique_ptr<TrainingMode> activeMode; 
-    
     std::vector<Target3D> targets;
     std::vector<PopEffect> effects;
-    
     SessionData  session;
     CameraAngles camAngles;
     Camera3D     camera;

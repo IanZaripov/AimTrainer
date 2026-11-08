@@ -1,28 +1,24 @@
 #pragma once
 #include "raylib.h"
+#include "RoomConfig.h"
 
 class Arena {
 public:
-    Arena();
+    Arena(const RoomConfig& config = RoomConfig{});
     void Draw() const;
 
 private:
-    // Размеры комнаты
-    const float width = 40.0f;
-    const float depth = 100.0f; 
-    const float height = 12.0f;
+    RoomConfig config;
 
-    // Цветовая палитра (вынесена из метода Draw)
-    const Color floorColor   = Color{ 80, 95, 115, 255 };
-    const Color wallColor    = Color{ 60, 75, 95, 255 };
-    const Color ceilingColor = Color{ 90, 105, 125, 255 };
-    const Color gridColor    = Color{ 100, 115, 135, 255 };
-    const Color neonColor    = Color{ 255, 70, 85, 255 };
-
-    // Приватные методы для отрисовки каждой детали
     void DrawFloor() const;
-    void DrawWalls() const;
     void DrawCeiling() const;
-    void DrawGrid() const;
+    void DrawBackWall() const;
+    void DrawFrontWall() const;
+    void DrawLeftWall() const;
+    void DrawRightWall() const;
+    void DrawGridLines() const;
+    void DrawGridLinesAlongX(float halfW, float halfD, int h) const;
+    void DrawGridLinesAlongY(float halfW, float halfD, int h) const;
+    void DrawGridLinesAlongZ(float halfW, float halfD, int h) const;
     void DrawNeonLines() const;
 };

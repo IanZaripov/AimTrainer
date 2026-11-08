@@ -7,26 +7,66 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(RAYLIB_PATH "C:/AimTrainer/raylib-5.5_win64_msvc16")
 
-add_executable(AimTrainer
+# --- 1. Группировка исходников ---
+set(APP_SOURCES
     src/main.cpp
     src/Application.cpp
-    src/Game.cpp
     src/App.cpp
+    src/Game.cpp
+)
+
+set(CORE_SOURCES
     src/Settings.cpp
     src/Arena.cpp
     src/Weapon.cpp
     src/HUD.cpp
     src/SystemStats.cpp
-    # Режимы тренировок
+)
+
+set(MODE_SOURCES
     src/StaticMode.cpp
     src/MovingMode.cpp
     src/BouncingMode.cpp
     src/TimedMode.cpp
     src/MultiStaticMode.cpp
-    src/GameConfig.h
-    src/WeaponConfig.h
 )
 
+set(HEADERS
+    src/GameConfig.h
+    src/WeaponConfig.h
+    src/RoomConfig.h
+    src/Game.h
+    src/App.h
+    src/Settings.h
+    src/Arena.h
+    src/Weapon.h
+    src/HUD.h
+    src/SystemStats.h
+    src/ITrainingMode.h
+    src/StaticMode.h
+    src/MovingMode.h
+    src/BouncingMode.h
+    src/TimedMode.h
+    src/MultiStaticMode.h
+)
+
+# --- 2. Создание исполняемого файла и добавление исходников ---
+add_executable(AimTrainer)
+
+target_sources(AimTrainer PRIVATE
+    ${APP_SOURCES}
+    ${CORE_SOURCES}
+    ${MODE_SOURCES}
+    ${HEADERS}
+)
+
+# --- 3. Визуальная группировка ---
+source_group("App" FILES ${APP_SOURCES})
+source_group("Core" FILES ${CORE_SOURCES})
+source_group("Modes" FILES ${MODE_SOURCES})
+source_group("Headers" FILES ${HEADERS})
+
+# --- 4. Настройки raylib ---
 target_include_directories(AimTrainer PRIVATE 
     src 
     include
