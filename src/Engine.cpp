@@ -1,59 +1,52 @@
-#include "Application.h"
+#include "Engine.h"
 #include "UITheme.h"
 
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 #undef RAYGUI_IMPLEMENTATION
 
-void Application::Run() {
+void Engine::Run() {
     InitWindowAndContext();
     LoadResources();
     SetupUI();
     SetupRenderTarget();
 
-    gameApp = std::make_unique<App>();
+    screenManager = std::make_unique<ScreenManager>();
 
-    while (!WindowShouldClose() && !gameApp->ShouldExit()) {
-        gameApp->UpdateLogic();
+    while (!WindowShouldClose() && !screenManager->ShouldExit()) {
+        screenManager->UpdateLogic();
 
-        // 1. Рендерим всё в виртуальную текстуру
         BeginTextureMode(renderTarget);
         ClearBackground(UITheme::BG);
-        gameApp->DrawUI(uiFont);
+        screenManager->DrawUI(uiFont);
         EndTextureMode();
 
-        // 2. Растягиваем текстуру на весь реальный экран
         BeginDrawing();
         ClearBackground(BLACK);
-        
-        // ВАЖНО: отрицательная высота (-height) в src переворачивает текстуру 
-        // обратно, так как OpenGL хранит её снизу вверх.
         DrawTexturePro(
             renderTarget.texture,
             { 0.0f, 0.0f, (float)renderTarget.texture.width, -(float)renderTarget.texture.height },
             { 0.0f, 0.0f, (float)GetScreenWidth(), (float)GetScreenHeight() },
             { 0.0f, 0.0f }, 0.0f, WHITE
         );
-        
         EndDrawing();
     }
 
     Shutdown();
 }
 
-void Application::InitWindowAndContext() {
+void Engine::InitWindowAndContext() {
     SetConfigFlags(FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT | FLAG_FULLSCREEN_MODE);
     InitWindow(0, 0, "Valorant Aim Trainer");
     SetTargetFPS(144);
-    SetExitKey(KEY_NULL); 
+    SetExitKey(KEY_NULL);
 }
 
-void Application::SetupRenderTarget() {
+void Engine::SetupRenderTarget() {
     float aspect = (float)GetScreenWidth() / (float)GetScreenHeight();
     int virtualWidth = (int)(UITheme::VirtualHeight * aspect);
 
     renderTarget = LoadRenderTexture(virtualWidth, UITheme::VirtualHeight);
-    
     SetTextureFilter(renderTarget.texture, TEXTURE_FILTER_BILINEAR);
 
     SetMouseScale(
@@ -62,26 +55,24 @@ void Application::SetupRenderTarget() {
     );
 }
 
-void Application::LoadResources() {
+void Engine::LoadResources() {
     const char* textToLoad = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,:-%()[] "
                              "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
                              "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
     
     int codepointCount = 0;
     int* codepoints = LoadCodepoints(textToLoad, &codepointCount);
-    
     uiFont = LoadFontEx("C:/Windows/Fonts/arial.ttf", 32, codepoints, codepointCount);
-    
     UnloadCodepoints(codepoints);
 }
 
-void Application::SetupUI() {
+void Engine::SetupUI() {
     GuiSetFont(uiFont);
     GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
     UITheme::Setup();
 }
 
-void Application::Shutdown() {
+void Engine::Shutdown() {
     UnloadRenderTexture(renderTarget);
     UnloadFont(uiFont);
     CloseWindow();

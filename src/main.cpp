@@ -1,7 +1,7 @@
-#include "Application.h"
+#include "Engine.h"
 
 int main() {
-    Application app;
-    app.Run();
+    Engine engine;
+    engine.Run();
     return 0;
 }

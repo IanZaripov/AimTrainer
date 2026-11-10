@@ -3,33 +3,14 @@
 #include "raylib.h"
 #include "raymath.h"
 #include "Settings.h"
-#include "RoomConfig.h" 
 #include "Arena.h"
-#include "Weapon.h"
+#include "Viewmodel.h"
 #include "HUD.h"
 #include "ITrainingMode.h"
+#include "GameMode.h"
 #include "GameConfig.h"
 
-enum class GameMode { STATIC, MOVING, BOUNCING, TIMED, MULTI_STATIC };
-
-struct PopEffect {
-    Vector3 position;
-    float   life = GameConfig::EffectLifetime;
-
-    float GetProgress() const { return 1.0f - (life / GameConfig::EffectLifetime); }
-    float GetRadius(float baseRadius) const { return baseRadius * (1.0f + GetProgress() * GameConfig::EffectMaxScale); }
-    Color GetColor(Color baseColor) const {
-        Color col = baseColor;
-        col.a = (unsigned char)(255 * (1.0f - GetProgress()));
-        return col;
-    }
-};
-
-enum class GameExitReason { 
-    None, 
-    UserQuit, 
-    TimeExpired
-};
+enum class GameExitReason { None, UserQuit, TimeExpired };
 
 struct SessionData {
     int   poppedCount   = 0;
@@ -48,29 +29,39 @@ struct CameraAngles {
     float pitch = 0.0f;
 };
 
-class Game {
+struct PopEffect {
+    Vector3 position;
+    float   life = GameConfig::EffectLifetime;
+
+    float GetProgress() const { return 1.0f - (life / GameConfig::EffectLifetime); }
+    float GetRadius(float baseRadius) const { return baseRadius * (1.0f + GetProgress() * GameConfig::EffectMaxScale); }
+    Color GetColor(Color baseColor) const {
+        Color col = baseColor;
+        col.a = (unsigned char)(255 * (1.0f - GetProgress()));
+        return col;
+    }
+};
+
+class TrainingSession {
 public:
-    Game(Settings& settings);
+    TrainingSession(Settings& settings);
     void Init();
     void Update();
     void Draw(Font uiFont) const;
 
     bool IsTrainingActive() const { return session.isActive; }
     void StartTraining(GameMode mode);
-    void Game::EndSession(GameExitReason reason);
+    void EndSession(GameExitReason reason);
 
     GameMode GetCurrentMode() const { return currentModeType; }
+    GameExitReason GetExitReason() const { return session.exitReason; }
     int GetPoppedCount() const { return session.poppedCount; }
     int GetSpawnedBalls() const { return session.spawnedBalls; }
     int GetShotsFired() const { return session.shotsFired; }
     int GetHits() const { return session.hits; }
     float GetSessionTime() const { return session.sessionTime; }
-    GameExitReason GetExitReason() const { return session.exitReason; }
 
 private:
-    bool IsPauseRequested() const;
-    bool IsShootRequested() const;
-
     void UpdateCameraAngles();
     void UpdateEffects(float dt);
     void UpdateTracking(float dt);
@@ -81,15 +72,18 @@ private:
     void DrawEffects() const;
     void DrawSingleEffect(const PopEffect& effect) const;
 
-    Settings& settings;
-    RoomConfig roomConfig;
+    Settings&   settings;
+    RoomConfig  roomConfig;
     Arena       arena;
-    Weapon      weapon;
+    Viewmodel   viewmodel;
     HUD         hud;
-    GameMode currentModeType = GameMode::STATIC;
-    std::unique_ptr<TrainingMode> activeMode; 
+
+    GameMode    currentModeType = GameMode::STATIC;
+    std::unique_ptr<TrainingMode> activeMode;
+
     std::vector<Target3D> targets;
     std::vector<PopEffect> effects;
+
     SessionData  session;
     CameraAngles camAngles;
     Camera3D     camera;

@@ -1,4 +1,4 @@
-#include "Game.h"
+#include "TrainingSession.h"
 #include "StaticMode.h"
 #include "MovingMode.h"
 #include "BouncingMode.h"
@@ -7,25 +7,25 @@
 #include <cmath>
 #include <algorithm>
 
-Game::Game(Settings& s) : settings(s), arena(roomConfig) {
-    camera.position = { 0.0f, 1.6f, 0.0f }; 
+TrainingSession::TrainingSession(Settings& s) : settings(s), arena(roomConfig) {
+    camera.position = { 0.0f, 1.6f, 0.0f };
     camera.target = { 0.0f, 1.6f, -1.0f };
     camera.up = { 0.0f, 1.0f, 0.0f };
-    
+
     float aspect = (float)GetRenderWidth() / (float)GetRenderHeight();
     float hFovRad = settings.fovDegrees * DEG2RAD;
     camera.fovy = 2.0f * atanf(tanf(hFovRad / 2.0f) / aspect) * RAD2DEG;
     camera.projection = CAMERA_PERSPECTIVE;
 }
 
-void Game::Init() {
+void TrainingSession::Init() {
     targets.clear();
     effects.clear();
-    session = SessionData{}; 
+    session = SessionData{};
     camAngles = CameraAngles{};
 }
 
-void Game::StartTraining(GameMode mode) {
+void TrainingSession::StartTraining(GameMode mode) {
     Init();
     currentModeType = mode;
     session.isActive = true;
@@ -43,13 +43,13 @@ void Game::StartTraining(GameMode mode) {
     session.spawnedBalls += (int)targets.size();
 }
 
-void Game::EndSession(GameExitReason reason) {
+void TrainingSession::EndSession(GameExitReason reason) {
     session.isActive = false;
     session.exitReason = reason;
     EnableCursor();
 }
 
-void Game::Update() {
+void TrainingSession::Update() {
     if (!session.isActive) return;
 
     if (IsKeyPressed(KEY_ESCAPE)) {
@@ -81,10 +81,10 @@ void Game::Update() {
     }
 }
 
-void Game::UpdateCameraAngles() {
+void TrainingSession::UpdateCameraAngles() {
     Vector2 delta = GetMouseDelta();
     float finalSens = settings.mouse.valorantSens * settings.mouse.sensMultiplier * GameConfig::SensMultiplier;
-    
+
     camAngles.yaw   += delta.x * finalSens;
     camAngles.pitch -= delta.y * finalSens;
     camAngles.pitch = std::clamp(camAngles.pitch, -GameConfig::PitchLimit, GameConfig::PitchLimit);
@@ -96,18 +96,18 @@ void Game::UpdateCameraAngles() {
     camera.target = Vector3Add(camera.position, dir);
 }
 
-void Game::UpdateEffects(float dt) {
+void TrainingSession::UpdateEffects(float dt) {
     for (auto& e : effects) e.life -= dt;
     effects.erase(std::remove_if(effects.begin(), effects.end(), [](const PopEffect& e) { return e.life <= 0.0f; }), effects.end());
 }
 
-void Game::UpdateTracking(float dt) {
+void TrainingSession::UpdateTracking(float dt) {
     if (!activeMode->UsesTracking()) return;
 
     session.trackTimeTotal += dt;
     Vector2 screenCenter = { (float)GetRenderWidth() / 2.0f, (float)GetRenderHeight() / 2.0f };
     Ray ray = GetScreenToWorldRay(screenCenter, camera);
-    
+
     for (auto& t : targets) {
         if (!t.active) continue;
         if (GetRayCollisionSphere(ray, t.position, settings.arena.targetRadius).hit) {
@@ -116,11 +116,11 @@ void Game::UpdateTracking(float dt) {
     }
 }
 
-void Game::CleanupTargets() {
+void TrainingSession::CleanupTargets() {
     targets.erase(std::remove_if(targets.begin(), targets.end(), [](const Target3D& t) { return !t.active; }), targets.end());
 }
 
-void Game::HandleShoot() {
+void TrainingSession::HandleShoot() {
     session.shotsFired++;
     Vector2 screenCenter = { (float)GetRenderWidth() / 2.0f, (float)GetRenderHeight() / 2.0f };
     Ray ray = GetScreenToWorldRay(screenCenter, camera);
@@ -132,42 +132,41 @@ void Game::HandleShoot() {
             session.poppedCount++;
             session.hits++;
             effects.push_back({ t.position });
-            
+
             int newSpawns = activeMode->OnHit(targets, settings);
             session.spawnedBalls += newSpawns;
-            break; 
+            break;
         }
     }
 }
 
-void Game::Draw(Font uiFont) const {
+void TrainingSession::Draw(Font uiFont) const {
     BeginMode3D(camera);
     arena.Draw();
     DrawTargets();
     DrawEffects();
-    weapon.Draw(camera);
+    viewmodel.Draw(camera);
     EndMode3D();
 
     float accuracy = activeMode->GetAccuracy(session.shotsFired, session.hits, session.spawnedBalls, session.trackTimeOnTarget, session.trackTimeTotal);
     hud.Draw(uiFont, settings.crosshair, session.poppedCount, accuracy, session.sessionTime);
 }
 
-void Game::DrawTargets() const {
+void TrainingSession::DrawTargets() const {
     for (const auto& t : targets) {
         if (!t.active) continue;
         DrawSphere(t.position, settings.arena.targetRadius, settings.arena.ballColor);
     }
 }
 
-void Game::DrawEffects() const {
+void TrainingSession::DrawEffects() const {
     for (const auto& e : effects) {
         DrawSingleEffect(e);
     }
 }
 
-void Game::DrawSingleEffect(const PopEffect& effect) const {
+void TrainingSession::DrawSingleEffect(const PopEffect& effect) const {
     float radius = effect.GetRadius(settings.arena.targetRadius);
     Color col = effect.GetColor(settings.arena.ballColor);
-    
     DrawSphereWires(effect.position, radius, GameConfig::EffectSphereRings, GameConfig::EffectSphereSlices, col);
 }

@@ -7,95 +7,184 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(RAYLIB_PATH "C:/AimTrainer/raylib-5.5_win64_msvc16")
 
-# --- 1. Группировка исходников ---
-set(APP_SOURCES
+# =========================================================
+# Infrastructure (точка входа + движок)
+# =========================================================
+set(INFRA_FILES
     src/main.cpp
-    src/Application.cpp
-    src/App.cpp
-    src/Game.cpp
+    src/Engine.h
+    src/Engine.cpp
 )
 
-set(CORE_SOURCES
-    src/Settings.cpp
-    src/Arena.cpp
-    src/Weapon.cpp
-    src/HUD.cpp
-    src/SystemStats.cpp
-    src/UITheme.cpp
-    src/TrainingCard.cpp
-    src/StaticCard.cpp
-    src/MovingCard.cpp
-    src/BouncingCard.cpp
-    src/TimedCard.cpp
-    src/MultiStaticCard.cpp
+# =========================================================
+# Application (роутинг экранов)
+# =========================================================
+set(APP_FILES
+    src/app/ScreenManager.h
+    src/app/ScreenManager.cpp
 )
 
-set(MODE_SOURCES
-    src/StaticMode.cpp
-    src/MovingMode.cpp
-    src/BouncingMode.cpp
-    src/TimedMode.cpp
-    src/MultiStaticMode.cpp
+# =========================================================
+# Training (домен: сессия, конфиги)
+# =========================================================
+set(TRAINING_FILES
+    src/training/TrainingSession.h
+    src/training/TrainingSession.cpp
+    src/training/GameConfig.h
+    src/training/GameMode.h
 )
 
-set(HEADERS
-    src/GameConfig.h
-    src/WeaponConfig.h
-    src/RoomConfig.h
-    src/Game.h
-    src/App.h
-    src/Settings.h
-    src/Arena.h
-    src/Weapon.h
-    src/HUD.h
-    src/SystemStats.h
-    src/ITrainingMode.h
-    src/StaticMode.h
-    src/MovingMode.h
-    src/BouncingMode.h
-    src/TimedMode.h
-    src/MultiStaticMode.h
-    src/UITheme.h
-    src/TrainingCard.h
+# =========================================================
+# Training Modes (режимы тренировок)
+# =========================================================
+set(MODES_FILES
+    src/training/modes/ITrainingMode.h
+    src/training/modes/StaticMode.h
+    src/training/modes/StaticMode.cpp
+    src/training/modes/MovingMode.h
+    src/training/modes/MovingMode.cpp
+    src/training/modes/BouncingMode.h
+    src/training/modes/BouncingMode.cpp
+    src/training/modes/TimedMode.h
+    src/training/modes/TimedMode.cpp
+    src/training/modes/MultiStaticMode.h
+    src/training/modes/MultiStaticMode.cpp
 )
 
-# --- 2. Создание исполняемого файла и добавление исходников ---
+# =========================================================
+# Settings (persistence)
+# =========================================================
+set(SETTINGS_FILES
+    src/settings/Settings.h
+    src/settings/Settings.cpp
+)
+
+# =========================================================
+# Scene (3D-мир)
+# =========================================================
+set(SCENE_FILES
+    src/scene/Arena.h
+    src/scene/Arena.cpp
+    src/scene/RoomConfig.h
+)
+
+# =========================================================
+# Viewmodel (оркестратор от первого лица)
+# =========================================================
+set(VIEWMODEL_FILES
+    src/viewmodel/Viewmodel.h
+    src/viewmodel/Viewmodel.cpp
+)
+
+set(WEAPON_FILES
+    src/viewmodel/weapon/Weapon.h
+    src/viewmodel/weapon/Weapon.cpp
+    src/viewmodel/weapon/WeaponConfig.h
+)
+
+set(HANDS_FILES
+    src/viewmodel/hands/Hands.h
+    src/viewmodel/hands/Hands.cpp
+    src/viewmodel/hands/HandsConfig.h
+)
+
+# =========================================================
+# UI (2D-интерфейс)
+# =========================================================
+set(UI_FILES
+    src/ui/UITheme.h
+    src/ui/UITheme.cpp
+    src/ui/HUD.h
+    src/ui/HUD.cpp
+    src/ui/SystemStats.h
+    src/ui/SystemStats.cpp
+)
+
+# =========================================================
+# UI Cards (все объявления в TrainingCard.h, .cpp отдельно)
+# =========================================================
+set(CARDS_FILES
+    src/ui/cards/TrainingCard.h
+    src/ui/cards/TrainingCard.cpp
+    src/ui/cards/StaticCard.cpp
+    src/ui/cards/MovingCard.cpp
+    src/ui/cards/BouncingCard.cpp
+    src/ui/cards/TimedCard.cpp
+    src/ui/cards/MultiStaticCard.cpp
+)
+
+# =========================================================
+# Собираем всё вместе
+# =========================================================
 add_executable(AimTrainer)
-
 target_sources(AimTrainer PRIVATE
-    ${APP_SOURCES}
-    ${CORE_SOURCES}
-    ${MODE_SOURCES}
-    ${HEADERS}
+    ${INFRA_FILES}
+    ${APP_FILES}
+    ${TRAINING_FILES}
+    ${MODES_FILES}
+    ${SETTINGS_FILES}
+    ${SCENE_FILES}
+    ${VIEWMODEL_FILES}
+    ${WEAPON_FILES}
+    ${HANDS_FILES}
+    ${UI_FILES}
+    ${CARDS_FILES}
 )
 
-# --- 3. Визуальная группировка ---
-source_group("App" FILES ${APP_SOURCES})
-source_group("Core" FILES ${CORE_SOURCES})
-source_group("Modes" FILES ${MODE_SOURCES})
-source_group("Headers" FILES ${HEADERS})
+# =========================================================
+# Визуальные группы в IDE
+# =========================================================
+source_group("Infrastructure"   FILES ${INFRA_FILES})
+source_group("Application"      FILES ${APP_FILES})
+source_group("Training"         FILES ${TRAINING_FILES})
+source_group("Training/Modes"   FILES ${MODES_FILES})
+source_group("Settings"         FILES ${SETTINGS_FILES})
+source_group("Scene"            FILES ${SCENE_FILES})
+source_group("Viewmodel"        FILES ${VIEWMODEL_FILES})
+source_group("Viewmodel/Weapon" FILES ${WEAPON_FILES})
+source_group("Viewmodel/Hands"  FILES ${HANDS_FILES})
+source_group("UI"               FILES ${UI_FILES})
+source_group("UI/Cards"         FILES ${CARDS_FILES})
 
-# --- 4. Настройки raylib ---
-target_include_directories(AimTrainer PRIVATE 
-    src 
+# =========================================================
+# Пути для #include
+# =========================================================
+target_include_directories(AimTrainer PRIVATE
+    src
+    src/app
+    src/training
+    src/training/modes
+    src/settings
+    src/scene
+    src/viewmodel
+    src/viewmodel/weapon
+    src/viewmodel/hands
+    src/ui
+    src/ui/cards
     include
     "${RAYLIB_PATH}/include"
 )
 
-target_link_directories(AimTrainer PRIVATE 
+# =========================================================
+# Линковка
+# =========================================================
+target_link_directories(AimTrainer PRIVATE
     "${RAYLIB_PATH}/lib"
 )
 
-target_link_libraries(AimTrainer PRIVATE 
+target_link_libraries(AimTrainer PRIVATE
     raylib winmm gdi32 opengl32 user32 shell32 pdh
 )
 
+# =========================================================
+# Windows-специфичные настройки
+# =========================================================
 if(WIN32)
     set_target_properties(AimTrainer PROPERTIES WIN32_EXECUTABLE TRUE)
     if(MSVC)
         set_target_properties(AimTrainer PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
     endif()
-    
+
     add_custom_command(TARGET AimTrainer POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${RAYLIB_PATH}/lib/raylib.dll"

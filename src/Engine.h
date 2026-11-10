@@ -1,18 +1,18 @@
 #pragma once
 #include <memory>
 #include "raylib.h"
-#include "App.h"
+#include "ScreenManager.h"
 
-class Application {
+class Engine {
 public:
-    Application() = default;
-    ~Application() = default;
+    Engine() = default;
+    ~Engine() = default;
 
     void Run();
 
 private:
     Font uiFont;
-    std::unique_ptr<App> gameApp;
+    std::unique_ptr<ScreenManager> screenManager;
     RenderTexture2D renderTarget;
 
     void InitWindowAndContext();

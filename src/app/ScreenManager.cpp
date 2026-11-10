@@ -1,38 +1,38 @@
-#include "App.h"
+#include "ScreenManager.h"
 #include "UITheme.h"
 #include "raygui.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
 
-App::App() : game(settings) {
+ScreenManager::ScreenManager() : session(settings) {
     settings.Load();
     snprintf(sensBuffer, sizeof(sensBuffer), "%.3f", settings.mouse.valorantSens);
-    game.Init();
+    session.Init();
+
     using namespace UITheme::Card;
     float x = LayoutX;
-    trainingCards.push_back(std::make_unique<StaticCard>(Rectangle{x, LayoutY, LayoutWidth, LayoutHeight})); x += LayoutWidth + LayoutSpacing;
-    trainingCards.push_back(std::make_unique<MovingCard>(Rectangle{x, LayoutY, LayoutWidth, LayoutHeight})); x += LayoutWidth + LayoutSpacing;
-    trainingCards.push_back(std::make_unique<BouncingCard>(Rectangle{x, LayoutY, LayoutWidth, LayoutHeight})); x += LayoutWidth + LayoutSpacing;
-    trainingCards.push_back(std::make_unique<TimedCard>(Rectangle{x, LayoutY, LayoutWidth, LayoutHeight})); x += LayoutWidth + LayoutSpacing;
+    trainingCards.push_back(std::make_unique<StaticCard>(Rectangle{x, LayoutY, LayoutWidth, LayoutHeight}));           x += LayoutWidth + LayoutSpacing;
+    trainingCards.push_back(std::make_unique<MovingCard>(Rectangle{x, LayoutY, LayoutWidth, LayoutHeight}));           x += LayoutWidth + LayoutSpacing;
+    trainingCards.push_back(std::make_unique<BouncingCard>(Rectangle{x, LayoutY, LayoutWidth, LayoutHeight}));         x += LayoutWidth + LayoutSpacing;
+    trainingCards.push_back(std::make_unique<TimedCard>(Rectangle{x, LayoutY, LayoutWidth, LayoutHeight}));            x += LayoutWidth + LayoutSpacing;
     trainingCards.push_back(std::make_unique<MultiStaticCard>(Rectangle{x, LayoutY, LayoutWidth, LayoutHeight}));
 }
 
-void App::UpdateLogic() {
-    if (currentScreen == AppScreen::PLAYING) {
-        game.Update();
-        if (!game.IsTrainingActive()) {
-            HandleGameExit(game.GetExitReason());
+void ScreenManager::UpdateLogic() {
+    if (currentScreen == ScreenID::PLAYING) {
+        session.Update();
+        if (!session.IsTrainingActive()) {
+            HandleGameExit(session.GetExitReason());
         }
-    } 
-    else if (currentScreen == AppScreen::ROUTINES) {
-        for (auto& card : trainingCards) {
+    } else if (currentScreen == ScreenID::ROUTINES) {
+        for (auto& card : trainingCards){
             card->Update(settings);
         }
         for (auto& card : trainingCards) {
             if (card->WasClicked()) {
-                currentScreen = AppScreen::PLAYING;
-                game.StartTraining(card->GetMode());
+                currentScreen = ScreenID::PLAYING;
+                session.StartTraining(card->GetMode());
                 card->ResetClicked();
                 break;
             }
@@ -40,72 +40,74 @@ void App::UpdateLogic() {
     }
 }
 
-void App::HandleGameExit(GameExitReason reason) {
+void ScreenManager::HandleGameExit(GameExitReason reason) {
     switch (reason) {
         case GameExitReason::TimeExpired:
-            currentScreen = AppScreen::RESULTS;
+            currentScreen = ScreenID::RESULTS;
             break;
         default:
-            currentScreen = AppScreen::ROUTINES;
+            currentScreen = ScreenID::ROUTINES;
             break;
     }
 }
 
-void App::DrawUI(Font uiFont) {
+void ScreenManager::DrawUI(Font uiFont) {
     ClearBackground(UITheme::BG);
 
-    if (currentScreen == AppScreen::PLAYING) {
-        game.Draw(uiFont);
-    } else if (currentScreen == AppScreen::RESULTS) {
+    if (currentScreen == ScreenID::PLAYING) {
+        session.Draw(uiFont);
+    } else if (currentScreen == ScreenID::RESULTS) {
         DrawResultsScreen(uiFont);
     } else {
         DrawMenuLayout(uiFont);
     }
 }
 
-void App::DrawMenuLayout(Font uiFont) {
+void ScreenManager::DrawMenuLayout(Font uiFont) {
     DrawTopBar(uiFont);
     switch (currentScreen) {
-        case AppScreen::ROUTINES:           DrawRoutinesScreen(uiFont); break;
-        case AppScreen::SETTINGS_MOUSE:     DrawMouseSettings(uiFont); break;
-        case AppScreen::SETTINGS_CROSSHAIR: DrawCrosshairSettings(uiFont); break;
-        case AppScreen::SETTINGS_ARENA:     DrawArenaSettings(uiFont); break;
+        case ScreenID::ROUTINES:           DrawRoutinesScreen(uiFont); break;
+        case ScreenID::SETTINGS_MOUSE:     DrawMouseSettings(uiFont); break;
+        case ScreenID::SETTINGS_CROSSHAIR: DrawCrosshairSettings(uiFont); break;
+        case ScreenID::SETTINGS_ARENA:     DrawArenaSettings(uiFont); break;
         default: break;
     }
 }
 
-void App::DrawTopBar(Font uiFont) {
+void ScreenManager::DrawTopBar(Font uiFont) {
     DrawRectangle(0, 0, GetRenderWidth(), (int)UITheme::TopBarHeight, Color{ 20, 25, 30, 255 });
     DrawLine(0, (int)UITheme::TopBarHeight, GetRenderWidth(), (int)UITheme::TopBarHeight, UITheme::ACCENT);
 
-    if (GuiButton({ UITheme::NavButton1X, UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "Тренировки")) 
-        currentScreen = AppScreen::ROUTINES;
-    if (GuiButton({ UITheme::NavButton2X, UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "Арена")) 
-        currentScreen = AppScreen::SETTINGS_ARENA;
-    if (GuiButton({ UITheme::NavButton3X, UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "Мышь")) 
-        currentScreen = AppScreen::SETTINGS_MOUSE;
-    if (GuiButton({ UITheme::NavButton4X, UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "Прицел")) 
-        currentScreen = AppScreen::SETTINGS_CROSSHAIR;
+    if (GuiButton({ UITheme::NavButton1X, UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "Тренировки")){
+        currentScreen = ScreenID::ROUTINES;
+    }
+    if (GuiButton({ UITheme::NavButton2X, UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "Арена")) {
+        currentScreen = ScreenID::SETTINGS_ARENA;
+    }
+    if (GuiButton({ UITheme::NavButton3X, UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "Мышь")){
+        currentScreen = ScreenID::SETTINGS_MOUSE;
+    }
+    if (GuiButton({ UITheme::NavButton4X, UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "Прицел")) {
+        currentScreen = ScreenID::SETTINGS_CROSSHAIR;
+    }
 
-    const char* title = "AIM TRAINER";
     float titleWidth = MeasureTextEx(uiFont, title, 24, 1).x;
     DrawTextEx(uiFont, title, { (GetRenderWidth() - titleWidth) / 2.0f, 18 }, 24, 1, WHITE);
 
-    if (GuiButton({ UITheme::GetRightButtonX(), UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "ВЫХОД")) 
-        shouldExit = true;
+    if (GuiButton({ UITheme::GetRightButtonX(), UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "ВЫХОД")) shouldExit = true;
 }
 
-void App::DrawRoutinesScreen(Font uiFont) {
+void ScreenManager::DrawRoutinesScreen(Font uiFont) {
     DrawTextEx(uiFont, "ВЫБЕРИТЕ РУТИНУ:", { 40, 100 }, 20, 1, UITheme::TEXT_DIM);
     for (auto& card : trainingCards) {
         card->Draw(uiFont, settings);
     }
 }
 
-void App::DrawSliderBox(Font font, float x, float y, const char* label, float* value, float min, float max, char* buffer, bool* editMode, bool isInt, int precision) {
+void ScreenManager::DrawSliderBox(Font font, float x, float y, const char* label, float* value, float min, float max, char* buffer, bool* editMode, bool isInt, int precision) {
     DrawTextEx(font, label, { x, y }, 16, 1, UITheme::TEXT);
     GuiSlider({ x, y + 25, 200, 20 }, "", "", value, min, max);
-    
+
     if (!*editMode) {
         if (isInt) snprintf(buffer, 16, "%d", (int)*value);
         else if (precision == 3) snprintf(buffer, 16, "%.3f", *value);
@@ -122,22 +124,22 @@ void App::DrawSliderBox(Font font, float x, float y, const char* label, float* v
     }
 }
 
-void App::DrawColorPickerRow(float x, float y, Color* targetColor, const Color* palette, int paletteSize) {
+void ScreenManager::DrawColorPickerRow(float x, float y, Color* targetColor, const Color* palette, int paletteSize) {
     for (int i = 0; i < paletteSize; i++) {
         Rectangle btn = { x + i * 40.0f, y, 30, 30 };
         DrawRectangleRec(btn, palette[i]);
         bool isSelected = (targetColor->r == palette[i].r && targetColor->g == palette[i].g && targetColor->b == palette[i].b);
         DrawRectangleLinesEx(btn, isSelected ? 2.0f : 1.0f, isSelected ? UITheme::ACCENT : UITheme::BORDER);
-        
+
         if (CheckCollisionPointRec(GetMousePosition(), btn) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             *targetColor = palette[i];
         }
     }
 }
 
-void App::DrawMouseSettings(Font uiFont) {
+void ScreenManager::DrawMouseSettings(Font uiFont) {
     DrawTextEx(uiFont, "НАСТРОЙКИ МЫШИ", { 40, 90 }, 24, 1, UITheme::ACCENT);
-    
+
     UITheme::DrawTitledGroup(uiFont, { 40, 140, 350, 100 }, "СЕНСА (VALORANT)");
     DrawSliderBox(uiFont, 60, 180, "Чувствительность", &settings.mouse.valorantSens, 0.1f, 8.0f, sensBuffer, &sensEditMode, false, 3);
 
@@ -150,9 +152,9 @@ void App::DrawMouseSettings(Font uiFont) {
     if (GetTime() - lastSaveTime > 2.0f) { settings.Save(); lastSaveTime = GetTime(); }
 }
 
-void App::DrawArenaSettings(Font uiFont) {
+void ScreenManager::DrawArenaSettings(Font uiFont) {
     DrawTextEx(uiFont, "НАСТРОЙКИ АРЕНЫ", { 40, 90 }, 24, 1, UITheme::ACCENT);
-    
+
     static char distBuffer[16] = "15";
     static bool distEdit = false;
     UITheme::DrawTitledGroup(uiFont, { 40, 140, 350, 100 }, "ДИСТАНЦИЯ ДО ЦЕЛЕЙ");
@@ -171,26 +173,26 @@ void App::DrawArenaSettings(Font uiFont) {
     DrawRectangleRounded(previewBox, 0.02f, 4, Color{ 30, 35, 40, 255 });
     DrawRectangleLinesEx(previewBox, 2.0f, UITheme::BORDER);
     DrawLineEx({previewBox.x, previewBox.y + 250}, {previewBox.x + previewBox.width, previewBox.y + 250}, 2.0f, UITheme::BORDER);
-    
+
     float cx = previewBox.x + previewBox.width / 2.0f, cy = previewBox.y + previewBox.height / 2.0f - 30;
     float aspect = (float)GetRenderWidth() / (float)GetRenderHeight();
     float vFovRad = 2.0f * atanf(tanf((settings.fovDegrees * DEG2RAD) / 2.0f) / aspect);
     float pxRadius = (settings.arena.targetRadius / settings.arena.distance) * (GetRenderHeight() / 2.0f) / tanf(vFovRad / 2.0f);
-    if (pxRadius < 0.5f) pxRadius = 0.5f; 
+    if (pxRadius < 0.5f) pxRadius = 0.5f;
 
     DrawCircle(cx, cy, pxRadius, settings.arena.ballColor);
 
     const char* infoText = TextFormat("Диаметр: %.1f см (%.0f px)", settings.arena.targetRadius * 200.0f, pxRadius * 2.0f);
     float tw = MeasureTextEx(uiFont, infoText, 18, 1).x;
     DrawTextEx(uiFont, infoText, { previewBox.x + (previewBox.width - tw) / 2.0f, previewBox.y + previewBox.height - 40 }, 18, 1, UITheme::TEXT);
-    
+
     static float lastSaveTime = 0.0f;
     if (GetTime() - lastSaveTime > 2.0f) { settings.Save(); lastSaveTime = GetTime(); }
 }
 
-void App::DrawCrosshairSettings(Font uiFont) {
+void ScreenManager::DrawCrosshairSettings(Font uiFont) {
     DrawTextEx(uiFont, "НАСТРОЙКИ ПРИЦЕЛА", { 40, 90 }, 24, 1, UITheme::ACCENT);
-    
+
     UITheme::DrawTitledGroup(uiFont, { 40, 140, 350, 210 }, "ФОРМА");
     static char lenBuffer[16] = "4", thicBuffer[16] = "1", gapBuffer[16] = "0";
     static bool lenEdit = false, thicEdit = false, gapEdit = false;
@@ -210,7 +212,7 @@ void App::DrawCrosshairSettings(Font uiFont) {
     DrawRectangleRounded(previewBox, 0.02f, 4, Color{ 30, 35, 40, 255 });
     DrawRectangleLinesEx(previewBox, 2.0f, UITheme::BORDER);
     DrawLineEx({previewBox.x, previewBox.y + 300}, {previewBox.x + previewBox.width, previewBox.y + 300}, 2.0f, UITheme::BORDER);
-    
+
     float cx = previewBox.x + previewBox.width / 2.0f, cy = previewBox.y + previewBox.height / 2.0f - 50;
     Color col = settings.crosshair.color;
     float len = settings.crosshair.length, thic = settings.crosshair.thickness, gap = settings.crosshair.gap;
@@ -232,9 +234,9 @@ void App::DrawCrosshairSettings(Font uiFont) {
     if (GetTime() - lastSaveTime > 2.0f) { settings.Save(); lastSaveTime = GetTime(); }
 }
 
-void App::DrawResultsScreen(Font uiFont) {
+void ScreenManager::DrawResultsScreen(Font uiFont) {
     DrawRectangle(0, 0, GetRenderWidth(), GetRenderHeight(), Fade(BLACK, 0.8f));
-    
+
     float pw = 500, ph = 450;
     Rectangle panel = { (GetRenderWidth() - pw) / 2.0f, (GetRenderHeight() - ph) / 2.0f, pw, ph };
     DrawRectangleRounded(panel, 0.05f, 4, UITheme::PANEL);
@@ -246,28 +248,28 @@ void App::DrawResultsScreen(Font uiFont) {
     DrawLineEx({panel.x + 20, panel.y + 80}, {panel.x + pw - 20, panel.y + 80}, 1.0f, UITheme::BORDER);
 
     float textY = panel.y + 110;
-    
+
     DrawTextEx(uiFont, "Время:", { panel.x + 50, textY }, 20, 1, UITheme::TEXT);
     DrawTextEx(uiFont, "60 сек", { panel.x + 300, textY }, 20, 1, WHITE);
     textY += 40;
 
     DrawTextEx(uiFont, "Сгенерировано шаров:", { panel.x + 50, textY }, 20, 1, UITheme::TEXT);
-    DrawTextEx(uiFont, TextFormat("%d", game.GetSpawnedBalls()), { panel.x + 300, textY }, 20, 1, WHITE);
+    DrawTextEx(uiFont, TextFormat("%d", session.GetSpawnedBalls()), { panel.x + 300, textY }, 20, 1, WHITE);
     textY += 40;
 
     DrawTextEx(uiFont, "Уничтожено:", { panel.x + 50, textY }, 20, 1, UITheme::TEXT);
-    DrawTextEx(uiFont, TextFormat("%d", game.GetPoppedCount()), { panel.x + 300, textY }, 20, 1, WHITE);
+    DrawTextEx(uiFont, TextFormat("%d", session.GetPoppedCount()), { panel.x + 300, textY }, 20, 1, WHITE);
     textY += 40;
 
-    float accuracy = (game.GetSpawnedBalls() > 0) ? 100.0f * game.GetPoppedCount() / game.GetSpawnedBalls() : 0.0f;
+    float accuracy = (session.GetSpawnedBalls() > 0) ? 100.0f * session.GetPoppedCount() / session.GetSpawnedBalls() : 0.0f;
     DrawTextEx(uiFont, "Точность:", { panel.x + 50, textY }, 20, 1, UITheme::TEXT);
     DrawTextEx(uiFont, TextFormat("%.1f%%", accuracy), { panel.x + 300, textY }, 20, 1, WHITE);
-    
+
     if (GuiButton({ panel.x + 50, panel.y + 350, 180, 40 }, "ЗАНОВО")) {
-        currentScreen = AppScreen::PLAYING;
-        game.StartTraining(GameMode::TIMED);
+        currentScreen = ScreenID::PLAYING;
+        session.StartTraining(GameMode::TIMED);
     }
     if (GuiButton({ panel.x + 270, panel.y + 350, 180, 40 }, "В МЕНЮ")) {
-        currentScreen = AppScreen::ROUTINES;
+        currentScreen = ScreenID::ROUTINES;
     }
 }

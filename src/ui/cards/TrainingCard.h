@@ -1,7 +1,7 @@
 #pragma once
 #include "raylib.h"
 #include "Settings.h"
-#include "Game.h"  // для GameMode
+#include "GameMode.h"
 
 class TrainingCard {
 public:
