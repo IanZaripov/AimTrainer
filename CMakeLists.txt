@@ -22,6 +22,12 @@ set(CORE_SOURCES
     src/HUD.cpp
     src/SystemStats.cpp
     src/UITheme.cpp
+    src/TrainingCard.cpp
+    src/StaticCard.cpp
+    src/MovingCard.cpp
+    src/BouncingCard.cpp
+    src/TimedCard.cpp
+    src/MultiStaticCard.cpp
 )
 
 set(MODE_SOURCES
@@ -50,6 +56,7 @@ set(HEADERS
     src/TimedMode.h
     src/MultiStaticMode.h
     src/UITheme.h
+    src/TrainingCard.h
 )
 
 # --- 2. Создание исполняемого файла и добавление исходников ---

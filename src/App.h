@@ -1,7 +1,10 @@
 #pragma once
+#include <vector>
+#include <memory>
 #include "raylib.h"
 #include "Game.h"
 #include "Settings.h"
+#include "TrainingCard.h"
 
 enum class AppScreen { ROUTINES, SETTINGS_MOUSE, SETTINGS_CROSSHAIR, SETTINGS_ARENA, PLAYING, RESULTS };
 
@@ -16,6 +19,7 @@ private:
     Settings settings;
     Game     game;
     AppScreen currentScreen = AppScreen::ROUTINES;
+    std::vector<std::unique_ptr<TrainingCard>> trainingCards;
     bool shouldExit = false;
 
     char sensBuffer[16] = "0.255";

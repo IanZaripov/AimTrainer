@@ -9,6 +9,13 @@ App::App() : game(settings) {
     settings.Load();
     snprintf(sensBuffer, sizeof(sensBuffer), "%.3f", settings.mouse.valorantSens);
     game.Init();
+    using namespace UITheme::Card;
+    float x = LayoutX;
+    trainingCards.push_back(std::make_unique<StaticCard>(Rectangle{x, LayoutY, LayoutWidth, LayoutHeight})); x += LayoutWidth + LayoutSpacing;
+    trainingCards.push_back(std::make_unique<MovingCard>(Rectangle{x, LayoutY, LayoutWidth, LayoutHeight})); x += LayoutWidth + LayoutSpacing;
+    trainingCards.push_back(std::make_unique<BouncingCard>(Rectangle{x, LayoutY, LayoutWidth, LayoutHeight})); x += LayoutWidth + LayoutSpacing;
+    trainingCards.push_back(std::make_unique<TimedCard>(Rectangle{x, LayoutY, LayoutWidth, LayoutHeight})); x += LayoutWidth + LayoutSpacing;
+    trainingCards.push_back(std::make_unique<MultiStaticCard>(Rectangle{x, LayoutY, LayoutWidth, LayoutHeight}));
 }
 
 void App::UpdateLogic() {
@@ -16,6 +23,19 @@ void App::UpdateLogic() {
         game.Update();
         if (!game.IsTrainingActive()) {
             HandleGameExit(game.GetExitReason());
+        }
+    } 
+    else if (currentScreen == AppScreen::ROUTINES) {
+        for (auto& card : trainingCards) {
+            card->Update(settings);
+        }
+        for (auto& card : trainingCards) {
+            if (card->WasClicked()) {
+                currentScreen = AppScreen::PLAYING;
+                game.StartTraining(card->GetMode());
+                card->ResetClicked();
+                break;
+            }
         }
     }
 }
@@ -77,126 +97,8 @@ void App::DrawTopBar(Font uiFont) {
 
 void App::DrawRoutinesScreen(Font uiFont) {
     DrawTextEx(uiFont, "ВЫБЕРИТЕ РУТИНУ:", { 40, 100 }, 20, 1, UITheme::TEXT_DIM);
-
-    float cw = 210.0f;
-    float ch = 350.0f;
-    float spacing = 20.0f;
-
-    DrawCardStatic(uiFont, { 40, 150, cw, ch });
-    DrawCardMoving(uiFont, { 40 + (cw + spacing), 150, cw, ch });
-    DrawCardBouncing(uiFont, { 40 + (cw + spacing) * 2, 150, cw, ch });
-    DrawCardTimed(uiFont, { 40 + (cw + spacing) * 3, 150, cw, ch });
-    DrawCardMulti(uiFont, { 40 + (cw + spacing) * 4, 150, cw, ch });
-}
-
-void App::DrawCardStatic(Font font, Rectangle rect) {
-    bool hovered = CheckCollisionPointRec(GetMousePosition(), rect);
-    UITheme::DrawCardBackground(rect, hovered);
-
-    DrawCircle(rect.x + rect.width/2, rect.y + 120, 40, settings.arena.ballColor);
-    DrawTextEx(font, "Статичные", { rect.x + 20, rect.y + 220 }, 20, 1, WHITE);
-    DrawTextEx(font, "Появляются после", { rect.x + 15, rect.y + 250 }, 12, 1, UITheme::TEXT_DIM);
-    DrawTextEx(font, "уничтожения", { rect.x + 15, rect.y + 270 }, 12, 1, UITheme::TEXT_DIM);
-
-    if (hovered && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        currentScreen = AppScreen::PLAYING;
-        game.StartTraining(GameMode::STATIC);
-    }
-}
-
-void App::DrawCardMoving(Font font, Rectangle rect) {
-    bool hovered = CheckCollisionPointRec(GetMousePosition(), rect);
-    UITheme::DrawCardBackground(rect, hovered);
-
-    DrawCircle(rect.x + rect.width/2, rect.y + 120, 40, settings.arena.ballColor);
-    DrawTriangle({rect.x + rect.width/2 + 50, rect.y + 120}, {rect.x + rect.width/2 + 70, rect.y + 110}, {rect.x + rect.width/2 + 70, rect.y + 130}, WHITE);
-    DrawTriangle({rect.x + rect.width/2 - 50, rect.y + 120}, {rect.x + rect.width/2 - 70, rect.y + 110}, {rect.x + rect.width/2 - 70, rect.y + 130}, WHITE);
-    
-    DrawTextEx(font, "Движущаяся", { rect.x + 20, rect.y + 220 }, 20, 1, WHITE);
-    DrawTextEx(font, "Летает влево", { rect.x + 15, rect.y + 250 }, 12, 1, UITheme::TEXT_DIM);
-    DrawTextEx(font, "и вправо", { rect.x + 15, rect.y + 270 }, 12, 1, UITheme::TEXT_DIM);
-
-    if (hovered && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        currentScreen = AppScreen::PLAYING;
-        game.StartTraining(GameMode::MOVING);
-    }
-}
-
-void App::DrawCardBouncing(Font font, Rectangle rect) {
-    bool hovered = CheckCollisionPointRec(GetMousePosition(), rect);
-    UITheme::DrawCardBackground(rect, hovered);
-
-    DrawCircle(rect.x + rect.width/2, rect.y + 120, 40, settings.arena.ballColor);
-    DrawTriangle({rect.x + rect.width/2 + 50, rect.y + 120}, {rect.x + rect.width/2 + 70, rect.y + 110}, {rect.x + rect.width/2 + 70, rect.y + 130}, WHITE);
-    DrawTriangle({rect.x + rect.width/2 - 50, rect.y + 120}, {rect.x + rect.width/2 - 70, rect.y + 110}, {rect.x + rect.width/2 - 70, rect.y + 130}, WHITE);
-    DrawTriangle({rect.x + rect.width/2, rect.y + 120 - 50}, {rect.x + rect.width/2 - 10, rect.y + 120 - 70}, {rect.x + rect.width/2 + 10, rect.y + 120 - 70}, WHITE);
-    DrawTriangle({rect.x + rect.width/2, rect.y + 120 + 50}, {rect.x + rect.width/2 - 10, rect.y + 120 + 70}, {rect.x + rect.width/2 + 10, rect.y + 120 + 70}, WHITE);
-
-    DrawTextEx(font, "Прыгающая", { rect.x + 20, rect.y + 220 }, 20, 1, WHITE);
-    DrawTextEx(font, "Отскакивает от", { rect.x + 15, rect.y + 250 }, 12, 1, UITheme::TEXT_DIM);
-    DrawTextEx(font, "пола и стен", { rect.x + 15, rect.y + 270 }, 12, 1, UITheme::TEXT_DIM);
-
-    if (hovered && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        currentScreen = AppScreen::PLAYING;
-        game.StartTraining(GameMode::BOUNCING);
-    }
-}
-
-void App::DrawCardTimed(Font font, Rectangle rect) {
-    bool hovered = CheckCollisionPointRec(GetMousePosition(), rect);
-    float diffY = rect.y + 370; 
-    const char* diffNames[] = { "Легко", "Сред", "Сложно" };
-    bool clickedDiff = false;
-    
-    for (int i = 0; i < 3; i++) {
-        Rectangle btn = { rect.x + 15 + i * 60.0f, diffY, 55, 25 };
-        if (CheckCollisionPointRec(GetMousePosition(), btn) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            settings.arena.timedDifficulty = i;
-            settings.Save();
-            clickedDiff = true;
-        }
-    }
-
-    if (hovered && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && !clickedDiff) {
-        currentScreen = AppScreen::PLAYING;
-        game.StartTraining(GameMode::TIMED);
-    }
-
-    UITheme::DrawCardBackground(rect, hovered);
-    
-    DrawCircle(rect.x + rect.width/2, rect.y + 120, 40, settings.arena.ballColor);
-    DrawCircleLines(rect.x + rect.width/2, rect.y + 120, 40, WHITE);
-    DrawLineEx({rect.x + rect.width/2, rect.y + 120}, {rect.x + rect.width/2, rect.y + 95}, 3.0f, WHITE);
-    
-    DrawTextEx(font, "На время", { rect.x + 15, rect.y + 190 }, 20, 1, WHITE);
-    
-    for (int i = 0; i < 3; i++) {
-        Rectangle btn = { rect.x + 15 + i * 60.0f, diffY, 55, 25 };
-        bool btnHover = CheckCollisionPointRec(GetMousePosition(), btn);
-        DrawRectangleRec(btn, settings.arena.timedDifficulty == i ? UITheme::ACCENT : UITheme::BG);
-        DrawRectangleLinesEx(btn, 1.0f, btnHover ? WHITE : UITheme::BORDER);
-        float tw = MeasureTextEx(font, diffNames[i], 12, 1).x;
-        DrawTextEx(font, diffNames[i], { btn.x + (btn.width - tw)/2, btn.y + 5 }, 12, 1, WHITE);
-    }
-}
-
-void App::DrawCardMulti(Font font, Rectangle rect) {
-    bool hovered = CheckCollisionPointRec(GetMousePosition(), rect);
-    UITheme::DrawCardBackground(rect, hovered);
-
-    DrawCircle(rect.x + rect.width/2 - 30, rect.y + 100, 15, settings.arena.ballColor);
-    DrawCircle(rect.x + rect.width/2 + 30, rect.y + 100, 15, settings.arena.ballColor);
-    DrawCircle(rect.x + rect.width/2, rect.y + 140, 15, settings.arena.ballColor);
-    DrawCircle(rect.x + rect.width/2 - 20, rect.y + 180, 15, settings.arena.ballColor);
-    DrawCircle(rect.x + rect.width/2 + 20, rect.y + 180, 15, settings.arena.ballColor);
-
-    DrawTextEx(font, "Мульти-цель", { rect.x + 15, rect.y + 220 }, 20, 1, WHITE);
-    DrawTextEx(font, "8 шаров одновременно", { rect.x + 15, rect.y + 250 }, 12, 1, UITheme::TEXT_DIM);
-    DrawTextEx(font, "(Тренировка спрея)", { rect.x + 15, rect.y + 270 }, 12, 1, UITheme::TEXT_DIM);
-
-    if (hovered && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        currentScreen = AppScreen::PLAYING;
-        game.StartTraining(GameMode::MULTI_STATIC);
+    for (auto& card : trainingCards) {
+        card->Draw(uiFont, settings);
     }
 }
 

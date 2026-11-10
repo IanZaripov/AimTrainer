@@ -49,14 +49,13 @@ void Application::InitWindowAndContext() {
 }
 
 void Application::SetupRenderTarget() {
-    // Виртуальная ширина зависит от соотношения сторон монитора
     float aspect = (float)GetScreenWidth() / (float)GetScreenHeight();
     int virtualWidth = (int)(UITheme::VirtualHeight * aspect);
 
     renderTarget = LoadRenderTexture(virtualWidth, UITheme::VirtualHeight);
+    
     SetTextureFilter(renderTarget.texture, TEXTURE_FILTER_BILINEAR);
 
-    // Масштабируем мышь в виртуальное пространство
     SetMouseScale(
         (float)virtualWidth / (float)GetScreenWidth(),
         (float)UITheme::VirtualHeight / (float)GetScreenHeight()

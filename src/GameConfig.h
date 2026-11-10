@@ -13,7 +13,7 @@ namespace GameConfig {
     constexpr int SpawnXMin = -600;
     constexpr int SpawnXMax = 600;
     constexpr int SpawnYMin = 150;
-    constexpr int SpawnYMax = 250;
+    constexpr int SpawnYMax = 400;
     constexpr float SpawnScale = 100.0f;
 
     // Время жизни шаров в режиме на время

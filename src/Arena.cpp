@@ -14,12 +14,19 @@ void Arena::Draw() const {
 }
 
 void Arena::DrawFloor() const {
+    // Делаем пол шире на толщину стен, чтобы он заходил внутрь их.
+    // Это убирает Z-fighting (мерцание) на стыках.
+    float floorW = config.width + config.wallThickness * 2.0f;
+    float floorD = config.depth + config.wallThickness * 2.0f;
     float floorY = -config.floorThickness / 2.0f;
-    DrawCube({0.0f, floorY, 0.0f}, config.width, config.floorThickness, config.depth, config.floorColor);
+    DrawCube({0.0f, floorY, 0.0f}, floorW, config.floorThickness, floorD, config.floorColor);
 }
 
 void Arena::DrawCeiling() const {
-    DrawCube({0.0f, config.height, 0.0f}, config.width, config.floorThickness, config.depth, config.ceilingColor);
+    // То же самое для потолка
+    float ceilW = config.width + config.wallThickness * 2.0f;
+    float ceilD = config.depth + config.wallThickness * 2.0f;
+    DrawCube({0.0f, config.height, 0.0f}, ceilW, config.floorThickness, ceilD, config.ceilingColor);
 }
 
 void Arena::DrawBackWall() const {

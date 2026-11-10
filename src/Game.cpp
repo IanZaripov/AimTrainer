@@ -12,7 +12,6 @@ Game::Game(Settings& s) : settings(s), arena(roomConfig) {
     camera.target = { 0.0f, 1.6f, -1.0f };
     camera.up = { 0.0f, 1.0f, 0.0f };
     
-    // Соотношение сторон совпадает у окна и RenderTexture, поэтому можно использовать любой
     float aspect = (float)GetRenderWidth() / (float)GetRenderHeight();
     float hFovRad = settings.fovDegrees * DEG2RAD;
     camera.fovy = 2.0f * atanf(tanf(hFovRad / 2.0f) / aspect) * RAD2DEG;
@@ -106,7 +105,6 @@ void Game::UpdateTracking(float dt) {
     if (!activeMode->UsesTracking()) return;
 
     session.trackTimeTotal += dt;
-    // Используем GetRenderWidth/Height, так как рендер идет в текстуру
     Vector2 screenCenter = { (float)GetRenderWidth() / 2.0f, (float)GetRenderHeight() / 2.0f };
     Ray ray = GetScreenToWorldRay(screenCenter, camera);
     
