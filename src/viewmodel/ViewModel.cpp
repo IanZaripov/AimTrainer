@@ -5,10 +5,8 @@
 
 void Viewmodel::Draw(const Camera3D& camera) const {
     SetupTransform(camera);
-
     weapon.Draw();
     hands.Draw();
-
     rlPopMatrix();
 }
 

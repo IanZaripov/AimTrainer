@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(RAYLIB_PATH "C:/AimTrainer/raylib-5.5_win64_msvc16")
 
 # =========================================================
-# Infrastructure (точка входа + движок)
+# Infrastructure
 # =========================================================
 set(INFRA_FILES
     src/main.cpp
@@ -17,7 +17,7 @@ set(INFRA_FILES
 )
 
 # =========================================================
-# Application (роутинг экранов)
+# Application (screen routing)
 # =========================================================
 set(APP_FILES
     src/app/ScreenManager.h
@@ -25,7 +25,7 @@ set(APP_FILES
 )
 
 # =========================================================
-# Training (домен: сессия, конфиги)
+# Training (core: sessions, configs)
 # =========================================================
 set(TRAINING_FILES
     src/training/TrainingSession.h
@@ -35,7 +35,7 @@ set(TRAINING_FILES
 )
 
 # =========================================================
-# Training Modes (режимы тренировок)
+# Training Modes
 # =========================================================
 set(MODES_FILES
     src/training/modes/ITrainingMode.h
@@ -60,7 +60,7 @@ set(SETTINGS_FILES
 )
 
 # =========================================================
-# Scene (3D-мир)
+# Scene (3D-world)
 # =========================================================
 set(SCENE_FILES
     src/scene/Arena.h
@@ -69,7 +69,7 @@ set(SCENE_FILES
 )
 
 # =========================================================
-# Viewmodel (оркестратор от первого лица)
+# Viewmodel (weapon and hands from the first person)
 # =========================================================
 set(VIEWMODEL_FILES
     src/viewmodel/Viewmodel.h
@@ -89,7 +89,7 @@ set(HANDS_FILES
 )
 
 # =========================================================
-# UI (2D-интерфейс)
+# UI (2D-interface)
 # =========================================================
 set(UI_FILES
     src/ui/UITheme.h
@@ -101,7 +101,7 @@ set(UI_FILES
 )
 
 # =========================================================
-# UI Cards (все объявления в TrainingCard.h, .cpp отдельно)
+# UI Cards (2d-persistance)
 # =========================================================
 set(CARDS_FILES
     src/ui/cards/TrainingCard.h
