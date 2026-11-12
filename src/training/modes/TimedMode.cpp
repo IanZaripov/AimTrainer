@@ -7,30 +7,42 @@ float TimedMode::GetLifetime(const Settings& settings) const {
     return GameConfig::TimedLifeHard;
 }
 
-void TimedMode::OnStart(std::vector<Target3D>& targets, const Settings& settings) {
-    Target3D t = SpawnRandomBall(settings);
+void TimedMode::OnStart(TargetPool& pool, const Settings& settings) {
+    Target3D& t = pool.Request();
+    t.position.x = (float)GetRandomValue(GameConfig::SpawnXMin, GameConfig::SpawnXMax) / GameConfig::SpawnScale;
+    t.position.y = (float)GetRandomValue(GameConfig::SpawnYMin, GameConfig::SpawnYMax) / GameConfig::SpawnScale;
+    t.position.z = -settings.arena.distance;
     t.lifeTimer = GetLifetime(settings);
-    targets.push_back(t);
+    t.active = true;
 }
 
-int TimedMode::OnUpdate(float dt, std::vector<Target3D>& targets, const Settings& settings) {
+int TimedMode::OnUpdate(float dt, TargetPool& pool, const Settings& settings) {
     int spawned = 0;
-    for (auto& t : targets) {
+    for (auto& t : pool.GetAll()) {
+        if (!t.active) continue;
+        
         t.lifeTimer -= dt;
         if (t.lifeTimer <= 0.0f) {
-            // Перерождаем шар НА МЕСТЕ (не меняем размер вектора!)
-            t.position.x = (float)GetRandomValue(GameConfig::SpawnXMin, GameConfig::SpawnXMax) / GameConfig::SpawnScale;
-            t.position.y = (float)GetRandomValue(GameConfig::SpawnYMin, GameConfig::SpawnYMax) / GameConfig::SpawnScale;
-            t.lifeTimer = GetLifetime(settings);
+            t.ForceKill(); // Player missed, just disappear
+            Target3D& newT = pool.Request();
+            newT.position.x = (float)GetRandomValue(GameConfig::SpawnXMin, GameConfig::SpawnXMax) / GameConfig::SpawnScale;
+            newT.position.y = (float)GetRandomValue(GameConfig::SpawnYMin, GameConfig::SpawnYMax) / GameConfig::SpawnScale;
+            newT.position.z = -settings.arena.distance;
+            newT.lifeTimer = GetLifetime(settings);
+            newT.active = true;
             spawned++;
         }
     }
-    return spawned; // Возвращаем 1, если был промах по времени
+    return spawned;
 }
 
-int TimedMode::OnHit(std::vector<Target3D>& targets, const Settings& settings) {
-    targets.clear();
-    OnStart(targets, settings);
+int TimedMode::OnHit(TargetPool& pool, const Settings& settings) {
+    Target3D& t = pool.Request();
+    t.position.x = (float)GetRandomValue(GameConfig::SpawnXMin, GameConfig::SpawnXMax) / GameConfig::SpawnScale;
+    t.position.y = (float)GetRandomValue(GameConfig::SpawnYMin, GameConfig::SpawnYMax) / GameConfig::SpawnScale;
+    t.position.z = -settings.arena.distance;
+    t.lifeTimer = GetLifetime(settings);
+    t.active = true;
     return 1;
 }
 

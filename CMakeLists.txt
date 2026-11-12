@@ -7,38 +7,32 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(RAYLIB_PATH "C:/AimTrainer/raylib-5.5_win64_msvc16")
 
-# =========================================================
-# Infrastructure
-# =========================================================
+# --- Infrastructure ---
 set(INFRA_FILES
     src/main.cpp
     src/Engine.h
     src/Engine.cpp
 )
 
-# =========================================================
-# Application (screen routing)
-# =========================================================
+# --- Application ---
 set(APP_FILES
     src/app/ScreenManager.h
     src/app/ScreenManager.cpp
 )
 
-# =========================================================
-# Training (core: sessions, configs)
-# =========================================================
+# --- Training ---
 set(TRAINING_FILES
     src/training/TrainingSession.h
     src/training/TrainingSession.cpp
     src/training/Target3D.h
     src/training/Target3D.cpp
+    src/training/TargetPool.h
+    src/training/TargetPool.cpp
     src/training/GameConfig.h
     src/training/GameMode.h
 )
 
-# =========================================================
-# Training Modes
-# =========================================================
+# --- Training Modes ---
 set(MODES_FILES
     src/training/modes/ITrainingMode.h
     src/training/modes/StaticMode.h
@@ -53,26 +47,20 @@ set(MODES_FILES
     src/training/modes/MultiStaticMode.cpp
 )
 
-# =========================================================
-# Settings (persistence)
-# =========================================================
+# --- Settings ---
 set(SETTINGS_FILES
     src/settings/Settings.h
     src/settings/Settings.cpp
 )
 
-# =========================================================
-# Scene (3D-world)
-# =========================================================
+# --- Scene ---
 set(SCENE_FILES
     src/scene/Arena.h
     src/scene/Arena.cpp
     src/scene/RoomConfig.h
 )
 
-# =========================================================
-# Viewmodel (weapon and hands from the first person)
-# =========================================================
+# --- Viewmodel ---
 set(VIEWMODEL_FILES
     src/viewmodel/Viewmodel.h
     src/viewmodel/Viewmodel.cpp
@@ -90,9 +78,7 @@ set(HANDS_FILES
     src/viewmodel/hands/HandsConfig.h
 )
 
-# =========================================================
-# UI (2D-interface)
-# =========================================================
+# --- UI ---
 set(UI_FILES
     src/ui/UITheme.h
     src/ui/UITheme.cpp
@@ -102,9 +88,7 @@ set(UI_FILES
     src/ui/SystemStats.cpp
 )
 
-# =========================================================
-# UI Cards (2d-persistance)
-# =========================================================
+# --- UI Cards ---
 set(CARDS_FILES
     src/ui/cards/TrainingCard.h
     src/ui/cards/TrainingCard.cpp
@@ -115,9 +99,7 @@ set(CARDS_FILES
     src/ui/cards/MultiStaticCard.cpp
 )
 
-# =========================================================
-# Собираем всё вместе
-# =========================================================
+# --- Build ---
 add_executable(AimTrainer)
 target_sources(AimTrainer PRIVATE
     ${INFRA_FILES}
@@ -133,9 +115,6 @@ target_sources(AimTrainer PRIVATE
     ${CARDS_FILES}
 )
 
-# =========================================================
-# Визуальные группы в IDE
-# =========================================================
 source_group("Infrastructure"   FILES ${INFRA_FILES})
 source_group("Application"      FILES ${APP_FILES})
 source_group("Training"         FILES ${TRAINING_FILES})
@@ -148,9 +127,6 @@ source_group("Viewmodel/Hands"  FILES ${HANDS_FILES})
 source_group("UI"               FILES ${UI_FILES})
 source_group("UI/Cards"         FILES ${CARDS_FILES})
 
-# =========================================================
-# Пути для #include
-# =========================================================
 target_include_directories(AimTrainer PRIVATE
     src
     src/app
@@ -167,26 +143,14 @@ target_include_directories(AimTrainer PRIVATE
     "${RAYLIB_PATH}/include"
 )
 
-# =========================================================
-# Линковка
-# =========================================================
-target_link_directories(AimTrainer PRIVATE
-    "${RAYLIB_PATH}/lib"
-)
+target_link_directories(AimTrainer PRIVATE "${RAYLIB_PATH}/lib")
+target_link_libraries(AimTrainer PRIVATE raylib winmm gdi32 opengl32 user32 shell32 pdh)
 
-target_link_libraries(AimTrainer PRIVATE
-    raylib winmm gdi32 opengl32 user32 shell32 pdh
-)
-
-# =========================================================
-# Windows-специфичные настройки
-# =========================================================
 if(WIN32)
     set_target_properties(AimTrainer PROPERTIES WIN32_EXECUTABLE TRUE)
     if(MSVC)
         set_target_properties(AimTrainer PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
     endif()
-
     add_custom_command(TARGET AimTrainer POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${RAYLIB_PATH}/lib/raylib.dll"

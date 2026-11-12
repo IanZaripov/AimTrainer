@@ -8,7 +8,6 @@ public:
     Vector3 position;
     bool    active = true;
     
-    // Movement data (used by training modes)
     float   speed = 0.0f;
     int     direction = 1;
     Vector2 velocity = { 0.0f, 0.0f };
@@ -16,13 +15,9 @@ public:
 
     Target3D();
     
-    // Triggers the explosion effect and starts the death animation
     void Hit();
-    
-    // Updates the explosion animation timer
+    void ForceKill(); // Immediately deactivates without explosion
     void Update(float dt);
-    
-    // Draws the sphere and the explosion effect
     void Draw(const Settings& settings) const;
 
     bool IsExploding() const { return isExploding; }

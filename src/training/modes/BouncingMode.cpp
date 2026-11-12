@@ -1,19 +1,24 @@
 #include "BouncingMode.h"
 #include "raymath.h"
 
-void BouncingMode::OnStart(std::vector<Target3D>& targets, const Settings& settings) {
-    Target3D t = SpawnRandomBall(settings);
+void BouncingMode::OnStart(TargetPool& pool, const Settings& settings) {
+    Target3D& t = pool.Request();
+    t.position.x = (float)GetRandomValue(GameConfig::SpawnXMin, GameConfig::SpawnXMax) / GameConfig::SpawnScale;
+    t.position.y = (float)GetRandomValue(GameConfig::SpawnYMin, GameConfig::SpawnYMax) / GameConfig::SpawnScale;
+    t.position.z = -settings.arena.distance;
+    
     float vx = (float)GetRandomValue(300, 800) / 100.0f;
     float vy = (float)GetRandomValue(300, 800) / 100.0f;
     t.velocity = { (GetRandomValue(0, 1) == 0 ? 1.0f : -1.0f) * vx, (GetRandomValue(0, 1) == 0 ? 1.0f : -1.0f) * vy };
-    targets.push_back(t);
+    t.active = true;
 }
 
-int BouncingMode::OnUpdate(float dt, std::vector<Target3D>& targets, const Settings& settings) {
+int BouncingMode::OnUpdate(float dt, TargetPool& pool, const Settings& settings) {
     float floorY = settings.arena.targetRadius + 0.1f;
     float ceilingY = 6.0f - settings.arena.targetRadius;
 
-    for (auto& t : targets) {
+    for (auto& t : pool.GetAll()) {
+        if (!t.active) continue;
         t.position.x += t.velocity.x * dt;
         t.position.y += t.velocity.y * dt;
 
@@ -25,9 +30,17 @@ int BouncingMode::OnUpdate(float dt, std::vector<Target3D>& targets, const Setti
     return 0;
 }
 
-int BouncingMode::OnHit(std::vector<Target3D>& targets, const Settings& settings) {
-    targets.clear();
-    OnStart(targets, settings);
+int BouncingMode::OnHit(TargetPool& pool, const Settings& settings) {
+    // Do NOT call pool.DeactivateAll() here
+    Target3D& t = pool.Request();
+    t.position.x = (float)GetRandomValue(GameConfig::SpawnXMin, GameConfig::SpawnXMax) / GameConfig::SpawnScale;
+    t.position.y = (float)GetRandomValue(GameConfig::SpawnYMin, GameConfig::SpawnYMax) / GameConfig::SpawnScale;
+    t.position.z = -settings.arena.distance;
+
+    float vx = (float)GetRandomValue(300, 800) / 100.0f;
+    float vy = (float)GetRandomValue(300, 800) / 100.0f;
+    t.velocity = { (GetRandomValue(0, 1) == 0 ? 1.0f : -1.0f) * vx, (GetRandomValue(0, 1) == 0 ? 1.0f : -1.0f) * vy };
+    t.active = true;
     return 1;
 }
 

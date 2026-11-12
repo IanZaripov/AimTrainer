@@ -1,15 +1,19 @@
 #include "MovingMode.h"
 #include "raymath.h"
 
-void MovingMode::OnStart(std::vector<Target3D>& targets, const Settings& settings) {
-    Target3D t = SpawnRandomBall(settings);
+void MovingMode::OnStart(TargetPool& pool, const Settings& settings) {
+    Target3D& t = pool.Request();
+    t.position.x = (float)GetRandomValue(GameConfig::SpawnXMin, GameConfig::SpawnXMax) / GameConfig::SpawnScale;
+    t.position.y = (float)GetRandomValue(GameConfig::SpawnYMin, GameConfig::SpawnYMax) / GameConfig::SpawnScale;
+    t.position.z = -settings.arena.distance;
     t.speed = (float)GetRandomValue(300, 1200) / 100.0f;
     t.direction = (GetRandomValue(0, 1) == 0) ? 1 : -1;
-    targets.push_back(t);
+    t.active = true;
 }
 
-int MovingMode::OnUpdate(float dt, std::vector<Target3D>& targets, const Settings& settings) {
-    for (auto& t : targets) {
+int MovingMode::OnUpdate(float dt, TargetPool& pool, const Settings& settings) {
+    for (auto& t : pool.GetAll()) {
+        if (!t.active) continue;
         t.position.x += t.speed * t.direction * dt;
         if (t.position.x >= 7.0f) { t.direction = -1; t.position.x = 7.0f; }
         else if (t.position.x <= -7.0f) { t.direction = 1; t.position.x = -7.0f; }
@@ -17,9 +21,16 @@ int MovingMode::OnUpdate(float dt, std::vector<Target3D>& targets, const Setting
     return 0;
 }
 
-int MovingMode::OnHit(std::vector<Target3D>& targets, const Settings& settings) {
-    targets.clear();
-    OnStart(targets, settings);
+int MovingMode::OnHit(TargetPool& pool, const Settings& settings) {
+    // Do NOT call pool.DeactivateAll() here, 
+    // otherwise the explosion animation of the hit target will be cut off.
+    Target3D& t = pool.Request();
+    t.position.x = (float)GetRandomValue(GameConfig::SpawnXMin, GameConfig::SpawnXMax) / GameConfig::SpawnScale;
+    t.position.y = (float)GetRandomValue(GameConfig::SpawnYMin, GameConfig::SpawnYMax) / GameConfig::SpawnScale;
+    t.position.z = -settings.arena.distance;
+    t.speed = (float)GetRandomValue(300, 1200) / 100.0f;
+    t.direction = (GetRandomValue(0, 1) == 0) ? 1 : -1;
+    t.active = true;
     return 1;
 }
 

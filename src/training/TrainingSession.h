@@ -1,6 +1,5 @@
 #pragma once
 #include <memory>
-#include <vector>
 #include "raylib.h"
 #include "raymath.h"
 #include "Settings.h"
@@ -10,7 +9,7 @@
 #include "ITrainingMode.h"
 #include "GameMode.h"
 #include "GameConfig.h"
-#include "Target3D.h"
+#include "TargetPool.h"
 
 enum class GameExitReason { None, UserQuit, TimeExpired };
 
@@ -52,12 +51,8 @@ public:
 
 private:
     void UpdateCameraAngles();
-    void UpdateTargets(float dt);
     void UpdateTracking(float dt);
-    void CleanupTargets();
     void HandleShoot();
-
-    void DrawTargets() const;
 
     Settings&   settings;
     RoomConfig  roomConfig;
@@ -67,8 +62,8 @@ private:
 
     GameMode    currentModeType = GameMode::STATIC;
     std::unique_ptr<TrainingMode> activeMode;
-
-    std::vector<Target3D> targets;
+    
+    TargetPool  targetPool; // Replaced std::vector
 
     SessionData  session;
     CameraAngles camAngles;

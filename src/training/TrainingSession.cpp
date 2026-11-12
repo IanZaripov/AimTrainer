@@ -19,7 +19,7 @@ TrainingSession::TrainingSession(Settings& s) : settings(s), arena(roomConfig) {
 }
 
 void TrainingSession::Init() {
-    targets.clear();
+    targetPool.DeactivateAll(); // Instantly kill all targets from previous session
     session = SessionData{};
     camAngles = CameraAngles{};
 }
@@ -38,8 +38,8 @@ void TrainingSession::StartTraining(GameMode mode) {
         case GameMode::MULTI_STATIC: activeMode = std::make_unique<MultiStaticMode>(); break;
     }
 
-    activeMode->OnStart(targets, settings);
-    session.spawnedBalls += (int)targets.size();
+    activeMode->OnStart(targetPool, settings);
+    session.spawnedBalls += (int)targetPool.GetAll().size();
 }
 
 void TrainingSession::EndSession(GameExitReason reason) {
@@ -67,13 +67,11 @@ void TrainingSession::Update() {
     }
 
     UpdateCameraAngles();
-    UpdateTargets(dt);
+    targetPool.Update(dt); // Update all targets (explosions, timers)
     UpdateTracking(dt);
 
-    int newSpawns = activeMode->OnUpdate(dt, targets, settings);
+    int newSpawns = activeMode->OnUpdate(dt, targetPool, settings);
     session.spawnedBalls += newSpawns;
-
-    CleanupTargets();
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         HandleShoot();
@@ -95,12 +93,6 @@ void TrainingSession::UpdateCameraAngles() {
     camera.target = Vector3Add(camera.position, dir);
 }
 
-void TrainingSession::UpdateTargets(float dt) {
-    for (auto& target : targets) {
-        target.Update(dt);
-    }
-}
-
 void TrainingSession::UpdateTracking(float dt) {
     if (!activeMode->UsesTracking()) return;
 
@@ -108,7 +100,7 @@ void TrainingSession::UpdateTracking(float dt) {
     Vector2 screenCenter = { (float)GetRenderWidth() / 2.0f, (float)GetRenderHeight() / 2.0f };
     Ray ray = GetScreenToWorldRay(screenCenter, camera);
 
-    for (auto& t : targets) {
+    for (auto& t : targetPool.GetAll()) {
         if (!t.active) continue;
         if (GetRayCollisionSphere(ray, t.position, settings.arena.targetRadius).hit) {
             session.trackTimeOnTarget += dt;
@@ -116,26 +108,19 @@ void TrainingSession::UpdateTracking(float dt) {
     }
 }
 
-void TrainingSession::CleanupTargets() {
-    // Remove targets that are dead AND finished exploding
-    targets.erase(std::remove_if(targets.begin(), targets.end(), [](const Target3D& t) { 
-        return !t.active && !t.IsExploding(); 
-    }), targets.end());
-}
-
 void TrainingSession::HandleShoot() {
     session.shotsFired++;
     Vector2 screenCenter = { (float)GetRenderWidth() / 2.0f, (float)GetRenderHeight() / 2.0f };
     Ray ray = GetScreenToWorldRay(screenCenter, camera);
 
-    for (auto& t : targets) {
+    for (auto& t : targetPool.GetAll()) {
         if (!t.active) continue;
         if (GetRayCollisionSphere(ray, t.position, settings.arena.targetRadius).hit) {
-            t.Hit(); // Trigger explosion and deactivate
+            t.Hit(); // Trigger explosion
             session.poppedCount++;
             session.hits++;
 
-            int newSpawns = activeMode->OnHit(targets, settings);
+            int newSpawns = activeMode->OnHit(targetPool, settings);
             session.spawnedBalls += newSpawns;
             break;
         }
@@ -145,16 +130,10 @@ void TrainingSession::HandleShoot() {
 void TrainingSession::Draw(Font uiFont) const {
     BeginMode3D(camera);
     arena.Draw();
-    DrawTargets();
+    targetPool.Draw(settings); // Pool handles drawing all targets
     viewmodel.Draw(camera);
     EndMode3D();
 
     float accuracy = activeMode->GetAccuracy(session.shotsFired, session.hits, session.spawnedBalls, session.trackTimeOnTarget, session.trackTimeTotal);
     hud.Draw(uiFont, settings.crosshair, session.poppedCount, accuracy, session.sessionTime);
-}
-
-void TrainingSession::DrawTargets() const {
-    for (const auto& t : targets) {
-        t.Draw(settings);
-    }
 }

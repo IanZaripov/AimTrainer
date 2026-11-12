@@ -8,6 +8,11 @@ void Target3D::Hit() {
     explosionLife = GameConfig::EffectLifetime;
 }
 
+void Target3D::ForceKill() {
+    active = false;
+    isExploding = false;
+}
+
 void Target3D::Update(float dt) {
     if (isExploding) {
         explosionLife -= dt;
@@ -18,12 +23,10 @@ void Target3D::Update(float dt) {
 }
 
 void Target3D::Draw(const Settings& settings) const {
-    // 1. Draw the target if it's still active
     if (active) {
         DrawSphere(position, settings.arena.targetRadius, settings.arena.ballColor);
     }
     
-    // 2. Draw the explosion effect
     if (isExploding) {
         float progress = 1.0f - (explosionLife / GameConfig::EffectLifetime); 
         float radius = settings.arena.targetRadius * (1.0f + progress * GameConfig::EffectMaxScale); 
