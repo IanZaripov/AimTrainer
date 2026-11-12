@@ -20,16 +20,20 @@ set(APP_FILES
     src/app/ScreenManager.cpp
 )
 
-# --- Training ---
+# --- Training (Core) ---
 set(TRAINING_FILES
     src/training/TrainingSession.h
     src/training/TrainingSession.cpp
-    src/training/Target3D.h
-    src/training/Target3D.cpp
-    src/training/TargetPool.h
-    src/training/TargetPool.cpp
     src/training/GameConfig.h
     src/training/GameMode.h
+)
+
+# --- Targets (Entities) ---
+set(TARGET_FILES
+    src/training/target/Target3D.h
+    src/training/target/Target3D.cpp
+    src/training/target/TargetPool.h
+    src/training/target/TargetPool.cpp
 )
 
 # --- Training Modes ---
@@ -105,6 +109,7 @@ target_sources(AimTrainer PRIVATE
     ${INFRA_FILES}
     ${APP_FILES}
     ${TRAINING_FILES}
+    ${TARGET_FILES}
     ${MODES_FILES}
     ${SETTINGS_FILES}
     ${SCENE_FILES}
@@ -118,6 +123,7 @@ target_sources(AimTrainer PRIVATE
 source_group("Infrastructure"   FILES ${INFRA_FILES})
 source_group("Application"      FILES ${APP_FILES})
 source_group("Training"         FILES ${TRAINING_FILES})
+source_group("Training/Targets" FILES ${TARGET_FILES})
 source_group("Training/Modes"   FILES ${MODES_FILES})
 source_group("Settings"         FILES ${SETTINGS_FILES})
 source_group("Scene"            FILES ${SCENE_FILES})
@@ -131,6 +137,7 @@ target_include_directories(AimTrainer PRIVATE
     src
     src/app
     src/training
+    src/training/target
     src/training/modes
     src/settings
     src/scene
