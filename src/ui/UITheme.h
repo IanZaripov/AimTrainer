@@ -3,7 +3,6 @@
 #include "raygui.h"
 
 namespace UITheme {
-    // Цвета
     constexpr Color BG        = { 18, 22, 28, 255 };
     constexpr Color PANEL     = { 25, 30, 35, 255 };
     constexpr Color BORDER    = { 50, 60, 70, 255 };
@@ -11,10 +10,8 @@ namespace UITheme {
     constexpr Color TEXT      = { 220, 220, 220, 255 };
     constexpr Color TEXT_DIM  = { 150, 150, 150, 255 };
 
-    // Виртуальное разрешение
     constexpr int VirtualHeight = 1080;
 
-    // --- TopBar ---
     constexpr float TopBarHeight   = 60.0f;
     constexpr float TopBarButtonY  = 15.0f;
     constexpr float TopBarButtonW  = 120.0f;
@@ -30,33 +27,30 @@ namespace UITheme {
         return (float)GetRenderWidth() - TopBarButtonW - TopBarPaddingX; 
     }
 
-    // --- Карточки тренировок (все нужные константы) ---
     namespace Card {
-        // Иконка
         constexpr float IconCenterY = 120.0f;
         constexpr float IconRadius  = 40.0f;
 
-        // Текст
         constexpr float TitleY      = 220.0f;
         constexpr float Subtitle1Y  = 250.0f;
         constexpr float Subtitle2Y  = 270.0f;
-        constexpr float TimedTitleY = 190.0f; // Тайтл для TimedCard (чуть выше из-за кнопок)
+        constexpr float TimedTitleY = 190.0f;
 
-        // Стрелки (MovingCard, BouncingCard)
+        // Arrows (MovingCard, BouncingCard)
         constexpr float ArrowOffsetX = 60.0f;
         constexpr float ArrowOffsetY = 20.0f;
         constexpr float ArrowSize    = 10.0f;
 
-        // Часы (TimedCard)
+        // Clock (TimedCard)
         constexpr float TimerHandLength = 25.0f;
 
-        // Кнопки сложности (TimedCard)
+        // Difficulty buttons (TimedCard)
         constexpr float DiffBtnY       = 370.0f;
         constexpr float DiffBtnW       = 55.0f;
         constexpr float DiffBtnH       = 25.0f;
         constexpr float DiffBtnSpacing = 60.0f;
 
-        // Лейаут карточек на экране выбора
+        // Card layout on the selection screen
         constexpr float LayoutX       = 40.0f;
         constexpr float LayoutY       = 150.0f;
         constexpr float LayoutWidth   = 210.0f;

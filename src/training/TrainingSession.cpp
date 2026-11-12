@@ -20,7 +20,6 @@ TrainingSession::TrainingSession(Settings& s) : settings(s), arena(roomConfig) {
 
 void TrainingSession::Init() {
     targets.clear();
-    effects.clear();
     session = SessionData{};
     camAngles = CameraAngles{};
 }
@@ -68,7 +67,7 @@ void TrainingSession::Update() {
     }
 
     UpdateCameraAngles();
-    UpdateEffects(dt);
+    UpdateTargets(dt);
     UpdateTracking(dt);
 
     int newSpawns = activeMode->OnUpdate(dt, targets, settings);
@@ -96,9 +95,10 @@ void TrainingSession::UpdateCameraAngles() {
     camera.target = Vector3Add(camera.position, dir);
 }
 
-void TrainingSession::UpdateEffects(float dt) {
-    for (auto& e : effects) e.life -= dt;
-    effects.erase(std::remove_if(effects.begin(), effects.end(), [](const PopEffect& e) { return e.life <= 0.0f; }), effects.end());
+void TrainingSession::UpdateTargets(float dt) {
+    for (auto& target : targets) {
+        target.Update(dt);
+    }
 }
 
 void TrainingSession::UpdateTracking(float dt) {
@@ -117,7 +117,10 @@ void TrainingSession::UpdateTracking(float dt) {
 }
 
 void TrainingSession::CleanupTargets() {
-    targets.erase(std::remove_if(targets.begin(), targets.end(), [](const Target3D& t) { return !t.active; }), targets.end());
+    // Remove targets that are dead AND finished exploding
+    targets.erase(std::remove_if(targets.begin(), targets.end(), [](const Target3D& t) { 
+        return !t.active && !t.IsExploding(); 
+    }), targets.end());
 }
 
 void TrainingSession::HandleShoot() {
@@ -128,10 +131,9 @@ void TrainingSession::HandleShoot() {
     for (auto& t : targets) {
         if (!t.active) continue;
         if (GetRayCollisionSphere(ray, t.position, settings.arena.targetRadius).hit) {
-            t.active = false;
+            t.Hit(); // Trigger explosion and deactivate
             session.poppedCount++;
             session.hits++;
-            effects.push_back({ t.position });
 
             int newSpawns = activeMode->OnHit(targets, settings);
             session.spawnedBalls += newSpawns;
@@ -144,7 +146,6 @@ void TrainingSession::Draw(Font uiFont) const {
     BeginMode3D(camera);
     arena.Draw();
     DrawTargets();
-    DrawEffects();
     viewmodel.Draw(camera);
     EndMode3D();
 
@@ -154,19 +155,6 @@ void TrainingSession::Draw(Font uiFont) const {
 
 void TrainingSession::DrawTargets() const {
     for (const auto& t : targets) {
-        if (!t.active) continue;
-        DrawSphere(t.position, settings.arena.targetRadius, settings.arena.ballColor);
+        t.Draw(settings);
     }
-}
-
-void TrainingSession::DrawEffects() const {
-    for (const auto& e : effects) {
-        DrawSingleEffect(e);
-    }
-}
-
-void TrainingSession::DrawSingleEffect(const PopEffect& effect) const {
-    float radius = effect.GetRadius(settings.arena.targetRadius);
-    Color col = effect.GetColor(settings.arena.ballColor);
-    DrawSphereWires(effect.position, radius, GameConfig::EffectSphereRings, GameConfig::EffectSphereSlices, col);
 }

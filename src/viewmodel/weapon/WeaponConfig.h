@@ -10,17 +10,17 @@ namespace WeaponConfig {
     constexpr Color BarrelColor = { 30, 30, 35, 255 };
     constexpr Color GripColor   = { 35, 40, 45, 255 };
 
-    // Затвор
+    // Slide
     constexpr Vector3 SlidePos  = { 0.0f, 0.02f, 0.05f };
     constexpr Vector3 SlideSize = { 0.04f, 0.04f, 0.18f };
 
-    // Ствол (выдвинут вперед)
+    // Barrel (extended forward)
     constexpr Vector3 BarrelStart = { 0.0f, 0.02f, 0.14f };
     constexpr Vector3 BarrelEnd   = { 0.0f, 0.02f, 0.18f };
     constexpr float BarrelRadius  = 0.015f;
     constexpr int BarrelSides     = 8;
 
-    // Рукоять
+    // Grip
     constexpr Vector3 GripPos  = { 0.0f, -0.05f, 0.0f };
     constexpr Vector3 GripSize = { 0.035f, 0.10f, 0.05f };
 }

@@ -44,7 +44,7 @@ namespace UITheme {
     }
 
     void SetupValueBoxStyle() {
-        // Стили для бегунка слайдера
+        // Styles for the slider runner
         GuiSetStyle(VALUEBOX, BASE_COLOR_NORMAL, ColorToInt(BLACK));
         GuiSetStyle(VALUEBOX, BORDER_COLOR_NORMAL, ColorToInt(WHITE));
     }

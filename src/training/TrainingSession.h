@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <vector>
 #include "raylib.h"
 #include "raymath.h"
 #include "Settings.h"
@@ -9,6 +10,7 @@
 #include "ITrainingMode.h"
 #include "GameMode.h"
 #include "GameConfig.h"
+#include "Target3D.h"
 
 enum class GameExitReason { None, UserQuit, TimeExpired };
 
@@ -27,19 +29,6 @@ struct SessionData {
 struct CameraAngles {
     float yaw = 0.0f;
     float pitch = 0.0f;
-};
-
-struct PopEffect {
-    Vector3 position;
-    float   life = GameConfig::EffectLifetime;
-
-    float GetProgress() const { return 1.0f - (life / GameConfig::EffectLifetime); }
-    float GetRadius(float baseRadius) const { return baseRadius * (1.0f + GetProgress() * GameConfig::EffectMaxScale); }
-    Color GetColor(Color baseColor) const {
-        Color col = baseColor;
-        col.a = (unsigned char)(255 * (1.0f - GetProgress()));
-        return col;
-    }
 };
 
 class TrainingSession {
@@ -63,14 +52,12 @@ public:
 
 private:
     void UpdateCameraAngles();
-    void UpdateEffects(float dt);
+    void UpdateTargets(float dt);
     void UpdateTracking(float dt);
     void CleanupTargets();
     void HandleShoot();
 
     void DrawTargets() const;
-    void DrawEffects() const;
-    void DrawSingleEffect(const PopEffect& effect) const;
 
     Settings&   settings;
     RoomConfig  roomConfig;
@@ -82,7 +69,6 @@ private:
     std::unique_ptr<TrainingMode> activeMode;
 
     std::vector<Target3D> targets;
-    std::vector<PopEffect> effects;
 
     SessionData  session;
     CameraAngles camAngles;

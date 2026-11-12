@@ -30,6 +30,8 @@ set(APP_FILES
 set(TRAINING_FILES
     src/training/TrainingSession.h
     src/training/TrainingSession.cpp
+    src/training/Target3D.h
+    src/training/Target3D.cpp
     src/training/GameConfig.h
     src/training/GameMode.h
 )

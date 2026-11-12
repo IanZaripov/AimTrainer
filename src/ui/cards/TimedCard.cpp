@@ -8,7 +8,6 @@ void TimedCard::Update(Settings& settings) {
     clickedDifficulty = false;
     float diffY = rect.y + UITheme::Card::DiffBtnY;
 
-    // Кнопки сложности обрабатываем первыми
     for (int i = 0; i < 3; i++) {
         Rectangle btn = { rect.x + 15 + i * UITheme::Card::DiffBtnSpacing, diffY, 
                           UITheme::Card::DiffBtnW, UITheme::Card::DiffBtnH };
@@ -19,7 +18,6 @@ void TimedCard::Update(Settings& settings) {
         }
     }
 
-    // Клик по самой карточке — только если не кликнули по кнопке
     hovered = CheckCollisionPointRec(GetMousePosition(), rect);
     if (hovered && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && !clickedDifficulty) {
         clicked = true;

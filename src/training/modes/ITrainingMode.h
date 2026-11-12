@@ -2,17 +2,10 @@
 #include "raylib.h"
 #include "Settings.h"
 #include "GameConfig.h"
+#include "Target3D.h" // <-- Include the new class
 #include <vector>
 
-struct Target3D {
-    Vector3 position;
-    bool    active = true;
-    float   speed = 0.0f;      
-    int     direction = 1;     
-    Vector2 velocity = { 0.0f, 0.0f };
-    float   lifeTimer = 0.0f;  
-};
-
+// Helper to spawn a target with random coordinates
 inline Target3D SpawnRandomBall(const Settings& settings) {
     Target3D t;
     t.position.x = (float)GetRandomValue(GameConfig::SpawnXMin, GameConfig::SpawnXMax) / GameConfig::SpawnScale;
@@ -28,7 +21,7 @@ public:
 
     virtual void OnStart(std::vector<Target3D>& targets, const Settings& settings) = 0;
     
-    // Возвращают количество новых шаров для статистики
+    // Returns the number of newly spawned targets for statistics
     virtual int OnUpdate(float dt, std::vector<Target3D>& targets, const Settings& settings) = 0;
     virtual int OnHit(std::vector<Target3D>& targets, const Settings& settings) = 0;
     

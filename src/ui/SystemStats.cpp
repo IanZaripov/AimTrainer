@@ -8,7 +8,7 @@
 
 #include "SystemStats.h"
 
-// Отменяем макросы Windows
+// Cancel Windows macros
 #undef DrawText
 #undef DrawTextEx
 #undef CloseWindow
