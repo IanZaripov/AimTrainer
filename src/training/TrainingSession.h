@@ -55,7 +55,6 @@ private:
     void HandleShoot();
 
     Settings&   settings;
-    RoomConfig  roomConfig;
     Arena       arena;
     Viewmodel   viewmodel;
     HUD         hud;

@@ -18,6 +18,19 @@ set(INFRA_FILES
 set(APP_FILES
     src/app/ScreenManager.h
     src/app/ScreenManager.cpp
+    src/app/IScreen.h
+    src/app/screens/RoutinesScreen.h
+    src/app/screens/RoutinesScreen.cpp
+    src/app/screens/MouseSettingsScreen.h
+    src/app/screens/MouseSettingsScreen.cpp
+    src/app/screens/CrosshairSettingsScreen.h
+    src/app/screens/CrosshairSettingsScreen.cpp
+    src/app/screens/ArenaSettingsScreen.h
+    src/app/screens/ArenaSettingsScreen.cpp
+    src/app/screens/GameplayScreen.h
+    src/app/screens/GameplayScreen.cpp
+    src/app/screens/ResultsScreen.h
+    src/app/screens/ResultsScreen.cpp
 )
 
 # --- Training (Core) ---
@@ -86,6 +99,8 @@ set(HANDS_FILES
 set(UI_FILES
     src/ui/UITheme.h
     src/ui/UITheme.cpp
+    src/ui/UIWidgets.h
+    src/ui/UIWidgets.cpp
     src/ui/HUD.h
     src/ui/HUD.cpp
     src/ui/SystemStats.h
@@ -136,6 +151,7 @@ source_group("UI/Cards"         FILES ${CARDS_FILES})
 target_include_directories(AimTrainer PRIVATE
     src
     src/app
+    src/app/screens
     src/training
     src/training/target
     src/training/modes

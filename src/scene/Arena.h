@@ -1,15 +1,12 @@
 #pragma once
 #include "raylib.h"
-#include "RoomConfig.h"
 
 class Arena {
 public:
-    Arena(const RoomConfig& config = RoomConfig{});
+    Arena() = default;
     void Draw() const;
 
 private:
-    RoomConfig config;
-
     void DrawFloor() const;
     void DrawCeiling() const;
     void DrawBackWall() const;

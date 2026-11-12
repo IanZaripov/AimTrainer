@@ -7,7 +7,7 @@
 #include <cmath>
 #include <algorithm>
 
-TrainingSession::TrainingSession(Settings& s) : settings(s), arena(roomConfig) {
+TrainingSession::TrainingSession(Settings& s) : settings(s) {
     camera.position = { 0.0f, 1.6f, 0.0f };
     camera.target = { 0.0f, 1.6f, -1.0f };
     camera.up = { 0.0f, 1.0f, 0.0f };

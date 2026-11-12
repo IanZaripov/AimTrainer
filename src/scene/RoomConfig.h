@@ -1,24 +1,26 @@
 #pragma once
 #include "raylib.h"
 
-struct RoomConfig {
-    // Размеры комнаты
-    float width = 40.0f;
-    float depth = 100.0f;
-    float height = 12.0f;
+namespace RoomConfig {
+    namespace Dimensions {
+        constexpr float Width  = 40.0f;
+        constexpr float Depth  = 100.0f;
+        constexpr float Height = 12.0f;
+        
+        constexpr float WallThickness  = 1.0f;
+        constexpr float FloorThickness = 1.0f;
+    }
 
-    // Толщина стен и пола
-    float wallThickness = 1.0f;
-    float floorThickness = 1.0f;
+    namespace Grid {
+        constexpr int Step = 4;
+        constexpr float NeonHeightOffset = 0.05f;
+    }
 
-    // Параметры сетки и неона
-    int gridStep = 4;
-    float neonHeightOffset = 0.05f;
-
-    // Цветовая палитра
-    Color floorColor   = { 80, 95, 115, 255 };
-    Color wallColor    = { 60, 75, 95, 255 };
-    Color ceilingColor = { 90, 105, 125, 255 };
-    Color gridColor    = { 100, 115, 135, 255 };
-    Color neonColor    = { 255, 70, 85, 255 };
-};
+    namespace Colors {
+        constexpr Color Floor   = { 80, 95, 115, 255 };
+        constexpr Color Wall    = { 60, 75, 95, 255 };
+        constexpr Color Ceiling = { 90, 105, 125, 255 };
+        constexpr Color Grid    = { 100, 115, 135, 255 };
+        constexpr Color Neon    = { 255, 70, 85, 255 };
+    }
+}
