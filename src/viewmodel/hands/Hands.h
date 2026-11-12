@@ -6,7 +6,6 @@ public:
 
 private:
     void DrawPalm() const;
-    void DrawFingers() const;
     void DrawThumb() const;
     void DrawSleeve() const;
 };

@@ -9,26 +9,26 @@ void Weapon::Draw() const {
 }
 
 void Weapon::DrawSlide() const {
-    DrawCube(WeaponConfig::SlidePos, 
-             WeaponConfig::SlideSize.x, 
-             WeaponConfig::SlideSize.y, 
-             WeaponConfig::SlideSize.z, 
-             WeaponConfig::SlideColor);
+    DrawCube(WeaponConfig::Slide::Pos, 
+             WeaponConfig::Slide::Size.x, 
+             WeaponConfig::Slide::Size.y, 
+             WeaponConfig::Slide::Size.z, 
+             WeaponConfig::Slide::Color);
 }
 
 void Weapon::DrawBarrel() const {
-    DrawCylinderEx(WeaponConfig::BarrelStart,
-                   WeaponConfig::BarrelEnd,
-                   WeaponConfig::BarrelRadius,
-                   WeaponConfig::BarrelRadius,
-                   WeaponConfig::BarrelSides,
-                   WeaponConfig::BarrelColor);
+    DrawCylinderEx(WeaponConfig::Barrel::Start,
+                   WeaponConfig::Barrel::End,
+                   WeaponConfig::Barrel::Radius,
+                   WeaponConfig::Barrel::Radius,
+                   WeaponConfig::Barrel::Sides,
+                   WeaponConfig::Barrel::Color);
 }
 
 void Weapon::DrawGrip() const {
-    DrawCube(WeaponConfig::GripPos, 
-             WeaponConfig::GripSize.x, 
-             WeaponConfig::GripSize.y, 
-             WeaponConfig::GripSize.z, 
-             WeaponConfig::GripColor);
+    DrawCube(WeaponConfig::Grip::Pos, 
+             WeaponConfig::Grip::Size.x, 
+             WeaponConfig::Grip::Size.y, 
+             WeaponConfig::Grip::Size.z, 
+             WeaponConfig::Grip::Color);
 }

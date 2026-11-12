@@ -19,7 +19,7 @@ TrainingSession::TrainingSession(Settings& s) : settings(s), arena(roomConfig) {
 }
 
 void TrainingSession::Init() {
-    targetPool.DeactivateAll(); // Instantly kill all targets from previous session
+    targetPool.DeactivateAll();
     session = SessionData{};
     camAngles = CameraAngles{};
 }
@@ -61,13 +61,13 @@ void TrainingSession::Update() {
     hud.UpdateStats();
 
     if (activeMode->IsFinished(session.sessionTime)) {
-        session.sessionTime = GameConfig::SessionTimeLimit;
+        session.sessionTime = GameConfig::Limits::SessionTime;
         EndSession(GameExitReason::TimeExpired);
         return;
     }
 
     UpdateCameraAngles();
-    targetPool.Update(dt); // Update all targets (explosions, timers)
+    targetPool.Update(dt);
     UpdateTracking(dt);
 
     int newSpawns = activeMode->OnUpdate(dt, targetPool, settings);
@@ -80,11 +80,11 @@ void TrainingSession::Update() {
 
 void TrainingSession::UpdateCameraAngles() {
     Vector2 delta = GetMouseDelta();
-    float finalSens = settings.mouse.valorantSens * settings.mouse.sensMultiplier * GameConfig::SensMultiplier;
+    float finalSens = settings.mouse.valorantSens * settings.mouse.sensMultiplier * GameConfig::Mouse::SensMultiplier;
 
     camAngles.yaw   += delta.x * finalSens;
     camAngles.pitch -= delta.y * finalSens;
-    camAngles.pitch = std::clamp(camAngles.pitch, -GameConfig::PitchLimit, GameConfig::PitchLimit);
+    camAngles.pitch = std::clamp(camAngles.pitch, -GameConfig::Limits::Pitch, GameConfig::Limits::Pitch);
 
     Vector3 dir;
     dir.x = cosf(camAngles.pitch * DEG2RAD) * sinf(camAngles.yaw * DEG2RAD);
@@ -116,7 +116,7 @@ void TrainingSession::HandleShoot() {
     for (auto& t : targetPool.GetAll()) {
         if (!t.active) continue;
         if (GetRayCollisionSphere(ray, t.position, settings.arena.targetRadius).hit) {
-            t.Hit(); // Trigger explosion
+            t.Hit();
             session.poppedCount++;
             session.hits++;
 
@@ -130,7 +130,7 @@ void TrainingSession::HandleShoot() {
 void TrainingSession::Draw(Font uiFont) const {
     BeginMode3D(camera);
     arena.Draw();
-    targetPool.Draw(settings); // Pool handles drawing all targets
+    targetPool.Draw(settings);
     viewmodel.Draw(camera);
     EndMode3D();
 

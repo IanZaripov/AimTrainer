@@ -63,7 +63,7 @@ private:
     GameMode    currentModeType = GameMode::STATIC;
     std::unique_ptr<TrainingMode> activeMode;
     
-    TargetPool  targetPool; // Replaced std::vector
+    TargetPool  targetPool;
 
     SessionData  session;
     CameraAngles camAngles;

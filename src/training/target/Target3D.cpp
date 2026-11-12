@@ -5,7 +5,7 @@ Target3D::Target3D() = default;
 void Target3D::Hit() {
     active = false;
     isExploding = true;
-    explosionLife = GameConfig::EffectLifetime;
+    explosionLife = GameConfig::Effect::Lifetime;
 }
 
 void Target3D::ForceKill() {
@@ -28,12 +28,12 @@ void Target3D::Draw(const Settings& settings) const {
     }
     
     if (isExploding) {
-        float progress = 1.0f - (explosionLife / GameConfig::EffectLifetime); 
-        float radius = settings.arena.targetRadius * (1.0f + progress * GameConfig::EffectMaxScale); 
+        float progress = 1.0f - (explosionLife / GameConfig::Effect::Lifetime); 
+        float radius = settings.arena.targetRadius * (1.0f + progress * GameConfig::Effect::MaxScale); 
         
         Color col = settings.arena.ballColor;
         col.a = (unsigned char)(255 * (1.0f - progress));
         
-        DrawSphereWires(position, radius, GameConfig::EffectSphereRings, GameConfig::EffectSphereSlices, col);
+        DrawSphereWires(position, radius, GameConfig::Effect::SphereRings, GameConfig::Effect::SphereSlices, col);
     }
 }

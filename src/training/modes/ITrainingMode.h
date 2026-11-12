@@ -1,7 +1,6 @@
 #pragma once
 #include "raylib.h"
 #include "Settings.h"
-#include "GameConfig.h"
 #include "TargetPool.h"
 #include <vector>
 

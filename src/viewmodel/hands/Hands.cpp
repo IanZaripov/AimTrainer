@@ -8,27 +8,26 @@ void Hands::Draw() const {
     DrawSleeve();
 }
 
-
 void Hands::DrawPalm() const {
-    DrawCube(HandsConfig::HandPos, 
-             HandsConfig::HandSize.x, 
-             HandsConfig::HandSize.y, 
-             HandsConfig::HandSize.z, 
-             HandsConfig::SkinColor);
+    DrawCube(HandsConfig::Palm::Pos, 
+             HandsConfig::Palm::Size.x, 
+             HandsConfig::Palm::Size.y, 
+             HandsConfig::Palm::Size.z, 
+             HandsConfig::Palm::Color);
 }
 
 void Hands::DrawThumb() const {
-    DrawCube(HandsConfig::ThumbPos, 
-             HandsConfig::ThumbSize.x, 
-             HandsConfig::ThumbSize.y, 
-             HandsConfig::ThumbSize.z, 
-             HandsConfig::SkinColor);
+    DrawCube(HandsConfig::Thumb::Pos, 
+             HandsConfig::Thumb::Size.x, 
+             HandsConfig::Thumb::Size.y, 
+             HandsConfig::Thumb::Size.z, 
+             HandsConfig::Thumb::Color);
 }
 
 void Hands::DrawSleeve() const {
-    DrawCube(HandsConfig::SleevePos, 
-             HandsConfig::SleeveSize.x, 
-             HandsConfig::SleeveSize.y, 
-             HandsConfig::SleeveSize.z, 
-             HandsConfig::SleeveColor);
+    DrawCube(HandsConfig::Sleeve::Pos, 
+             HandsConfig::Sleeve::Size.x, 
+             HandsConfig::Sleeve::Size.y, 
+             HandsConfig::Sleeve::Size.z, 
+             HandsConfig::Sleeve::Color);
 }

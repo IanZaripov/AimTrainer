@@ -10,5 +10,5 @@ public:
     int OnUpdate(float dt, TargetPool& pool, const Settings& settings) override;
     int OnHit(TargetPool& pool, const Settings& settings) override;
     float GetAccuracy(int shots, int hits, int spawned, float trackTime, float trackTotal) const override;
-    bool IsFinished(float sessionTime) const override { return sessionTime >= GameConfig::SessionTimeLimit; }
+    bool IsFinished(float sessionTime) const override { return sessionTime >= GameConfig::Limits::SessionTime; }
 };

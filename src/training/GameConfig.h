@@ -1,26 +1,37 @@
 #pragma once
 
 namespace GameConfig {
-    constexpr float SessionTimeLimit = 60.0f; 
-    constexpr float PitchLimit = 89.0f;       
-    constexpr float SensMultiplier = 0.022f;  
-    constexpr float EffectLifetime = 0.2f;    
-    constexpr float EffectMaxScale = 2.0f;    
-    constexpr int EffectSphereRings = 8;
-    constexpr int EffectSphereSlices = 8;
+    namespace Limits {
+        constexpr float SessionTime = 60.0f;
+        constexpr float Pitch = 89.0f;
+    }
+    
+    namespace Mouse {
+        constexpr float SensMultiplier = 0.022f;
+    }
 
-    // Параметры спавна шаров
-    constexpr int SpawnXMin = -600;
-    constexpr int SpawnXMax = 600;
-    constexpr int SpawnYMin = 150;
-    constexpr int SpawnYMax = 400;
-    constexpr float SpawnScale = 100.0f;
+    namespace Effect {
+        constexpr float Lifetime = 0.2f;
+        constexpr float MaxScale = 2.0f;
+        constexpr int SphereRings = 8;
+        constexpr int SphereSlices = 8;
+    }
 
-    // Время жизни шаров в режиме на время
-    constexpr float TimedLifeEasy = 1.5f;
-    constexpr float TimedLifeMedium = 1.0f;
-    constexpr float TimedLifeHard = 0.6f;
+    namespace Spawn {
+        constexpr int XMin = -600;
+        constexpr int XMax = 600;
+        constexpr int YMin = 150;
+        constexpr int YMax = 400;
+        constexpr float Scale = 100.0f;
+    }
 
-    // Количество шаров в режиме Мульти-цель
-    constexpr int MultiStaticBallCount = 8; 
+    namespace TimedMode {
+        constexpr float LifeEasy = 1.5f;
+        constexpr float LifeMedium = 1.0f;
+        constexpr float LifeHard = 0.6f;
+    }
+
+    namespace MultiStaticMode {
+        constexpr int BallCount = 8;
+    }
 }
