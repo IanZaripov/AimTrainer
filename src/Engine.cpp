@@ -5,22 +5,29 @@
 #include "raygui.h"
 #undef RAYGUI_IMPLEMENTATION
 
-void Engine::Run() {
+Engine::Engine() {
     InitWindowAndContext();
-    LoadResources();
+    LoadFontsResources();
     SetupUI();
     SetupRenderTarget();
-
     screenManager = std::make_unique<ScreenManager>();
+}
 
+Engine::~Engine() {
+    Shutdown();
+}
+
+void Engine::Run() {
     while (!WindowShouldClose() && !screenManager->ShouldExit()) {
         screenManager->UpdateLogic();
 
+        // draw onto a virtual texture
         BeginTextureMode(renderTarget);
         ClearBackground(UITheme::BG);
         screenManager->DrawUI(uiFont);
         EndTextureMode();
 
+        // stretch it to fit the actual screen
         BeginDrawing();
         ClearBackground(BLACK);
         DrawTexturePro(
@@ -31,8 +38,6 @@ void Engine::Run() {
         );
         EndDrawing();
     }
-
-    Shutdown();
 }
 
 void Engine::InitWindowAndContext() {
@@ -42,20 +47,8 @@ void Engine::InitWindowAndContext() {
     SetExitKey(KEY_NULL);
 }
 
-void Engine::SetupRenderTarget() {
-    float aspect = (float)GetScreenWidth() / (float)GetScreenHeight();
-    int virtualWidth = (int)(UITheme::VirtualHeight * aspect);
-
-    renderTarget = LoadRenderTexture(virtualWidth, UITheme::VirtualHeight);
-    SetTextureFilter(renderTarget.texture, TEXTURE_FILTER_BILINEAR);
-
-    SetMouseScale(
-        (float)virtualWidth / (float)GetScreenWidth(),
-        (float)UITheme::VirtualHeight / (float)GetScreenHeight()
-    );
-}
-
-void Engine::LoadResources() {
+void Engine::LoadFontsResources() {
+    
     const char* textToLoad = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,:-%()[] "
                              "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
                              "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
@@ -70,6 +63,20 @@ void Engine::SetupUI() {
     GuiSetFont(uiFont);
     GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
     UITheme::Setup();
+}
+
+void Engine::SetupRenderTarget() {
+    // Virtual resolution: the height is fixed, the width depends on the monitor’s aspect ratio
+    float aspect = (float)GetScreenWidth() / (float)GetScreenHeight();
+    int virtualWidth = (int)(UITheme::VirtualHeight * aspect);
+
+    renderTarget = LoadRenderTexture(virtualWidth, UITheme::VirtualHeight);
+    SetTextureFilter(renderTarget.texture, TEXTURE_FILTER_BILINEAR);
+    // scale the mouse in the virtual space so that the sensation feels the same at any resolution
+    SetMouseScale(
+        (float)virtualWidth / (float)GetScreenWidth(),
+        (float)UITheme::VirtualHeight / (float)GetScreenHeight()
+    );
 }
 
 void Engine::Shutdown() {

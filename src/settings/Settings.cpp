@@ -7,6 +7,7 @@ void Settings::Load(const char* filename) {
         file >> mouse.valorantSens >> fovDegrees >> headRadius >> mouse.sensMultiplier;
         
         int out, dt, r, g, b;
+        // Убрали hm (hitmarker)
         file >> crosshair.length >> crosshair.thickness >> crosshair.gap >> out >> dt;
         crosshair.outline = (out != 0);
         crosshair.dot = (dt != 0);

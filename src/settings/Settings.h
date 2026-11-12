@@ -2,17 +2,17 @@
 #include "raylib.h"
 
 struct MouseConfig {
-    float valorantSens = 0.255f; 
+    float valorantSens = 0.520f; 
     float sensMultiplier = 3.15f;
 };
 
 struct CrosshairConfig {
-    Color color = { 0, 255, 255, 255 }; 
+    Color color = { 255, 255, 255, 255 }; 
     float length = 4.0f;                
-    float thickness = 1.0f;             
+    float thickness = 2.0f;             
     float gap = 0.0f;                   
-    bool  outline = true;               
-    bool  dot = true;                   
+    bool  outline = false;               
+    bool  dot = false;                   
 };
 
 struct TargetConfig {

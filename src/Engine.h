@@ -5,19 +5,18 @@
 
 class Engine {
 public:
-    Engine() = default;
-    ~Engine() = default;
-
+    Engine();
+    ~Engine();
     void Run();
 
 private:
-    Font uiFont;
+    Font uiFont = { 0 };
     std::unique_ptr<ScreenManager> screenManager;
-    RenderTexture2D renderTarget;
+    RenderTexture2D renderTarget = { 0 };
 
     void InitWindowAndContext();
-    void SetupRenderTarget();
-    void LoadResources();
+    void LoadFontsResources();
     void SetupUI();
+    void SetupRenderTarget();
     void Shutdown();
 };

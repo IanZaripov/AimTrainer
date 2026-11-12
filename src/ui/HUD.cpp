@@ -88,7 +88,6 @@ void HUD::DrawStatBox(Font font, const char* label, const char* value, float x, 
 
     char textBuffer[64];
     snprintf(textBuffer, sizeof(textBuffer), "%s: %s", label, value);
-    
     DrawCenteredText(font, textBuffer, boxRect, 16.0f, WHITE);
 }
 
