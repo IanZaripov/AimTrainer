@@ -14,7 +14,7 @@ void TrainingCard::Update(Settings& settings) {
 
 void TrainingCard::Draw(Font font, const Settings& settings) const {
     DrawBase();
-    Vector2 center = { rect.x + rect.width / 2.0f, rect.y + UITheme::Card::IconCenterY };
+    Vector2 center = { rect.x + rect.width / 2.0f, rect.y + UITheme::Card::Layout::Icon::CenterY };
     DrawIcon(center, settings);
     DrawTitleBlock(font);
 }
@@ -28,23 +28,23 @@ void TrainingCard::DrawBase() const {
 }
 
 void TrainingCard::DrawTitleBlock(Font font) const {
-    DrawTextEx(font, title, { rect.x + 20, rect.y + UITheme::Card::TitleY }, 20, 1, WHITE);
-    if (sub1) DrawTextEx(font, sub1, { rect.x + 15, rect.y + UITheme::Card::Subtitle1Y }, 12, 1, UITheme::TEXT_DIM);
-    if (sub2) DrawTextEx(font, sub2, { rect.x + 15, rect.y + UITheme::Card::Subtitle2Y }, 12, 1, UITheme::TEXT_DIM);
+    DrawTextEx(font, title, { rect.x + 20, rect.y + UITheme::Card::Text::TitleY }, 20, 1, WHITE);
+    if (sub1) DrawTextEx(font, sub1, { rect.x + 15, rect.y + UITheme::Card::Text::Subtitle1Y }, 12, 1, UITheme::TEXT_DIM);
+    if (sub2) DrawTextEx(font, sub2, { rect.x + 15, rect.y + UITheme::Card::Text::Subtitle2Y }, 12, 1, UITheme::TEXT_DIM);
 }
 
 void TrainingCard::DrawHorizontalArrows(Vector2 center) const {
-    float aX = UITheme::Card::ArrowOffsetX;
-    float aY = UITheme::Card::ArrowOffsetY;
-    float aS = UITheme::Card::ArrowSize;
+    float aX = UITheme::Card::Layout::Arrows::OffsetX;
+    float aY = UITheme::Card::Layout::Arrows::OffsetY;
+    float aS = UITheme::Card::Layout::Arrows::Size;
     DrawTriangle({center.x + aX, center.y}, {center.x + aX + aY, center.y - aS}, {center.x + aX + aY, center.y + aS}, WHITE);
     DrawTriangle({center.x - aX, center.y}, {center.x - aX - aY, center.y - aS}, {center.x - aX - aY, center.y + aS}, WHITE);
 }
 
 void TrainingCard::DrawVerticalArrows(Vector2 center) const {
-    float aX = UITheme::Card::ArrowOffsetX;
-    float aY = UITheme::Card::ArrowOffsetY;
-    float aS = UITheme::Card::ArrowSize;
+    float aX = UITheme::Card::Layout::Arrows::OffsetX;
+    float aY = UITheme::Card::Layout::Arrows::OffsetY;
+    float aS = UITheme::Card::Layout::Arrows::Size;
     DrawTriangle({center.x, center.y - aX}, {center.x - aS, center.y - aX - aY}, {center.x + aS, center.y - aX - aY}, WHITE);
     DrawTriangle({center.x, center.y + aX}, {center.x - aS, center.y + aX + aY}, {center.x + aS, center.y + aX + aY}, WHITE);
 }

@@ -58,17 +58,17 @@ void ScreenManager::DrawUI(Font uiFont) {
 }
 
 void ScreenManager::DrawTopBar(Font uiFont) {
-    DrawRectangle(0, 0, GetRenderWidth(), (int)UITheme::TopBarHeight, Color{ 20, 25, 30, 255 });
-    DrawLine(0, (int)UITheme::TopBarHeight, GetRenderWidth(), (int)UITheme::TopBarHeight, UITheme::ACCENT);
+    DrawRectangle(0, 0, GetRenderWidth(), (int)UITheme::TopBar::Height, Color{ 20, 25, 30, 255 });
+    DrawLine(0, (int)UITheme::TopBar::Height, GetRenderWidth(), (int)UITheme::TopBar::Height, UITheme::ACCENT);
 
-    if (GuiButton({ UITheme::NavButton1X, UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "Тренировки")) GoTo(ScreenID::ROUTINES);
-    if (GuiButton({ UITheme::NavButton2X, UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "Арена"))      GoTo(ScreenID::SETTINGS_ARENA);
-    if (GuiButton({ UITheme::NavButton3X, UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "Мышь"))       GoTo(ScreenID::SETTINGS_MOUSE);
-    if (GuiButton({ UITheme::NavButton4X, UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "Прицел"))     GoTo(ScreenID::SETTINGS_CROSSHAIR);
+    if (GuiButton({ UITheme::TopBar::Nav1X, UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, "Тренировки")) GoTo(ScreenID::ROUTINES);
+    if (GuiButton({ UITheme::TopBar::Nav2X, UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, "Арена"))      GoTo(ScreenID::SETTINGS_ARENA);
+    if (GuiButton({ UITheme::TopBar::Nav3X, UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, "Мышь"))       GoTo(ScreenID::SETTINGS_MOUSE);
+    if (GuiButton({ UITheme::TopBar::Nav4X, UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, "Прицел"))     GoTo(ScreenID::SETTINGS_CROSSHAIR);
 
     const char* title = "AIM TRAINER";
     float titleWidth = MeasureTextEx(uiFont, title, 24, 1).x;
     DrawTextEx(uiFont, title, { (GetRenderWidth() - titleWidth) / 2.0f, 18 }, 24, 1, WHITE);
 
-    if (GuiButton({ UITheme::GetRightButtonX(), UITheme::TopBarButtonY, UITheme::TopBarButtonW, UITheme::TopBarButtonH }, "ВЫХОД")) shouldExit = true;
+    if (GuiButton({ UITheme::GetRightButtonX(), UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, "ВЫХОД")) shouldExit = true;
 }
