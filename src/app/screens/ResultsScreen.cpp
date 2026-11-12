@@ -15,13 +15,12 @@ void ResultsScreen::Draw(Font uiFont, ScreenManager& manager) {
 }
 
 Rectangle ResultsScreen::GetPanelRect() const {
-    float pw = 500.0f;
-    float ph = 450.0f;
+    using namespace UITheme::Screens::Results;
     return { 
-        (GetRenderWidth() - pw) / 2.0f, 
-        (GetRenderHeight() - ph) / 2.0f, 
-        pw, 
-        ph 
+        (GetRenderWidth() - PanelWidth) / 2.0f, 
+        (GetRenderHeight() - PanelHeight) / 2.0f, 
+        PanelWidth, 
+        PanelHeight 
     };
 }
 
@@ -30,64 +29,68 @@ void ResultsScreen::DrawOverlay() const {
 }
 
 void ResultsScreen::DrawPanel(Rectangle panelRect) const {
-    DrawRectangleRounded(panelRect, 0.05f, 4, UITheme::PANEL);
-    DrawRectangleLinesEx(panelRect, 2.0f, UITheme::ACCENT);
+    using namespace UITheme::Screens::Results;
+    DrawRectangleRounded(panelRect, PanelRoundness, PanelSegments, UITheme::PANEL);
+    DrawRectangleLinesEx(panelRect, PanelBorderThickness, UITheme::ACCENT);
 }
 
 void ResultsScreen::DrawTitle(Font uiFont, Rectangle panelRect) const {
+    using namespace UITheme::Screens::Results;
     const char* title = "РЕЗУЛЬТАТЫ";
-    float tw = MeasureTextEx(uiFont, title, 32, 1).x;
+    float tw = MeasureTextEx(uiFont, title, TitleFontSize, 1).x;
     
-    DrawTextEx(uiFont, title, { panelRect.x + (panelRect.width - tw) / 2.0f, panelRect.y + 30 }, 32, 1, UITheme::ACCENT);
-    DrawLineEx({panelRect.x + 20, panelRect.y + 80}, {panelRect.x + panelRect.width - 20, panelRect.y + 80}, 1.0f, UITheme::BORDER);
+    DrawTextEx(uiFont, title, { panelRect.x + (panelRect.width - tw) / 2.0f, panelRect.y + TitleYOffset }, TitleFontSize, 1, UITheme::ACCENT);
+    DrawLineEx({panelRect.x + SeparatorPaddingX, panelRect.y + SeparatorYOffset}, {panelRect.x + panelRect.width - SeparatorPaddingX, panelRect.y + SeparatorYOffset}, SeparatorThickness, UITheme::BORDER);
 }
 
 void ResultsScreen::DrawStats(Font uiFont, Rectangle panelRect, const TrainingSession& session) const {
-    float textY = panelRect.y + 110;
-    float labelX = panelRect.x + 50;
-    float valueX = panelRect.x + 300;
+    using namespace UITheme::Screens::Results;
+    float textY = panelRect.y + StatsStartY;
+    float labelX = panelRect.x + StatLabelX;
+    float valueX = panelRect.x + StatValueX;
 
     DrawTimeResult(uiFont, labelX, valueX, textY);
-    textY += 40;
+    textY += StatRowSpacing;
 
     DrawSpawnedResult(uiFont, labelX, valueX, textY, session);
-    textY += 40;
+    textY += StatRowSpacing;
 
     DrawPoppedResult(uiFont, labelX, valueX, textY, session);
-    textY += 40;
+    textY += StatRowSpacing;
 
     DrawAccuracyResult(uiFont, labelX, valueX, textY, session);
 }
 
 void ResultsScreen::DrawTimeResult(Font font, float labelX, float valueX, float y) const {
-    DrawTextEx(font, "Время:", { labelX, y }, 20, 1, UITheme::TEXT);
-    DrawTextEx(font, "60 сек", { valueX, y }, 20, 1, WHITE);
+    DrawTextEx(font, "Время:", { labelX, y }, UITheme::Screens::Results::StatFontSize, 1, UITheme::TEXT);
+    DrawTextEx(font, "60 сек", { valueX, y }, UITheme::Screens::Results::StatFontSize, 1, WHITE);
 }
 
 void ResultsScreen::DrawSpawnedResult(Font font, float labelX, float valueX, float y, const TrainingSession& session) const {
-    DrawTextEx(font, "Сгенерировано шаров:", { labelX, y }, 20, 1, UITheme::TEXT);
-    DrawTextEx(font, TextFormat("%d", session.GetSpawnedBalls()), { valueX, y }, 20, 1, WHITE);
+    DrawTextEx(font, "Сгенерировано шаров:", { labelX, y }, UITheme::Screens::Results::StatFontSize, 1, UITheme::TEXT);
+    DrawTextEx(font, TextFormat("%d", session.GetSpawnedBalls()), { valueX, y }, UITheme::Screens::Results::StatFontSize, 1, WHITE);
 }
 
 void ResultsScreen::DrawPoppedResult(Font font, float labelX, float valueX, float y, const TrainingSession& session) const {
-    DrawTextEx(font, "Уничтожено:", { labelX, y }, 20, 1, UITheme::TEXT);
-    DrawTextEx(font, TextFormat("%d", session.GetPoppedCount()), { valueX, y }, 20, 1, WHITE);
+    DrawTextEx(font, "Уничтожено:", { labelX, y }, UITheme::Screens::Results::StatFontSize, 1, UITheme::TEXT);
+    DrawTextEx(font, TextFormat("%d", session.GetPoppedCount()), { valueX, y }, UITheme::Screens::Results::StatFontSize, 1, WHITE);
 }
 
 void ResultsScreen::DrawAccuracyResult(Font font, float labelX, float valueX, float y, const TrainingSession& session) const {
     float accuracy = (session.GetSpawnedBalls() > 0) ? 100.0f * session.GetPoppedCount() / session.GetSpawnedBalls() : 0.0f;
     
-    DrawTextEx(font, "Точность:", { labelX, y }, 20, 1, UITheme::TEXT);
-    DrawTextEx(font, TextFormat("%.1f%%", accuracy), { valueX, y }, 20, 1, WHITE);
+    DrawTextEx(font, "Точность:", { labelX, y }, UITheme::Screens::Results::StatFontSize, 1, UITheme::TEXT);
+    DrawTextEx(font, TextFormat("%.1f%%", accuracy), { valueX, y }, UITheme::Screens::Results::StatFontSize, 1, WHITE);
 }
 
 void ResultsScreen::DrawButtons(Font uiFont, Rectangle panelRect, ScreenManager& manager, const TrainingSession& session) {
-    if (GuiButton({ panelRect.x + 50, panelRect.y + 350, 180, 40 }, "ЗАНОВО")) {
+    using namespace UITheme::Screens::Results;
+    if (GuiButton({ panelRect.x + Btn1X, panelRect.y + BtnY, BtnWidth, BtnHeight }, "ЗАНОВО")) {
         auto& mutableSession = manager.GetSession();
         mutableSession.StartTraining(GameMode::TIMED);
         manager.GoTo(ScreenID::PLAYING);
     }
-    if (GuiButton({ panelRect.x + 270, panelRect.y + 350, 180, 40 }, "В МЕНЮ")) {
+    if (GuiButton({ panelRect.x + Btn2X, panelRect.y + BtnY, BtnWidth, BtnHeight }, "В МЕНЮ")) {
         manager.GoTo(ScreenID::ROUTINES);
     }
 }

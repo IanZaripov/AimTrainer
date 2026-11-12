@@ -50,10 +50,10 @@ namespace UITheme {
     }
 
     void DrawTitledGroup(Font font, Rectangle rect, const char* title) {
-        DrawRectangleRounded(rect, 0.05f, 4, PANEL);
-        DrawRectangleLinesEx(rect, 1.0f, BORDER);
-        DrawTextEx(font, title, { rect.x + 15, rect.y + 10 }, 14, 1, ACCENT);
-        DrawLine((int)rect.x + 15, (int)rect.y + 30, (int)(rect.x + rect.width - 15), (int)rect.y + 30, BORDER);
+        DrawRectangleRounded(rect, Screens::Settings::GroupRoundness, Screens::Settings::GroupSegments, PANEL);
+        DrawRectangleLinesEx(rect, Screens::Settings::GroupBorderThickness, BORDER);
+        DrawTextEx(font, title, { rect.x + Screens::Settings::GroupTitleOffsetX, rect.y + Screens::Settings::GroupTitleOffsetY }, Screens::Settings::GroupTitleFontSize, 1, ACCENT);
+        DrawLine((int)rect.x + Screens::Settings::GroupSeparatorPadding, (int)rect.y + Screens::Settings::GroupSeparatorYOffset, (int)(rect.x + rect.width - Screens::Settings::GroupSeparatorPadding), (int)rect.y + Screens::Settings::GroupSeparatorYOffset, BORDER);
     }
 
     void DrawCardBackground(Rectangle rect, bool hovered) {

@@ -4,29 +4,44 @@
 #include "UIWidgets.h"
 #include "raygui.h"
 
+void CrosshairSettingsScreen::Update(ScreenManager& manager) {
+    if (isDirty) {
+        manager.GetSettings().Save();
+        isDirty = false;
+    }
+}
+
 void CrosshairSettingsScreen::Draw(Font uiFont, ScreenManager& manager) {
+    using namespace UITheme::Screens::Settings;
     auto& settings = manager.GetSettings();
-    DrawTextEx(uiFont, "НАСТРОЙКИ ПРИЦЕЛА", { 40, 90 }, 24, 1, UITheme::ACCENT);
+    
+    DrawTextEx(uiFont, "НАСТРОЙКИ ПРИЦЕЛА", { TitleX, TitleY }, TitleFontSize, 1, UITheme::ACCENT);
 
-    UITheme::DrawTitledGroup(uiFont, { 40, 140, 350, 210 }, "ФОРМА");
-    UIWidgets::DrawSliderBox(uiFont, 60, 180, "Длина линий", &settings.crosshair.length, 0.0f, 20.0f, lenBuffer, &lenEdit, true);
-    UIWidgets::DrawSliderBox(uiFont, 60, 230, "Толщина", &settings.crosshair.thickness, 1.0f, 10.0f, thicBuffer, &thicEdit, true);
-    UIWidgets::DrawSliderBox(uiFont, 60, 280, "Отступ (Gap)", &settings.crosshair.gap, 0.0f, 20.0f, gapBuffer, &gapEdit, true);
+    UITheme::DrawTitledGroup(uiFont, { GroupX, Crosshair::FormGroupY, GroupWidth, Crosshair::FormGroupH }, "ФОРМА");
+    isDirty |= UIWidgets::DrawSliderBox(uiFont, Crosshair::FormLabelX, Crosshair::FormLabelStartY, "Длина линий", &settings.crosshair.length, 0.0f, 20.0f, lenBuffer, &lenEdit, true);
+    isDirty |= UIWidgets::DrawSliderBox(uiFont, Crosshair::FormLabelX, Crosshair::FormLabelStartY + Crosshair::FormRowSpacing, "Толщина", &settings.crosshair.thickness, 1.0f, 10.0f, thicBuffer, &thicEdit, true);
+    isDirty |= UIWidgets::DrawSliderBox(uiFont, Crosshair::FormLabelX, Crosshair::FormLabelStartY + Crosshair::FormRowSpacing * 2, "Отступ (Gap)", &settings.crosshair.gap, 0.0f, 20.0f, gapBuffer, &gapEdit, true);
 
-    UITheme::DrawTitledGroup(uiFont, { 40, 370, 350, 100 }, "ДОПОЛНИТЕЛЬНО");
-    GuiCheckBox({ 60, 400, 20, 20 }, "Центральная точка", &settings.crosshair.dot);
-    GuiCheckBox({ 60, 430, 20, 20 }, "Обводка (Outline)", &settings.crosshair.outline);
+    UITheme::DrawTitledGroup(uiFont, { GroupX, Crosshair::ExtraGroupY, GroupWidth, Crosshair::ExtraGroupH }, "ДОПОЛНИТЕЛЬНО");
+    
+    bool oldDot = settings.crosshair.dot;
+    GuiCheckBox({ Crosshair::ExtraCheckboxX, Crosshair::ExtraCheckbox1Y, 20, 20 }, "Центральная точка", &settings.crosshair.dot);
+    bool oldOutline = settings.crosshair.outline;
+    GuiCheckBox({ Crosshair::ExtraCheckboxX, Crosshair::ExtraCheckbox2Y, 20, 20 }, "Обводка (Outline)", &settings.crosshair.outline);
+    if (oldDot != settings.crosshair.dot || oldOutline != settings.crosshair.outline) isDirty = true;
 
-    UITheme::DrawTitledGroup(uiFont, { 40, 490, 350, 90 }, "ЦВЕТ ПРИЦЕЛА");
+    UITheme::DrawTitledGroup(uiFont, { GroupX, Crosshair::ColorGroupY, GroupWidth, Crosshair::ColorGroupH }, "ЦВЕТ ПРИЦЕЛА");
     Color colors[] = { WHITE, BLACK, YELLOW, PINK, SKYBLUE, ORANGE, RED };
-    UIWidgets::DrawColorPickerRow(60, 520, &settings.crosshair.color, colors, 7);
+    isDirty |= UIWidgets::DrawColorPickerRow(Crosshair::ColorPickerX, Crosshair::ColorPickerY, &settings.crosshair.color, colors, 7);
 
-    Rectangle previewBox = { 420, 140, 500, 440 };
-    DrawRectangleRounded(previewBox, 0.02f, 4, Color{ 30, 35, 40, 255 });
-    DrawRectangleLinesEx(previewBox, 2.0f, UITheme::BORDER);
-    DrawLineEx({previewBox.x, previewBox.y + 300}, {previewBox.x + previewBox.width, previewBox.y + 300}, 2.0f, UITheme::BORDER);
+    // ... (тут оставь весь код отрисовки превью прицела, он не меняется) ...
+    Rectangle previewBox = { Crosshair::PreviewX, Crosshair::PreviewY, Crosshair::PreviewW, Crosshair::PreviewH };
+    DrawRectangleRounded(previewBox, Crosshair::PreviewRoundness, 4, Color{ 30, 35, 40, 255 });
+    DrawRectangleLinesEx(previewBox, Crosshair::PreviewBorderThickness, UITheme::BORDER);
+    DrawLineEx({previewBox.x, previewBox.y + Crosshair::PreviewFloorY}, {previewBox.x + previewBox.width, previewBox.y + Crosshair::PreviewFloorY}, 2.0f, UITheme::BORDER);
 
-    float cx = previewBox.x + previewBox.width / 2.0f, cy = previewBox.y + previewBox.height / 2.0f - 50;
+    float cx = previewBox.x + previewBox.width / 2.0f;
+    float cy = previewBox.y + previewBox.height / 2.0f + Crosshair::PreviewCenterYOffset;
     Color col = settings.crosshair.color;
     float len = settings.crosshair.length, thic = settings.crosshair.thickness, gap = settings.crosshair.gap;
 
@@ -42,7 +57,4 @@ void CrosshairSettingsScreen::Draw(Font uiFont, ScreenManager& manager) {
     DrawRectanglePro({cx - gap - len/2.0f, cy, len, thic}, {len/2.0f, thic/2.0f}, 0.0f, col);
     DrawRectanglePro({cx + gap + len/2.0f, cy, len, thic}, {len/2.0f, thic/2.0f}, 0.0f, col);
     if (settings.crosshair.dot) DrawRectanglePro({cx, cy, thic, thic}, {thic/2.0f, thic/2.0f}, 0.0f, col);
-
-    static float lastSaveTime = 0.0f;
-    if (GetTime() - lastSaveTime > 2.0f) { settings.Save(); lastSaveTime = GetTime(); }
 }

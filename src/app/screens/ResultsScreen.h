@@ -16,7 +16,6 @@ private:
     
     void DrawStats(Font uiFont, Rectangle panelRect, const TrainingSession& session) const;
     
-    // Individual stat drawers
     void DrawTimeResult(Font font, float labelX, float valueX, float y) const;
     void DrawSpawnedResult(Font font, float labelX, float valueX, float y, const TrainingSession& session) const;
     void DrawPoppedResult(Font font, float labelX, float valueX, float y, const TrainingSession& session) const;

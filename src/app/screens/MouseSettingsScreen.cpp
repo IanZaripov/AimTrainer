@@ -3,16 +3,47 @@
 #include "UITheme.h"
 #include "UIWidgets.h"
 
+void MouseSettingsScreen::Update(ScreenManager& manager) {
+    if (isDirty) {
+        manager.GetSettings().Save();
+        isDirty = false;
+    }
+}
+
 void MouseSettingsScreen::Draw(Font uiFont, ScreenManager& manager) {
     auto& settings = manager.GetSettings();
-    DrawTextEx(uiFont, "НАСТРОЙКИ МЫШИ", { 40, 90 }, 24, 1, UITheme::ACCENT);
 
-    UITheme::DrawTitledGroup(uiFont, { 40, 140, 350, 100 }, "СЕНСА (VALORANT)");
-    UIWidgets::DrawSliderBox(uiFont, 60, 180, "Чувствительность", &settings.mouse.valorantSens, 0.1f, 8.0f, sensBuffer, &sensEditMode, false, 3);
+    DrawTitle(uiFont);
+    
+    isDirty |= DrawSensitivityGroup(uiFont, settings);
+    isDirty |= DrawMultiplierGroup(uiFont, settings);
+}
 
-    UITheme::DrawTitledGroup(uiFont, { 40, 260, 350, 100 }, "МНОЖИТЕЛЬ (ПОДГОНКА)");
-    UIWidgets::DrawSliderBox(uiFont, 60, 300, "Множитель", &settings.mouse.sensMultiplier, 0.5f, 5.0f, multBuffer, &multEditMode);
+void MouseSettingsScreen::DrawTitle(Font uiFont) const {
+    using namespace UITheme::Screens::Settings;
+    DrawTextEx(uiFont, "НАСТРОЙКИ МЫШИ", { TitleX, TitleY }, TitleFontSize, 1, UITheme::ACCENT);
+}
 
-    static float lastSaveTime = 0.0f;
-    if (GetTime() - lastSaveTime > 2.0f) { settings.Save(); lastSaveTime = GetTime(); }
+bool MouseSettingsScreen::DrawSensitivityGroup(Font uiFont, Settings& settings) {
+    using namespace UITheme::Screens::Settings;
+    
+    UITheme::DrawTitledGroup(uiFont, { GroupX, Mouse::SensGroupY, GroupWidth, Mouse::SensGroupH }, "СЕНСА (VALORANT)");
+    return UIWidgets::DrawSliderBox(
+        uiFont, Mouse::SensLabelX, Mouse::SensLabelY, 
+        "Чувствительность", 
+        &settings.mouse.valorantSens, 0.1f, 8.0f, 
+        sensBuffer, &sensEditMode, false, 3
+    );
+}
+
+bool MouseSettingsScreen::DrawMultiplierGroup(Font uiFont, Settings& settings) {
+    using namespace UITheme::Screens::Settings;
+    
+    UITheme::DrawTitledGroup(uiFont, { GroupX, Mouse::MultGroupY, GroupWidth, Mouse::MultGroupH }, "МНОЖИТЕЛЬ (ПОДГОНКА)");
+    return UIWidgets::DrawSliderBox(
+        uiFont, Mouse::MultLabelX, Mouse::MultLabelY, 
+        "Множитель", 
+        &settings.mouse.sensMultiplier, 0.5f, 5.0f, 
+        multBuffer, &multEditMode
+    );
 }

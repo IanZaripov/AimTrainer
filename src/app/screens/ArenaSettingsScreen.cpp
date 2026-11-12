@@ -4,36 +4,45 @@
 #include "UIWidgets.h"
 #include <cmath>
 
+void ArenaSettingsScreen::Update(ScreenManager& manager) {
+    if (isDirty) {
+        manager.GetSettings().Save();
+        isDirty = false;
+    }
+}
+
 void ArenaSettingsScreen::Draw(Font uiFont, ScreenManager& manager) {
+    using namespace UITheme::Screens::Settings;
     auto& settings = manager.GetSettings();
-    DrawTextEx(uiFont, "НАСТРОЙКИ АРЕНЫ", { 40, 90 }, 24, 1, UITheme::ACCENT);
+    
+    DrawTextEx(uiFont, "НАСТРОЙКИ АРЕНЫ", { TitleX, TitleY }, TitleFontSize, 1, UITheme::ACCENT);
 
-    UITheme::DrawTitledGroup(uiFont, { 40, 140, 350, 100 }, "ДИСТАНЦИЯ ДО ЦЕЛЕЙ");
-    UIWidgets::DrawSliderBox(uiFont, 60, 180, "Метры", &settings.arena.distance, 5.0f, 30.0f, distBuffer, &distEdit, true);
+    UITheme::DrawTitledGroup(uiFont, { GroupX, ArenaSettings::DistGroupY, GroupWidth, ArenaSettings::DistGroupH }, "ДИСТАНЦИЯ ДО ЦЕЛЕЙ");
+    isDirty |= UIWidgets::DrawSliderBox(uiFont, ArenaSettings::DistLabelX, ArenaSettings::DistLabelY, "Метры", &settings.arena.distance, 5.0f, 30.0f, distBuffer, &distEdit, true);
 
-    UITheme::DrawTitledGroup(uiFont, { 40, 260, 350, 100 }, "ЦВЕТ ШАРОВ");
+    UITheme::DrawTitledGroup(uiFont, { GroupX, ArenaSettings::ColorGroupY, GroupWidth, ArenaSettings::ColorGroupH }, "ЦВЕТ ШАРОВ");
     Color colors[] = { { 0, 220, 255, 255 }, WHITE, YELLOW, PINK, ORANGE, RED, GREEN };
-    UIWidgets::DrawColorPickerRow(60, 300, &settings.arena.ballColor, colors, 7);
+    isDirty |= UIWidgets::DrawColorPickerRow(ArenaSettings::ColorPickerX, ArenaSettings::ColorPickerY, &settings.arena.ballColor, colors, 7);
 
-    UITheme::DrawTitledGroup(uiFont, { 40, 380, 350, 100 }, "РАЗМЕР ШАРОВ");
-    UIWidgets::DrawSliderBox(uiFont, 60, 420, "Радиус (метры)", &settings.arena.targetRadius, 0.02f, 2.0f, sizeBuffer, &sizeEdit, false);
+    UITheme::DrawTitledGroup(uiFont, { GroupX, ArenaSettings::SizeGroupY, GroupWidth, ArenaSettings::SizeGroupH }, "РАЗМЕР ШАРОВ");
+    isDirty |= UIWidgets::DrawSliderBox(uiFont, ArenaSettings::SizeLabelX, ArenaSettings::SizeLabelY, "Радиус (метры)", &settings.arena.targetRadius, 0.02f, 2.0f, sizeBuffer, &sizeEdit, false);
 
-    Rectangle previewBox = { 420, 140, 500, 340 };
-    DrawRectangleRounded(previewBox, 0.02f, 4, Color{ 30, 35, 40, 255 });
-    DrawRectangleLinesEx(previewBox, 2.0f, UITheme::BORDER);
-    DrawLineEx({previewBox.x, previewBox.y + 250}, {previewBox.x + previewBox.width, previewBox.y + 250}, 2.0f, UITheme::BORDER);
+    Rectangle previewBox = { ArenaSettings::PreviewX, ArenaSettings::PreviewY, ArenaSettings::PreviewW, ArenaSettings::PreviewH };
+    DrawRectangleRounded(previewBox, ArenaSettings::PreviewRoundness, 4, Color{ 30, 35, 40, 255 });
+    DrawRectangleLinesEx(previewBox, ArenaSettings::PreviewBorderThickness, UITheme::BORDER);
+    DrawLineEx({previewBox.x, previewBox.y + ArenaSettings::PreviewFloorY}, {previewBox.x + previewBox.width, previewBox.y + ArenaSettings::PreviewFloorY}, 2.0f, UITheme::BORDER);
 
-    float cx = previewBox.x + previewBox.width / 2.0f, cy = previewBox.y + previewBox.height / 2.0f - 30;
+    float cx = previewBox.x + previewBox.width / 2.0f;
+    float cy = previewBox.y + previewBox.height / 2.0f + ArenaSettings::PreviewCenterYOffset;
+    
     float aspect = (float)GetRenderWidth() / (float)GetRenderHeight();
     float vFovRad = 2.0f * atanf(tanf((settings.fovDegrees * DEG2RAD) / 2.0f) / aspect);
     float pxRadius = (settings.arena.targetRadius / settings.arena.distance) * (GetRenderHeight() / 2.0f) / tanf(vFovRad / 2.0f);
     if (pxRadius < 0.5f) pxRadius = 0.5f;
 
     DrawCircle(cx, cy, pxRadius, settings.arena.ballColor);
+    
     const char* infoText = TextFormat("Диаметр: %.1f см (%.0f px)", settings.arena.targetRadius * 200.0f, pxRadius * 2.0f);
     float tw = MeasureTextEx(uiFont, infoText, 18, 1).x;
-    DrawTextEx(uiFont, infoText, { previewBox.x + (previewBox.width - tw) / 2.0f, previewBox.y + previewBox.height - 40 }, 18, 1, UITheme::TEXT);
-
-    static float lastSaveTime = 0.0f;
-    if (GetTime() - lastSaveTime > 2.0f) { settings.Save(); lastSaveTime = GetTime(); }
+    DrawTextEx(uiFont, infoText, { previewBox.x + (previewBox.width - tw) / 2.0f, previewBox.y + previewBox.height + ArenaSettings::PreviewInfoYOffset }, 18, 1, UITheme::TEXT);
 }
