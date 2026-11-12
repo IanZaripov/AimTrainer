@@ -5,25 +5,21 @@
 
 class Viewmodel {
 public:
-    // Главный метод, который вызывает TrainingSession
     void Draw(const Camera3D& camera) const;
 
 private:
     Weapon weapon;
     Hands  hands;
 
-    // Вспомогательная структура для осей камеры
     struct CameraBasis {
         Vector3 forward;
         Vector3 right;
         Vector3 up;
     };
 
-    // Управление пространством рендера
     void BeginViewmodelSpace(const Camera3D& camera) const;
     void EndViewmodelSpace() const;
 
-    // Шаги для BeginViewmodelSpace
     CameraBasis CalculateCameraBasis(const Camera3D& camera) const;
     Vector3 CalculateViewmodelPosition(const Camera3D& camera, const CameraBasis& basis) const;
     void ApplyCameraOrientation(const CameraBasis& basis) const;

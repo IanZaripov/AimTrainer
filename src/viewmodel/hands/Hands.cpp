@@ -13,7 +13,7 @@ void Hands::DrawPalm() const {
              HandsConfig::Palm::Size.x, 
              HandsConfig::Palm::Size.y, 
              HandsConfig::Palm::Size.z, 
-             HandsConfig::Palm::Color);
+             HandsConfig::Palm::color);
 }
 
 void Hands::DrawThumb() const {
@@ -21,7 +21,7 @@ void Hands::DrawThumb() const {
              HandsConfig::Thumb::Size.x, 
              HandsConfig::Thumb::Size.y, 
              HandsConfig::Thumb::Size.z, 
-             HandsConfig::Thumb::Color);
+             HandsConfig::Thumb::color);
 }
 
 void Hands::DrawSleeve() const {
@@ -29,5 +29,5 @@ void Hands::DrawSleeve() const {
              HandsConfig::Sleeve::Size.x, 
              HandsConfig::Sleeve::Size.y, 
              HandsConfig::Sleeve::Size.z, 
-             HandsConfig::Sleeve::Color);
+             HandsConfig::Sleeve::color);
 }

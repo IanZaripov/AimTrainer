@@ -13,7 +13,7 @@ void Weapon::DrawSlide() const {
              WeaponConfig::Slide::Size.x, 
              WeaponConfig::Slide::Size.y, 
              WeaponConfig::Slide::Size.z, 
-             WeaponConfig::Slide::Color);
+             WeaponConfig::Slide::color);
 }
 
 void Weapon::DrawBarrel() const {
@@ -22,7 +22,7 @@ void Weapon::DrawBarrel() const {
                    WeaponConfig::Barrel::Radius,
                    WeaponConfig::Barrel::Radius,
                    WeaponConfig::Barrel::Sides,
-                   WeaponConfig::Barrel::Color);
+                   WeaponConfig::Barrel::color);
 }
 
 void Weapon::DrawGrip() const {
@@ -30,5 +30,5 @@ void Weapon::DrawGrip() const {
              WeaponConfig::Grip::Size.x, 
              WeaponConfig::Grip::Size.y, 
              WeaponConfig::Grip::Size.z, 
-             WeaponConfig::Grip::Color);
+             WeaponConfig::Grip::color);
 }
