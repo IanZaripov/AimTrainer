@@ -1,15 +1,15 @@
 #include "ScreenManager.h"
 #include "UITheme.h"
-#include "Audio.h"
 #include "raygui.h"
+#include "Audio.h"
 
-#include "screens/RoutinesScreen.h"
-#include "screens/MouseSettingsScreen.h"
-#include "screens/CrosshairSettingsScreen.h"
-#include "screens/ArenaSettingsScreen.h"
-#include "screens/AudioSettingsScreen.h"
-#include "screens/GameplayScreen.h"
-#include "screens/ResultsScreen.h"
+#include "RoutinesScreen.h"
+#include "MouseSettingsScreen.h"
+#include "CrosshairSettingsScreen.h"
+#include "ArenaSettingsScreen.h"
+#include "AudioSettingsScreen.h"
+#include "GameplayScreen.h"
+#include "ResultsScreen.h"
 
 ScreenManager::ScreenManager() : session(settings) {
     settings.Load();

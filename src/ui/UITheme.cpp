@@ -12,7 +12,7 @@ namespace UITheme {
     }
 
     void SetupDefaultStyle() {
-        // Базовые настройки для всех элементов (текст, фон, рамки)
+        // Basic settings for all elements (text, background, frames)
         GuiSetStyle(DEFAULT, TEXT_COLOR_NORMAL, ColorToInt(TEXT));
         GuiSetStyle(DEFAULT, BORDER_COLOR_NORMAL, ColorToInt(BORDER));
         GuiSetStyle(DEFAULT, BASE_COLOR_NORMAL, ColorToInt(PANEL));

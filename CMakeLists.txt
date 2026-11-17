@@ -19,20 +19,20 @@ set(APP_FILES
     src/app/ScreenManager.h
     src/app/ScreenManager.cpp
     src/app/IScreen.h
-    src/app/screens/RoutinesScreen.h
-    src/app/screens/RoutinesScreen.cpp
-    src/app/screens/MouseSettingsScreen.h
-    src/app/screens/MouseSettingsScreen.cpp
-    src/app/screens/CrosshairSettingsScreen.h
-    src/app/screens/CrosshairSettingsScreen.cpp
-    src/app/screens/ArenaSettingsScreen.h
-    src/app/screens/ArenaSettingsScreen.cpp
-    src/app/screens/AudioSettingsScreen.h
-    src/app/screens/AudioSettingsScreen.cpp
-    src/app/screens/GameplayScreen.h
-    src/app/screens/GameplayScreen.cpp
-    src/app/screens/ResultsScreen.h
-    src/app/screens/ResultsScreen.cpp
+    src/app/screens/RoutinesScreen/RoutinesScreen.h
+    src/app/screens/RoutinesScreen/RoutinesScreen.cpp
+    src/app/screens/MouseSettingsScreen/MouseSettingsScreen.h
+    src/app/screens/MouseSettingsScreen/MouseSettingsScreen.cpp
+    src/app/screens/CrosshairSettingsScreen/CrosshairSettingsScreen.h
+    src/app/screens/CrosshairSettingsScreen/CrosshairSettingsScreen.cpp
+    src/app/screens/ArenaSettingsScreen/ArenaSettingsScreen.h
+    src/app/screens/ArenaSettingsScreen/ArenaSettingsScreen.cpp
+    src/app/screens/AudioSettingsScreen/AudioSettingsScreen.h
+    src/app/screens/AudioSettingsScreen/AudioSettingsScreen.cpp
+    src/app/screens/GameplayScreen/GameplayScreen.h
+    src/app/screens/GameplayScreen/GameplayScreen.cpp
+    src/app/screens/ResultsScreen/ResultsScreen.h
+    src/app/screens/ResultsScreen/ResultsScreen.cpp
 )
 
 # --- Audio ---
@@ -161,7 +161,13 @@ source_group("UI/Cards"         FILES ${CARDS_FILES})
 target_include_directories(AimTrainer PRIVATE
     src
     src/app
-    src/app/screens
+    src/app/screens/RoutinesScreen
+    src/app/screens/MouseSettingsScreen
+    src/app/screens/CrosshairSettingsScreen
+    src/app/screens/ArenaSettingsScreen
+    src/app/screens/AudioSettingsScreen
+    src/app/screens/GameplayScreen
+    src/app/screens/ResultsScreen
     src/audio
     src/training
     src/training/target
