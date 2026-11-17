@@ -4,6 +4,7 @@
 #include "BouncingMode.h"
 #include "TimedMode.h"
 #include "MultiStaticMode.h"
+#include "Audio.h"
 #include <cmath>
 #include <algorithm>
 
@@ -117,6 +118,7 @@ void TrainingSession::HandleShoot() {
         if (!t.active) continue;
         if (GetRayCollisionSphere(ray, t.position, settings.arena.targetRadius).hit) {
             t.Hit();
+            Audio::PlayPop();
             session.poppedCount++;
             session.hits++;
 

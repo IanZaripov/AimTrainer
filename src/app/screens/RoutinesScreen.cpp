@@ -2,6 +2,7 @@
 #include "ScreenManager.h"
 #include "UITheme.h"
 #include "Settings.h"
+#include "Audio.h"
 
 RoutinesScreen::RoutinesScreen() {
     using namespace UITheme::Card::Grid;
@@ -21,6 +22,7 @@ void RoutinesScreen::Update(ScreenManager& manager) {
     
     for (auto& card : cards) {
         if (card->WasClicked()) {
+            Audio::PlayClick();
             manager.GetSession().StartTraining(card->GetMode());
             manager.GoTo(ScreenID::PLAYING);
             card->ResetClicked();

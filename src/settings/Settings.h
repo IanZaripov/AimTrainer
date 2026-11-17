@@ -1,5 +1,6 @@
 #pragma once
 #include "raylib.h"
+#include <fstream>
 
 struct MouseConfig {
     float valorantSens = 0.520f; 
@@ -18,14 +19,37 @@ struct CrosshairConfig {
 struct TargetConfig {
     Color ballColor = { 0, 220, 255, 255 };
     float distance = 15.0f;
-    float targetRadius = 0.11f; 
+    float targetRadius = 0.30f; 
     int   timedDifficulty = 1;
 };
 
-struct Settings {
+struct AudioConfig {
+    float uiVolume = 0.5f;
+    float popVolume   = 0.5f;
+    float arenaVolume = 0.5f;
+};
+
+class Settings {
+private:
+    // Load methods
+    void LoadMouse(std::ifstream& file);
+    void LoadCrosshair(std::ifstream& file);
+    void LoadArena(std::ifstream& file);
+    void LoadAudio(std::ifstream& file);
+    
+    // Save methods
+    void SaveMouse(std::ofstream& file) const;
+    void SaveCrosshair(std::ofstream& file) const;
+    void SaveArena(std::ofstream& file) const;
+    void SaveAudio(std::ofstream& file) const;
+
+    // Validation
+    void Sanitize();
+public:
     MouseConfig     mouse;
     CrosshairConfig crosshair;
     TargetConfig    arena;
+    AudioConfig     audio;
     
     float fovDegrees = 103.0f;
     float headRadius = 0.11f; 

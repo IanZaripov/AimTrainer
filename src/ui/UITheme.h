@@ -19,13 +19,12 @@ namespace UITheme {
         constexpr float ButtonW  = 120.0f;
         constexpr float ButtonH  = 30.0f;
         constexpr float PaddingX = 20.0f;
-        constexpr float TitleY   = 18.0f;
-        constexpr float TitleFontSize = 24.0f;
 
-        constexpr float Nav1X = 20.0f;
-        constexpr float Nav2X = 150.0f;
-        constexpr float Nav3X = 280.0f;
-        constexpr float Nav4X = 410.0f;
+        constexpr float Nav1X = 20.0f;   // Trainings
+        constexpr float Nav2X = 150.0f;  // Arena
+        constexpr float Nav3X = 280.0f;  // Mouse
+        constexpr float Nav4X = 410.0f;  // Crosshair
+        constexpr float Nav5X = 540.0f;  // Audio
     }
 
     inline float GetRightButtonX() { 
@@ -184,6 +183,23 @@ namespace UITheme {
                 constexpr float PreviewRoundness = 0.02f;
                 constexpr float PreviewBorderThickness = 2.0f;
             }
+            
+            namespace AudioSettings {
+                constexpr float UIGroupY    = 140.0f;
+                constexpr float UIGroupH    = 100.0f;
+                constexpr float UILabelX    = 60.0f;
+                constexpr float UILabelY    = 180.0f;
+
+                constexpr float PopGroupY   = 260.0f;
+                constexpr float PopGroupH   = 100.0f;
+                constexpr float PopLabelX   = 60.0f;
+                constexpr float PopLabelY   = 300.0f;
+
+                constexpr float ArenaGroupY = 380.0f;
+                constexpr float ArenaGroupH = 100.0f;
+                constexpr float ArenaLabelX = 60.0f;
+                constexpr float ArenaLabelY = 420.0f;
+            }
         }
 
         namespace Results {
@@ -211,6 +227,7 @@ namespace UITheme {
             constexpr float BtnWidth = 180.0f;
             constexpr float BtnHeight = 40.0f;
         }
+        
     }
 
     void Setup();

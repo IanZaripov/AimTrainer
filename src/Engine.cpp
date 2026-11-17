@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include "UITheme.h"
+#include "Audio.h"
 
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
@@ -10,6 +11,7 @@ Engine::Engine() {
     LoadFontsResources();
     SetupUI();
     SetupRenderTarget();
+    Audio::Init();
     screenManager = std::make_unique<ScreenManager>();
 }
 
@@ -80,6 +82,7 @@ void Engine::SetupRenderTarget() {
 }
 
 void Engine::Shutdown() {
+    Audio::Close();
     UnloadRenderTexture(renderTarget);
     UnloadFont(uiFont);
     CloseWindow();

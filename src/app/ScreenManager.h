@@ -9,7 +9,8 @@ enum class ScreenID {
     ROUTINES, 
     SETTINGS_MOUSE, 
     SETTINGS_CROSSHAIR, 
-    SETTINGS_ARENA, 
+    SETTINGS_ARENA,
+    SETTINGS_AUDIO, 
     PLAYING, 
     RESULTS 
 };

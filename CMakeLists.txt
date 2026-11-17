@@ -27,13 +27,21 @@ set(APP_FILES
     src/app/screens/CrosshairSettingsScreen.cpp
     src/app/screens/ArenaSettingsScreen.h
     src/app/screens/ArenaSettingsScreen.cpp
+    src/app/screens/AudioSettingsScreen.h
+    src/app/screens/AudioSettingsScreen.cpp
     src/app/screens/GameplayScreen.h
     src/app/screens/GameplayScreen.cpp
     src/app/screens/ResultsScreen.h
     src/app/screens/ResultsScreen.cpp
 )
 
-# --- Training (Core) ---
+# --- Audio ---
+set(AUDIO_FILES
+    src/audio/Audio.h
+    src/audio/Audio.cpp
+)
+
+# --- Training ---
 set(TRAINING_FILES
     src/training/TrainingSession.h
     src/training/TrainingSession.cpp
@@ -41,7 +49,7 @@ set(TRAINING_FILES
     src/training/GameMode.h
 )
 
-# --- Targets (Entities) ---
+# --- Targets ---
 set(TARGET_FILES
     src/training/target/Target3D.h
     src/training/target/Target3D.cpp
@@ -123,6 +131,7 @@ add_executable(AimTrainer)
 target_sources(AimTrainer PRIVATE
     ${INFRA_FILES}
     ${APP_FILES}
+    ${AUDIO_FILES}
     ${TRAINING_FILES}
     ${TARGET_FILES}
     ${MODES_FILES}
@@ -137,6 +146,7 @@ target_sources(AimTrainer PRIVATE
 
 source_group("Infrastructure"   FILES ${INFRA_FILES})
 source_group("Application"      FILES ${APP_FILES})
+source_group("Audio"            FILES ${AUDIO_FILES})
 source_group("Training"         FILES ${TRAINING_FILES})
 source_group("Training/Targets" FILES ${TARGET_FILES})
 source_group("Training/Modes"   FILES ${MODES_FILES})
@@ -152,6 +162,7 @@ target_include_directories(AimTrainer PRIVATE
     src
     src/app
     src/app/screens
+    src/audio
     src/training
     src/training/target
     src/training/modes
