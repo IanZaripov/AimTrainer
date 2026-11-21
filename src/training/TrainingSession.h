@@ -48,7 +48,10 @@ public:
     int GetShotsFired() const { return session.shotsFired; }
     int GetHits() const { return session.hits; }
     float GetSessionTime() const { return session.sessionTime; }
-    float GetCurrentAccuracy() const;
+    float GetCurrentAccuracy() const{
+            return activeMode->GetAccuracy(session.shotsFired, session.hits, session.spawnedBalls, 
+                                           session.trackTimeOnTarget, session.trackTimeTotal);
+    }
 
 private:
     void UpdateCameraAngles();

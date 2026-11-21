@@ -12,6 +12,32 @@ namespace UITheme {
 
     constexpr int VirtualHeight = 1080;
 
+    // --- Pause Menu ---
+        namespace PauseMenu {
+            constexpr float PanelWidth = 400.0f;
+            constexpr float PanelHeight = 360.0f;
+            constexpr float PanelRoundness = 0.05f;
+            constexpr int PanelSegments = 4;
+            constexpr float PanelBorderThickness = 2.0f;
+
+            constexpr float HeaderFontSize = 32.0f;
+            constexpr float HeaderYOffset = 20.0f;
+            constexpr float SeparatorYOffset = 65.0f;
+            constexpr float SeparatorPaddingX = 20.0f;
+            constexpr float SeparatorThickness = 1.0f;
+
+            constexpr float StatsStartYOffset = 85.0f;
+            constexpr float StatsLabelXOffset = 40.0f;
+            constexpr float StatsValueXOffset = 40.0f;
+            constexpr float StatsFontSize = 20.0f;
+            constexpr float StatsRowSpacing = 35.0f;
+
+            constexpr float BtnWidth = 300.0f;
+            constexpr float BtnHeight = 40.0f;
+            constexpr float BtnSpacing = 10.0f;
+            constexpr float BtnStartYOffset = 200.0f;
+        }
+
     // --- Top Navigation Bar ---
     namespace TopBar {
         constexpr float Height   = 60.0f;

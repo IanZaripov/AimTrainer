@@ -17,7 +17,6 @@ void GameplayScreen::Update(ScreenManager& manager) {
         return;
     }
 
-    // Стандартное обновление игры
     session.Update();
 
     if (!session.IsTrainingActive()) {
@@ -37,63 +36,93 @@ void GameplayScreen::Draw(Font uiFont, ScreenManager& manager) {
     }
 }
 
+// --- Pause Menu Logic ---
+
 void GameplayScreen::DrawPauseMenu(Font uiFont, ScreenManager& manager) {
+    Rectangle panelRect = GetPausePanelRect();
     auto& session = manager.GetSession();
 
-    // 1. Затемняем экран
+    DrawPauseOverlay();
+    DrawPausePanel(panelRect);
+    DrawPauseHeader(uiFont, panelRect);
+    DrawPauseStats(uiFont, panelRect, session);
+    DrawPauseButtons(uiFont, panelRect, manager);
+}
+
+Rectangle GameplayScreen::GetPausePanelRect() const {
+    using namespace UITheme::PauseMenu;
+    return { 
+        GetRenderWidth() / 2.0f - PanelWidth / 2.0f, 
+        GetRenderHeight() / 2.0f - PanelHeight / 2.0f, 
+        PanelWidth, 
+        PanelHeight 
+    };
+}
+
+void GameplayScreen::DrawPauseOverlay() const {
     DrawRectangle(0, 0, GetRenderWidth(), GetRenderHeight(), Fade(BLACK, 0.7f));
+}
 
-    // 2. Панель
-    float pw = 400.0f;
-    float ph = 360.0f;
-    float px = GetRenderWidth() / 2.0f - pw / 2.0f;
-    float py = GetRenderHeight() / 2.0f - ph / 2.0f;
+void GameplayScreen::DrawPausePanel(Rectangle panelRect) const {
+    using namespace UITheme::PauseMenu;
+    DrawRectangleRounded(panelRect, PanelRoundness, PanelSegments, UITheme::PANEL);
+    DrawRectangleLinesEx(panelRect, PanelBorderThickness, UITheme::ACCENT);
+}
 
-    DrawRectangleRounded({ px, py, pw, ph }, 0.05f, 4, UITheme::PANEL);
-    DrawRectangleLinesEx({ px, py, pw, ph }, 2.0f, UITheme::ACCENT);
-
-    // 3. Заголовок
+void GameplayScreen::DrawPauseHeader(Font uiFont, Rectangle panelRect) const {
+    using namespace UITheme::PauseMenu;
     const char* title = "ПАУЗА";
-    float tw = MeasureTextEx(uiFont, title, 32, 1).x;
-    DrawTextEx(uiFont, title, { px + (pw - tw) / 2.0f, py + 20.0f }, 32, 1, UITheme::ACCENT);
-    DrawLineEx({ px + 20, py + 65 }, { px + pw - 20, py + 65 }, 1.0f, UITheme::BORDER);
+    float tw = MeasureTextEx(uiFont, title, HeaderFontSize, 1).x;
+    
+    DrawTextEx(uiFont, title, { panelRect.x + (panelRect.width - tw) / 2.0f, panelRect.y + HeaderYOffset }, HeaderFontSize, 1, UITheme::ACCENT);
+    DrawLineEx(
+        { panelRect.x + SeparatorPaddingX, panelRect.y + SeparatorYOffset }, 
+        { panelRect.x + panelRect.width - SeparatorPaddingX, panelRect.y + SeparatorYOffset }, 
+        SeparatorThickness, 
+        UITheme::BORDER
+    );
+}
 
-    // 4. Статистика
-    float textY = py + 85.0f;
-    float labelX = px + 40.0f;
-    float valueX = px + pw - 40.0f;
+void GameplayScreen::DrawPauseStats(Font uiFont, Rectangle panelRect, const TrainingSession& session) const {
+    using namespace UITheme::PauseMenu;
+    
+    float textY = panelRect.y + StatsStartYOffset;
+    float labelX = panelRect.x + StatsLabelXOffset;
+    float valueX = panelRect.x + panelRect.width - StatsValueXOffset;
 
     auto DrawStatRow = [&](const char* label, const char* value) {
-        DrawTextEx(uiFont, label, { labelX, textY }, 20, 1, UITheme::TEXT);
-        float valW = MeasureTextEx(uiFont, value, 20, 1).x;
-        DrawTextEx(uiFont, value, { valueX - valW, textY }, 20, 1, WHITE);
-        textY += 35.0f;
+        DrawTextEx(uiFont, label, { labelX, textY }, StatsFontSize, 1, UITheme::TEXT);
+        float valW = MeasureTextEx(uiFont, value, StatsFontSize, 1).x;
+        DrawTextEx(uiFont, value, { valueX - valW, textY }, StatsFontSize, 1, WHITE);
+        textY += StatsRowSpacing;
     };
 
     DrawStatRow("Время:", TextFormat("%.1f сек", session.GetSessionTime()));
     DrawStatRow("Счет:", TextFormat("%d", session.GetPoppedCount()));
     DrawStatRow("Точность:", TextFormat("%.1f%%", session.GetCurrentAccuracy()));
+}
 
-    // 5. Кнопки
-    float btnW = 300.0f;
-    float btnX = px + pw / 2.0f - btnW / 2.0f;
-    float btnY = py + 200.0f;
+void GameplayScreen::DrawPauseButtons(Font uiFont, Rectangle panelRect, ScreenManager& manager) {
+    using namespace UITheme::PauseMenu;
+    auto& session = manager.GetSession();
 
-    if (GuiButton({ btnX, btnY, btnW, 40.0f }, "ПРОДОЛЖИТЬ")) {
+    float btnX = panelRect.x + panelRect.width / 2.0f - BtnWidth / 2.0f;
+    float btnY = panelRect.y + BtnStartYOffset;
+
+    if (GuiButton({ btnX, btnY, BtnWidth, BtnHeight }, "ПРОДОЛЖИТЬ")) {
         Audio::PlayClick();
         isPaused = false;
         DisableCursor();
     }
-    if (GuiButton({ btnX, btnY + 50.0f, btnW, 40.0f }, "ЗАНОВО")) {
+    if (GuiButton({ btnX, btnY + BtnHeight + BtnSpacing, BtnWidth, BtnHeight }, "ЗАНОВО")) {
         Audio::PlayClick();
         isPaused = false;
         session.StartTraining(session.GetCurrentMode());
         DisableCursor();
     }
-    if (GuiButton({ btnX, btnY + 100.0f, btnW, 40.0f }, "В МЕНЮ")) {
+    if (GuiButton({ btnX, btnY + (BtnHeight + BtnSpacing) * 2.0f, BtnWidth, BtnHeight }, "В МЕНЮ")) {
         Audio::PlayClick();
         isPaused = false;
         session.EndSession(GameExitReason::UserQuit);
-        // Следующий кадр Update увидит, что сессия неактивна, и переключит на меню
     }
 }

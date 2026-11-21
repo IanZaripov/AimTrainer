@@ -49,13 +49,10 @@ void TrainingSession::EndSession(GameExitReason reason) {
     EnableCursor();
 }
 
-float TrainingSession::GetCurrentAccuracy() const {
-    return activeMode->GetAccuracy(session.shotsFired, session.hits, session.spawnedBalls, 
-                                   session.trackTimeOnTarget, session.trackTimeTotal);
-}
-
 void TrainingSession::Update() {
-    if (!session.isActive) return;
+    if (!session.isActive){
+        return;
+    }
 
     float dt = GetFrameTime();
     session.sessionTime += dt;
