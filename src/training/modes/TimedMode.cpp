@@ -47,5 +47,6 @@ int TimedMode::OnHit(TargetPool& pool, const Settings& settings) {
 }
 
 float TimedMode::GetAccuracy(int shots, int hits, int spawned, float trackTime, float trackTotal) const {
-    return (spawned > 0) ? 100.0f * hits / spawned : 0.0f;
+    if (spawned <= 1) return 0.0f;
+    return 100.0f * hits / (float)(spawned - 1);
 }

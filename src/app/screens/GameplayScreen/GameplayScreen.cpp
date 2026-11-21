@@ -27,7 +27,7 @@ void GameplayScreen::Update(ScreenManager& manager) {
         }
     }
 }
-
+    
 void GameplayScreen::Draw(Font uiFont, ScreenManager& manager) {
     manager.GetSession().Draw(uiFont);
 

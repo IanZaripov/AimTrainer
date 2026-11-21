@@ -40,7 +40,12 @@ void TrainingSession::StartTraining(GameMode mode) {
     }
 
     activeMode->OnStart(targetPool, settings);
-    session.spawnedBalls += (int)targetPool.GetAll().size();
+    
+    int initialSpawns = 0;
+    for (const auto& t : targetPool.GetAll()) {
+        if (t.active) initialSpawns++;
+    }
+    session.spawnedBalls += initialSpawns;
 }
 
 void TrainingSession::EndSession(GameExitReason reason) {

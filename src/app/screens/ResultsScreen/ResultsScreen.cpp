@@ -77,7 +77,7 @@ void ResultsScreen::DrawPoppedResult(Font font, float labelX, float valueX, floa
 }
 
 void ResultsScreen::DrawAccuracyResult(Font font, float labelX, float valueX, float y, const TrainingSession& session) const {
-    float accuracy = (session.GetSpawnedBalls() > 0) ? 100.0f * session.GetPoppedCount() / session.GetSpawnedBalls() : 0.0f;
+    float accuracy = session.GetCurrentAccuracy();
     
     DrawTextEx(font, "Точность:", { labelX, y }, UITheme::Screens::Results::StatFontSize, 1, UITheme::TEXT);
     DrawTextEx(font, TextFormat("%.1f%%", accuracy), { valueX, y }, UITheme::Screens::Results::StatFontSize, 1, WHITE);
