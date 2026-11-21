@@ -48,6 +48,7 @@ public:
     int GetShotsFired() const { return session.shotsFired; }
     int GetHits() const { return session.hits; }
     float GetSessionTime() const { return session.sessionTime; }
+    float GetCurrentAccuracy() const;
 
 private:
     void UpdateCameraAngles();

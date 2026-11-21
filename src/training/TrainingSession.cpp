@@ -49,13 +49,13 @@ void TrainingSession::EndSession(GameExitReason reason) {
     EnableCursor();
 }
 
+float TrainingSession::GetCurrentAccuracy() const {
+    return activeMode->GetAccuracy(session.shotsFired, session.hits, session.spawnedBalls, 
+                                   session.trackTimeOnTarget, session.trackTimeTotal);
+}
+
 void TrainingSession::Update() {
     if (!session.isActive) return;
-
-    if (IsKeyPressed(KEY_ESCAPE)) {
-        EndSession(GameExitReason::UserQuit);
-        return;
-    }
 
     float dt = GetFrameTime();
     session.sessionTime += dt;
@@ -136,6 +136,5 @@ void TrainingSession::Draw(Font uiFont) const {
     viewmodel.Draw(camera);
     EndMode3D();
 
-    float accuracy = activeMode->GetAccuracy(session.shotsFired, session.hits, session.spawnedBalls, session.trackTimeOnTarget, session.trackTimeTotal);
-    hud.Draw(uiFont, settings.crosshair, session.poppedCount, accuracy, session.sessionTime);
+    hud.Draw(uiFont, settings.crosshair, session.poppedCount, GetCurrentAccuracy(), session.sessionTime);
 }
