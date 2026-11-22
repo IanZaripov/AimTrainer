@@ -11,6 +11,11 @@ void Settings::Load(const char* filename) {
     LoadArena(file);
     LoadAudio(file);
 
+    int langInt = 0;
+    if (file >> langInt) {
+        language = static_cast<Language>(langInt);
+    }
+
     Sanitize();
 }
 
@@ -24,6 +29,7 @@ void Settings::Save(const char* filename) const {
     SaveCrosshair(file);
     SaveArena(file);
     SaveAudio(file);
+    file << (int)language << "\n";
 }
 
 // ==========================================

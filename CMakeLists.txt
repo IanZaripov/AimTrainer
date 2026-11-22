@@ -29,10 +29,18 @@ set(APP_FILES
     src/app/screens/ArenaSettingsScreen/ArenaSettingsScreen.cpp
     src/app/screens/AudioSettingsScreen/AudioSettingsScreen.h
     src/app/screens/AudioSettingsScreen/AudioSettingsScreen.cpp
+    src/app/screens/LanguageSettingsScreen/LanguageSettingsScreen.h
+    src/app/screens/LanguageSettingsScreen/LanguageSettingsScreen.cpp
     src/app/screens/GameplayScreen/GameplayScreen.h
     src/app/screens/GameplayScreen/GameplayScreen.cpp
     src/app/screens/ResultsScreen/ResultsScreen.h
     src/app/screens/ResultsScreen/ResultsScreen.cpp
+)
+
+# --- Localization ---
+set(LOC_FILES
+    src/localization/Localization.h
+    src/localization/Localization.cpp
 )
 
 # --- Audio ---
@@ -131,6 +139,7 @@ add_executable(AimTrainer)
 target_sources(AimTrainer PRIVATE
     ${INFRA_FILES}
     ${APP_FILES}
+    ${LOC_FILES}
     ${AUDIO_FILES}
     ${TRAINING_FILES}
     ${TARGET_FILES}
@@ -146,6 +155,7 @@ target_sources(AimTrainer PRIVATE
 
 source_group("Infrastructure"   FILES ${INFRA_FILES})
 source_group("Application"      FILES ${APP_FILES})
+source_group("Localization"     FILES ${LOC_FILES})
 source_group("Audio"            FILES ${AUDIO_FILES})
 source_group("Training"         FILES ${TRAINING_FILES})
 source_group("Training/Targets" FILES ${TARGET_FILES})
@@ -166,8 +176,10 @@ target_include_directories(AimTrainer PRIVATE
     src/app/screens/CrosshairSettingsScreen
     src/app/screens/ArenaSettingsScreen
     src/app/screens/AudioSettingsScreen
+    src/app/screens/LanguageSettingsScreen
     src/app/screens/GameplayScreen
     src/app/screens/ResultsScreen
+    src/localization
     src/audio
     src/training
     src/training/target
@@ -191,9 +203,18 @@ if(WIN32)
     if(MSVC)
         set_target_properties(AimTrainer PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
     endif()
+    
+    # Copy raylib.dll
     add_custom_command(TARGET AimTrainer POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${RAYLIB_PATH}/lib/raylib.dll"
         $<TARGET_FILE_DIR:AimTrainer>
+    )
+    
+    # Copy assets folder (lang json files)
+    add_custom_command(TARGET AimTrainer POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+        $<TARGET_FILE_DIR:AimTrainer>/assets
     )
 endif()

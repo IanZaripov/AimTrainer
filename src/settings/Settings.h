@@ -1,6 +1,7 @@
 #pragma once
 #include "raylib.h"
 #include <fstream>
+#include "Localization.h"
 
 struct MouseConfig {
     float valorantSens = 0.520f; 
@@ -50,6 +51,7 @@ public:
     CrosshairConfig crosshair;
     TargetConfig    arena;
     AudioConfig     audio;
+    Language language = Language::ENGLISH;
     
     float fovDegrees = 103.0f;
     float headRadius = 0.11f; 

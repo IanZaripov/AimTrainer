@@ -51,6 +51,7 @@ namespace UITheme {
         constexpr float Nav3X = 280.0f;  // Mouse
         constexpr float Nav4X = 410.0f;  // Crosshair
         constexpr float Nav5X = 540.0f;  // Audio
+        constexpr float Nav6X = 670.0f;  // Language
     }
 
     inline float GetRightButtonX() { 
