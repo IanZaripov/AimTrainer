@@ -34,4 +34,9 @@ namespace GameConfig {
     namespace MultiStaticMode {
         constexpr int BallCount = 8;
     }
+
+    namespace MovingMode {
+        constexpr int TargetCount = 4;
+        constexpr float BoundX = 7.0f;
+    }
 }
