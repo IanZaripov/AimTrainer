@@ -1,12 +1,11 @@
 #include "TrainingCard.h"
 #include "UITheme.h"
+#include "Localization.h"
 
 MovingCard::MovingCard(Rectangle r)
-    : TrainingCard(r, GameMode::MOVING, "Движущиеся", "Несколько шаров", "летают туда-сюда") {}
+    : TrainingCard(r, GameMode::MOVING, Loc::T("Moving"), Loc::T("Multiple targets"), Loc::T("flying around")) {}
 
 void MovingCard::DrawIcon(Vector2 center, const Settings& settings) const {
-    Color c = settings.arena.ballColor;
-    DrawCircle(center.x, center.y, UITheme::Card::Layout::Icon::Radius, c);
-    
+    DrawCircle(center.x, center.y, UITheme::Card::Layout::Icon::Radius, settings.arena.ballColor);
     DrawHorizontalArrows(center);
 }

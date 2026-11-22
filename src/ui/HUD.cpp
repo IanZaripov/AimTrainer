@@ -1,4 +1,6 @@
 #include "HUD.h"
+#include "UITheme.h"
+#include "Localization.h"
 #include <cstdio>
 
 void HUD::UpdateStats() {
@@ -41,10 +43,9 @@ void HUD::DrawCrosshair(const CrosshairConfig& cfg) const {
 }
 
 void HUD::DrawTopPanel(Font font, int score, float accuracy, float timer) const {
-    float cx = GetRenderWidth() / 2.0f;
     float panelWidth = 500.0f;
     float panelHeight = 60.0f;
-    float panelX = cx - panelWidth / 2.0f;
+    float panelX = GetRenderWidth() / 2.0f - panelWidth / 2.0f;
     float panelY = 20.0f;
 
     DrawRectangleRounded({ panelX, panelY, panelWidth, panelHeight }, 0.2f, 4, Fade(Color{ 20, 25, 30, 255 }, 0.85f));
@@ -54,9 +55,9 @@ void HUD::DrawTopPanel(Font font, int score, float accuracy, float timer) const 
     int secs = (int)timer % 60;
     float textY = panelY + 8.0f;
 
-    DrawStatColumn(font, TextFormat("%02d:%02d", mins, secs), "ВРЕМЯ", panelX + (panelWidth * 0.25f), textY);
-    DrawStatColumn(font, TextFormat("%d", score), "СЧЕТ", panelX + (panelWidth * 0.50f), textY);
-    DrawStatColumn(font, TextFormat("%.1f%%", accuracy), "ТОЧНОСТЬ", panelX + (panelWidth * 0.75f), textY);
+    DrawStatColumn(font, TextFormat("%02d:%02d", mins, secs), Loc::T("TIME"), panelX + (panelWidth * 0.25f), textY);
+    DrawStatColumn(font, TextFormat("%d", score), Loc::T("SCORE"), panelX + (panelWidth * 0.50f), textY);
+    DrawStatColumn(font, TextFormat("%.1f%%", accuracy), Loc::T("ACCURACY"), panelX + (panelWidth * 0.75f), textY);
 }
 
 void HUD::DrawStatColumn(Font font, const char* value, const char* label, float centerX, float y) const {
@@ -68,37 +69,28 @@ void HUD::DrawStatColumn(Font font, const char* value, const char* label, float 
 }
 
 void HUD::DrawSystemStats(Font font) const {
-    float startX = 10.0f;
-    float startY = 10.0f;
-    float boxSpacing = 10.0f;
-    float currentWidth = 110.0f;
+    float currentX = 10.0f;
+    float startY = 20.0f;
 
-    DrawStatBox(font, "FPS", TextFormat("%d", GetFPS()), startX, startY);
-    startX += currentWidth + boxSpacing;
+    DrawStatBox(font, "FPS", TextFormat("%d", GetFPS()), currentX, startY);
+    currentX += 110.0f + 10.0f;
     
-    DrawStatBox(font, "CPU", TextFormat("%.1f%%", sysStats.GetCPU()), startX, startY);
-    startX += currentWidth + boxSpacing;
+    DrawStatBox(font, "CPU", TextFormat("%.1f%%", sysStats.GetCPU()), currentX, startY);
+    currentX += 110.0f + 10.0f;
     
-    DrawStatBox(font, "GPU", TextFormat("%.1f%%", sysStats.GetGPU()), startX, startY);
+    DrawStatBox(font, "GPU", TextFormat("%.1f%%", sysStats.GetGPU()), currentX, startY);
 }
 
 void HUD::DrawStatBox(Font font, const char* label, const char* value, float x, float y) const {
     Rectangle boxRect = { x, y, 110.0f, 30.0f };
-    DrawStatFrame(boxRect);
+    DrawRectangleRounded(boxRect, 0.2f, 4, Fade(Color{ 20, 25, 30, 255 }, 0.8f));
+    DrawRectangleRoundedLinesEx(boxRect, 0.2f, 4, 1.5f, Color{ 255, 70, 85, 255 });
 
     char textBuffer[64];
     snprintf(textBuffer, sizeof(textBuffer), "%s: %s", label, value);
-    DrawCenteredText(font, textBuffer, boxRect, 16.0f, WHITE);
-}
-
-void HUD::DrawStatFrame(Rectangle rect) const {
-    DrawRectangleRounded(rect, 0.2f, 4, Fade(Color{ 20, 25, 30, 255 }, 0.8f));
-    DrawRectangleRoundedLinesEx(rect, 0.2f, 4, 1.5f, Color{ 255, 70, 85, 255 });
-}
-
-void HUD::DrawCenteredText(Font font, const char* text, Rectangle rect, float fontSize, Color color) const {
-    Vector2 textSize = MeasureTextEx(font, text, fontSize, 1);
-    float textX = rect.x + (rect.width - textSize.x) / 2.0f;
-    float textY = rect.y + (rect.height - textSize.y) / 2.0f;
-    DrawTextEx(font, text, { textX, textY }, fontSize, 1, color);
+    
+    Vector2 textSize = MeasureTextEx(font, textBuffer, 16, 1);
+    float textX = boxRect.x + (boxRect.width - textSize.x) / 2.0f;
+    float textY = boxRect.y + (boxRect.height - textSize.y) / 2.0f;
+    DrawTextEx(font, textBuffer, { textX, textY }, 16, 1, WHITE);
 }

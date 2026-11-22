@@ -92,7 +92,7 @@ void ScreenManager::DrawTopBar(Font uiFont) {
     if (GuiButton({ UITheme::TopBar::Nav6X, UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, Loc::T("Language"))) { 
         Audio::PlayClick(); GoTo(ScreenID::SETTINGS_LANGUAGE);
     }
-    if (GuiButton({ UITheme::GetRightButtonX(), UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, Loc::T("EXIT"))) {
+    if (GuiButton({ UITheme::GetRightButtonX(), UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, Loc::T("EXIT"))){
         shouldExit = true;
     }
     const char* title = "AIM TRAINER";

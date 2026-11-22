@@ -3,14 +3,19 @@
 #include "UITheme.h"
 #include "Settings.h"
 #include "Audio.h"
+#include "Localization.h"
 
 RoutinesScreen::RoutinesScreen() {
     using namespace UITheme::Card::Grid;
     float x = X;
-    cards.push_back(std::make_unique<StaticCard>(Rectangle{x, Y, Width, Height}));           x += Width + Spacing;
-    cards.push_back(std::make_unique<MovingCard>(Rectangle{x, Y, Width, Height}));           x += Width + Spacing;
-    cards.push_back(std::make_unique<BouncingCard>(Rectangle{x, Y, Width, Height}));         x += Width + Spacing;
-    cards.push_back(std::make_unique<TimedCard>(Rectangle{x, Y, Width, Height}));            x += Width + Spacing;
+    cards.push_back(std::make_unique<StaticCard>(Rectangle{x, Y, Width, Height}));
+    x += Width + Spacing;
+    cards.push_back(std::make_unique<MovingCard>(Rectangle{x, Y, Width, Height}));
+    x += Width + Spacing;
+    cards.push_back(std::make_unique<BouncingCard>(Rectangle{x, Y, Width, Height}));
+    x += Width + Spacing;
+    cards.push_back(std::make_unique<TimedCard>(Rectangle{x, Y, Width, Height}));
+    x += Width + Spacing;
     cards.push_back(std::make_unique<MultiStaticCard>(Rectangle{x, Y, Width, Height}));
 }
 
@@ -37,7 +42,7 @@ void RoutinesScreen::Draw(Font uiFont, ScreenManager& manager) {
 }
 
 void RoutinesScreen::DrawTitle(Font uiFont) const {
-    DrawTextEx(uiFont, "ВЫБЕРИТЕ РУТИНУ:", { UITheme::Screens::Routines::TitleX, UITheme::Screens::Routines::TitleY }, 20, 1, UITheme::TEXT_DIM);
+    DrawTextEx(uiFont, Loc::T("SELECT ROUTINE:"), { UITheme::Screens::Routines::TitleX, UITheme::Screens::Routines::TitleY }, 20, 1, UITheme::TEXT_DIM);
 }
 
 void RoutinesScreen::DrawCards(Font uiFont, const Settings& settings) const {

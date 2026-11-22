@@ -1,5 +1,6 @@
 #pragma once
 #include "ITrainingMode.h"
+#include <vector>
 
 class MovingMode : public TrainingMode {
 public:
@@ -9,4 +10,6 @@ public:
     float GetAccuracy(int shots, int hits, int spawned, float trackTime, float trackTotal) const override;
     
     bool UsesTracking() const override { return false; }
+private:
+    std::vector<int> ownedIndices;
 };

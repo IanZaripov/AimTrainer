@@ -47,6 +47,7 @@
     "TARGET COLOR": "ЦВЕТ ШАРОВ",
     "TARGET SIZE": "РАЗМЕР ШАРОВ",
     "Radius (meters)": "Радиус (метры)",
+    "Diameter: %.1f cm (%.0f px)": "Диаметр: %.1f см (%.0f px)",
 
     "AUDIO SETTINGS": "НАСТРОЙКИ ЗВУКА",
     "UI SOUNDS": "ЗВУКИ ИНТЕРФЕЙСА",

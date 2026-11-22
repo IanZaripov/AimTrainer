@@ -11,6 +11,8 @@ public:
     // Reuses an inactive one if available, or creates a new one.
     Target3D& Request();
 
+    int RequestIndex();
+
     // Updates all targets (including exploding ones)
     void Update(float dt);
 

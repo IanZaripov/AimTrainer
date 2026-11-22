@@ -3,6 +3,7 @@
 #include "UITheme.h"
 #include "UIWidgets.h"
 #include "Audio.h"
+#include "Localization.h"
 
 void AudioSettingsScreen::Update(ScreenManager& manager) {
     if (isDirty) {
@@ -29,16 +30,16 @@ void AudioSettingsScreen::Draw(Font uiFont, ScreenManager& manager) {
 
 void AudioSettingsScreen::DrawTitle(Font uiFont) const {
     using namespace UITheme::Screens::Settings;
-    DrawTextEx(uiFont, "НАСТРОЙКИ ЗВУКА", { TitleX, TitleY }, TitleFontSize, 1, UITheme::ACCENT);
+    DrawTextEx(uiFont, Loc::T("AUDIO SETTINGS"), { TitleX, TitleY }, TitleFontSize, 1, UITheme::ACCENT);
 }
 
 bool AudioSettingsScreen::DrawUIGroup(Font uiFont, Settings& settings) {
     using namespace UITheme::Screens::Settings;
     
-    UITheme::DrawTitledGroup(uiFont, { GroupX, AudioSettings::UIGroupY, GroupWidth, AudioSettings::UIGroupH }, "ЗВУКИ ИНТЕРФЕЙСА");
+    UITheme::DrawTitledGroup(uiFont, { GroupX, AudioSettings::UIGroupY, GroupWidth, AudioSettings::UIGroupH }, Loc::T("UI SOUNDS"));
     return UIWidgets::DrawSliderBox(
         uiFont, AudioSettings::UILabelX, AudioSettings::UILabelY, 
-        "Громкость UI", 
+        Loc::T("UI Volume"), 
         &settings.audio.uiVolume, 0.0f, 1.0f, 
         uiBuffer, &uiEdit, false, 2
     );
@@ -47,10 +48,10 @@ bool AudioSettingsScreen::DrawUIGroup(Font uiFont, Settings& settings) {
 bool AudioSettingsScreen::DrawPopGroup(Font uiFont, Settings& settings) {
     using namespace UITheme::Screens::Settings;
     
-    UITheme::DrawTitledGroup(uiFont, { GroupX, AudioSettings::PopGroupY, GroupWidth, AudioSettings::PopGroupH }, "ЗВУК ПОПАДАНИЯ");
+    UITheme::DrawTitledGroup(uiFont, { GroupX, AudioSettings::PopGroupY, GroupWidth, AudioSettings::PopGroupH }, Loc::T("TARGET SOUNDS"));
     return UIWidgets::DrawSliderBox(
         uiFont, AudioSettings::PopLabelX, AudioSettings::PopLabelY, 
-        "Громкость попадания", 
+        Loc::T("Hit Volume"), 
         &settings.audio.popVolume, 0.0f, 1.0f, 
         popBuffer, &popEdit, false, 2
     );
@@ -59,10 +60,10 @@ bool AudioSettingsScreen::DrawPopGroup(Font uiFont, Settings& settings) {
 bool AudioSettingsScreen::DrawArenaGroup(Font uiFont, Settings& settings) {
     using namespace UITheme::Screens::Settings;
     
-    UITheme::DrawTitledGroup(uiFont, { GroupX, AudioSettings::ArenaGroupY, GroupWidth, AudioSettings::ArenaGroupH }, "ЗВУКИ АРЕНЫ (MUSIC)");
+    UITheme::DrawTitledGroup(uiFont, { GroupX, AudioSettings::ArenaGroupY, GroupWidth, AudioSettings::ArenaGroupH }, Loc::T("ARENA SOUNDS (MUSIC)"));
     return UIWidgets::DrawSliderBox(
         uiFont, AudioSettings::ArenaLabelX, AudioSettings::ArenaLabelY, 
-        "Громкость арены", 
+        Loc::T("Arena Volume"), 
         &settings.audio.arenaVolume, 0.0f, 1.0f, 
         arenaBuffer, &arenaEdit, false, 2
     );

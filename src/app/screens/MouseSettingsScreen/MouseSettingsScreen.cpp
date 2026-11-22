@@ -2,6 +2,7 @@
 #include "ScreenManager.h"
 #include "UITheme.h"
 #include "UIWidgets.h"
+#include "Localization.h"
 
 void MouseSettingsScreen::Update(ScreenManager& manager) {
     if (isDirty) {
@@ -21,16 +22,16 @@ void MouseSettingsScreen::Draw(Font uiFont, ScreenManager& manager) {
 
 void MouseSettingsScreen::DrawTitle(Font uiFont) const {
     using namespace UITheme::Screens::Settings;
-    DrawTextEx(uiFont, "НАСТРОЙКИ МЫШИ", { TitleX, TitleY }, TitleFontSize, 1, UITheme::ACCENT);
+    DrawTextEx(uiFont, Loc::T("MOUSE SETTINGS"), { TitleX, TitleY }, TitleFontSize, 1, UITheme::ACCENT);
 }
 
 bool MouseSettingsScreen::DrawSensitivityGroup(Font uiFont, Settings& settings) {
     using namespace UITheme::Screens::Settings;
     
-    UITheme::DrawTitledGroup(uiFont, { GroupX, Mouse::SensGroupY, GroupWidth, Mouse::SensGroupH }, "СЕНСА (VALORANT)");
+    UITheme::DrawTitledGroup(uiFont, { GroupX, Mouse::SensGroupY, GroupWidth, Mouse::SensGroupH }, Loc::T("SENSITIVITY (VALORANT)"));
     return UIWidgets::DrawSliderBox(
         uiFont, Mouse::SensLabelX, Mouse::SensLabelY, 
-        "Чувствительность", 
+        Loc::T("Sensitivity"), 
         &settings.mouse.valorantSens, 0.1f, 8.0f, 
         sensBuffer, &sensEditMode, false, 3
     );
@@ -39,10 +40,10 @@ bool MouseSettingsScreen::DrawSensitivityGroup(Font uiFont, Settings& settings) 
 bool MouseSettingsScreen::DrawMultiplierGroup(Font uiFont, Settings& settings) {
     using namespace UITheme::Screens::Settings;
     
-    UITheme::DrawTitledGroup(uiFont, { GroupX, Mouse::MultGroupY, GroupWidth, Mouse::MultGroupH }, "МНОЖИТЕЛЬ (ПОДГОНКА)");
+    UITheme::DrawTitledGroup(uiFont, { GroupX, Mouse::MultGroupY, GroupWidth, Mouse::MultGroupH }, Loc::T("MULTIPLIER (TUNING)"));
     return UIWidgets::DrawSliderBox(
         uiFont, Mouse::MultLabelX, Mouse::MultLabelY, 
-        "Множитель", 
+        Loc::T("Multiplier"), 
         &settings.mouse.sensMultiplier, 0.5f, 5.0f, 
         multBuffer, &multEditMode
     );

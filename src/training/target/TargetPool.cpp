@@ -1,16 +1,18 @@
 #include "TargetPool.h"
 
 Target3D& TargetPool::Request() {
-    // Look for a dead target to reuse
-    for (auto& t : targets) {
-        if (!t.active && !t.IsExploding()) {
-            t = Target3D{}; // Reset to default state
-            return t;
+    return targets[RequestIndex()];
+}
+
+int TargetPool::RequestIndex() {
+    for (size_t i = 0; i < targets.size(); i++) {
+        if (!targets[i].active && !targets[i].IsExploding()) {
+            targets[i] = Target3D{};
+            return (int)i;
         }
     }
-    // If no dead targets, add a new one
     targets.emplace_back();
-    return targets.back();
+    return (int)(targets.size() - 1);
 }
 
 void TargetPool::Update(float dt) {

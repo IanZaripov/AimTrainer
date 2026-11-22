@@ -9,8 +9,12 @@ static float GetBandY(int bandIndex) {
 }
 
 void MovingMode::OnStart(TargetPool& pool, const Settings& settings) {
+    ownedIndices.clear();
     for (int i = 0; i < GameConfig::MovingMode::TargetCount; i++) {
-        Target3D& t = pool.Request();
+        int idx = pool.RequestIndex();
+        ownedIndices.push_back(idx);
+
+        Target3D& t = pool.GetAll()[idx];
         t.position.x = (float)GetRandomValue(GameConfig::Spawn::XMin, GameConfig::Spawn::XMax) / GameConfig::Spawn::Scale;
         t.position.y = GetBandY(i);
         t.position.z = -settings.arena.distance;
@@ -22,10 +26,13 @@ void MovingMode::OnStart(TargetPool& pool, const Settings& settings) {
 
 int MovingMode::OnUpdate(float dt, TargetPool& pool, const Settings& settings) {
     int newSpawns = 0;
-    auto& targets = pool.GetAll();
+    auto& allTargets = pool.GetAll();
 
-    for (size_t i = 0; i < targets.size(); i++) {
-        auto& t = targets[i];
+    for (size_t slot = 0; slot < ownedIndices.size(); slot++) {
+        int idx = ownedIndices[slot];
+        if (idx >= (int)allTargets.size()) continue;
+        
+        auto& t = allTargets[idx];
         
         if (t.active) {
             t.position.x += t.speed * t.direction * dt;
@@ -40,10 +47,8 @@ int MovingMode::OnUpdate(float dt, TargetPool& pool, const Settings& settings) {
             }
         } 
         else if (!t.IsExploding()) {
-            int bandIndex = i % GameConfig::MovingMode::TargetCount;
-            
             t.position.x = (float)GetRandomValue(GameConfig::Spawn::XMin, GameConfig::Spawn::XMax) / GameConfig::Spawn::Scale;
-            t.position.y = GetBandY(bandIndex);
+            t.position.y = GetBandY((int)slot);
             t.position.z = -settings.arena.distance;
             t.speed = (float)GetRandomValue(300, 1200) / 100.0f;
             t.direction = (GetRandomValue(0, 1) == 0) ? 1 : -1;
@@ -53,6 +58,7 @@ int MovingMode::OnUpdate(float dt, TargetPool& pool, const Settings& settings) {
     }
     return newSpawns;
 }
+
 
 int MovingMode::OnHit(TargetPool& pool, const Settings& settings) {
     return 0; 

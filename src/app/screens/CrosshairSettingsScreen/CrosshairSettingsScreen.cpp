@@ -3,6 +3,7 @@
 #include "UITheme.h"
 #include "UIWidgets.h"
 #include "raygui.h"
+#include "Localization.h"
 
 void CrosshairSettingsScreen::Update(ScreenManager& manager) {
     if (isDirty) {
@@ -25,7 +26,7 @@ void CrosshairSettingsScreen::Draw(Font uiFont, ScreenManager& manager) {
 
 void CrosshairSettingsScreen::DrawTitle(Font uiFont) const {
     using namespace UITheme::Screens::Settings;
-    DrawTextEx(uiFont, "НАСТРОЙКИ ПРИЦЕЛА", { TitleX, TitleY }, TitleFontSize, 1, UITheme::ACCENT);
+    DrawTextEx(uiFont, Loc::T("CROSSHAIR SETTINGS"), { TitleX, TitleY }, TitleFontSize, 1, UITheme::ACCENT);
 }
 
 // Draws the sliders for length, thickness, and gap
@@ -33,10 +34,10 @@ bool CrosshairSettingsScreen::DrawFormGroup(Font uiFont, Settings& settings) {
     using namespace UITheme::Screens::Settings;
     bool changed = false;
 
-    UITheme::DrawTitledGroup(uiFont, { GroupX, Crosshair::FormGroupY, GroupWidth, Crosshair::FormGroupH }, "ФОРМА");
-    changed |= UIWidgets::DrawSliderBox(uiFont, Crosshair::FormLabelX, Crosshair::FormLabelStartY, "Длина линий", &settings.crosshair.length, 0.0f, 20.0f, lenBuffer, &lenEdit, true);
-    changed |= UIWidgets::DrawSliderBox(uiFont, Crosshair::FormLabelX, Crosshair::FormLabelStartY + Crosshair::FormRowSpacing, "Толщина", &settings.crosshair.thickness, 1.0f, 10.0f, thicBuffer, &thicEdit, true);
-    changed |= UIWidgets::DrawSliderBox(uiFont, Crosshair::FormLabelX, Crosshair::FormLabelStartY + Crosshair::FormRowSpacing * 2, "Отступ (Gap)", &settings.crosshair.gap, 0.0f, 20.0f, gapBuffer, &gapEdit, true);
+    UITheme::DrawTitledGroup(uiFont, { GroupX, Crosshair::FormGroupY, GroupWidth, Crosshair::FormGroupH }, Loc::T("SHAPE"));
+    changed |= UIWidgets::DrawSliderBox(uiFont, Crosshair::FormLabelX, Crosshair::FormLabelStartY, Loc::T("Length"), &settings.crosshair.length, 0.0f, 20.0f, lenBuffer, &lenEdit, true);
+    changed |= UIWidgets::DrawSliderBox(uiFont, Crosshair::FormLabelX, Crosshair::FormLabelStartY + Crosshair::FormRowSpacing, Loc::T("Thickness"), &settings.crosshair.thickness, 1.0f, 10.0f, thicBuffer, &thicEdit, true);
+    changed |= UIWidgets::DrawSliderBox(uiFont, Crosshair::FormLabelX, Crosshair::FormLabelStartY + Crosshair::FormRowSpacing * 2, Loc::T("Gap"), &settings.crosshair.gap, 0.0f, 20.0f, gapBuffer, &gapEdit, true);
 
     return changed;
 }
@@ -45,13 +46,13 @@ bool CrosshairSettingsScreen::DrawFormGroup(Font uiFont, Settings& settings) {
 bool CrosshairSettingsScreen::DrawExtraGroup(Font uiFont, Settings& settings) {
     using namespace UITheme::Screens::Settings;
     
-    UITheme::DrawTitledGroup(uiFont, { GroupX, Crosshair::ExtraGroupY, GroupWidth, Crosshair::ExtraGroupH }, "ДОПОЛНИТЕЛЬНО");
+    UITheme::DrawTitledGroup(uiFont, { GroupX, Crosshair::ExtraGroupY, GroupWidth, Crosshair::ExtraGroupH }, Loc::T("EXTRA"));
     
     bool oldDot = settings.crosshair.dot;
-    GuiCheckBox({ Crosshair::ExtraCheckboxX, Crosshair::ExtraCheckbox1Y, 20, 20 }, "Центральная точка", &settings.crosshair.dot);
+    GuiCheckBox({ Crosshair::ExtraCheckboxX, Crosshair::ExtraCheckbox1Y, 20, 20 }, Loc::T("Center dot"), &settings.crosshair.dot);
     
     bool oldOutline = settings.crosshair.outline;
-    GuiCheckBox({ Crosshair::ExtraCheckboxX, Crosshair::ExtraCheckbox2Y, 20, 20 }, "Обводка (Outline)", &settings.crosshair.outline);
+    GuiCheckBox({ Crosshair::ExtraCheckboxX, Crosshair::ExtraCheckbox2Y, 20, 20 }, Loc::T("Outline"), &settings.crosshair.outline);
 
     return (oldDot != settings.crosshair.dot || oldOutline != settings.crosshair.outline);
 }
@@ -59,7 +60,7 @@ bool CrosshairSettingsScreen::DrawExtraGroup(Font uiFont, Settings& settings) {
 bool CrosshairSettingsScreen::DrawColorGroup(Font uiFont, Settings& settings) {
     using namespace UITheme::Screens::Settings;
     
-    UITheme::DrawTitledGroup(uiFont, { GroupX, Crosshair::ColorGroupY, GroupWidth, Crosshair::ColorGroupH }, "ЦВЕТ ПРИЦЕЛА");
+    UITheme::DrawTitledGroup(uiFont, { GroupX, Crosshair::ColorGroupY, GroupWidth, Crosshair::ColorGroupH }, Loc::T("COLOR"));
     Color colors[] = { WHITE, BLACK, YELLOW, PINK, SKYBLUE, ORANGE, RED };
     
     return UIWidgets::DrawColorPickerRow(Crosshair::ColorPickerX, Crosshair::ColorPickerY, &settings.crosshair.color, colors, 7);

@@ -22,7 +22,6 @@ private:
     void drawBackGroundAndFlorPreview(Rectangle previewBox) const;
     void DrawCrosshairPreview(const Settings& settings) const;
 
-    // --- New methods for crosshair components ---
     void DrawOutline(float cx, float cy, float len, float thic, float gap) const;
     void DrawMainLines(float cx, float cy, float len, float thic, float gap, Color color) const;
     void DrawCenterDot(float cx, float cy, float thic, Color color) const;

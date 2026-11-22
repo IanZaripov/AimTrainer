@@ -1,14 +1,14 @@
 #include "TrainingCard.h"
 #include "UITheme.h"
+#include "Localization.h"
 
 TimedCard::TimedCard(Rectangle r)
-    : TrainingCard(r, GameMode::TIMED, "На время", nullptr, nullptr) {}
+    : TrainingCard(r, GameMode::TIMED, Loc::T("Timed"), nullptr, nullptr) {}
 
 void TimedCard::Update(Settings& settings) {
     clickedDifficulty = false;
     float diffY = rect.y + UITheme::Card::Layout::Difficulty::Y;
 
-    // Handle difficulty buttons first
     for (int i = 0; i < 3; i++) {
         Rectangle btn = { rect.x + 15 + i * UITheme::Card::Layout::Difficulty::Spacing, 
                           diffY, 
@@ -21,7 +21,6 @@ void TimedCard::Update(Settings& settings) {
         }
     }
 
-    // Click on the card itself only if not clicking a button
     hovered = CheckCollisionPointRec(GetMousePosition(), rect);
     if (hovered && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && !clickedDifficulty) {
         clicked = true;
@@ -43,7 +42,7 @@ void TimedCard::DrawIcon(Vector2 center, const Settings& settings) const {
 }
 
 void TimedCard::DrawDifficultyButtons(Font font, const Settings& settings) const {
-    const char* diffNames[] = { "Легко", "Сред", "Сложно" };
+    const char* diffNames[] = { Loc::T("Easy"), Loc::T("Medium"), Loc::T("Hard") };
     float diffY = rect.y + UITheme::Card::Layout::Difficulty::Y;
 
     for (int i = 0; i < 3; i++) {

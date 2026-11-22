@@ -1,8 +1,9 @@
 #include "TrainingCard.h"
 #include "UITheme.h"
+#include "Localization.h"
 
 MultiStaticCard::MultiStaticCard(Rectangle r)
-    : TrainingCard(r, GameMode::MULTI_STATIC, "Мульти-цель", "8 шаров одновременно", "(Тренировка спрея)") {}
+    : TrainingCard(r, GameMode::MULTI_STATIC, Loc::T("Multi-target"), Loc::T("8 targets at once"), Loc::T("(Spray training)")) {}
 
 void MultiStaticCard::DrawIcon(Vector2 center, const Settings& settings) const {
     Color c = settings.arena.ballColor;

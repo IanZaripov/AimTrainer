@@ -3,6 +3,7 @@
 #include "UITheme.h"
 #include "raygui.h"
 #include "Audio.h"
+#include "Localization.h"
 
 void GameplayScreen::Update(ScreenManager& manager) {
     auto& session = manager.GetSession();
@@ -27,7 +28,7 @@ void GameplayScreen::Update(ScreenManager& manager) {
         }
     }
 }
-    
+
 void GameplayScreen::Draw(Font uiFont, ScreenManager& manager) {
     manager.GetSession().Draw(uiFont);
 
@@ -35,8 +36,6 @@ void GameplayScreen::Draw(Font uiFont, ScreenManager& manager) {
         DrawPauseMenu(uiFont, manager);
     }
 }
-
-// --- Pause Menu Logic ---
 
 void GameplayScreen::DrawPauseMenu(Font uiFont, ScreenManager& manager) {
     Rectangle panelRect = GetPausePanelRect();
@@ -71,7 +70,7 @@ void GameplayScreen::DrawPausePanel(Rectangle panelRect) const {
 
 void GameplayScreen::DrawPauseHeader(Font uiFont, Rectangle panelRect) const {
     using namespace UITheme::PauseMenu;
-    const char* title = "ПАУЗА";
+    const char* title = Loc::T("PAUSED");
     float tw = MeasureTextEx(uiFont, title, HeaderFontSize, 1).x;
     
     DrawTextEx(uiFont, title, { panelRect.x + (panelRect.width - tw) / 2.0f, panelRect.y + HeaderYOffset }, HeaderFontSize, 1, UITheme::ACCENT);
@@ -97,9 +96,9 @@ void GameplayScreen::DrawPauseStats(Font uiFont, Rectangle panelRect, const Trai
         textY += StatsRowSpacing;
     };
 
-    DrawStatRow("Время:", TextFormat("%.1f сек", session.GetSessionTime()));
-    DrawStatRow("Счет:", TextFormat("%d", session.GetPoppedCount()));
-    DrawStatRow("Точность:", TextFormat("%.1f%%", session.GetCurrentAccuracy()));
+    DrawStatRow(Loc::T("Time:"), TextFormat("%.1f", session.GetSessionTime()));
+    DrawStatRow(Loc::T("Score:"), TextFormat("%d", session.GetPoppedCount()));
+    DrawStatRow(Loc::T("Accuracy:"), TextFormat("%.1f%%", session.GetCurrentAccuracy()));
 }
 
 void GameplayScreen::DrawPauseButtons(Font uiFont, Rectangle panelRect, ScreenManager& manager) {
@@ -109,18 +108,18 @@ void GameplayScreen::DrawPauseButtons(Font uiFont, Rectangle panelRect, ScreenMa
     float btnX = panelRect.x + panelRect.width / 2.0f - BtnWidth / 2.0f;
     float btnY = panelRect.y + BtnStartYOffset;
 
-    if (GuiButton({ btnX, btnY, BtnWidth, BtnHeight }, "ПРОДОЛЖИТЬ")) {
+    if (GuiButton({ btnX, btnY, BtnWidth, BtnHeight }, Loc::T("RESUME"))) {
         Audio::PlayClick();
         isPaused = false;
         DisableCursor();
     }
-    if (GuiButton({ btnX, btnY + BtnHeight + BtnSpacing, BtnWidth, BtnHeight }, "ЗАНОВО")) {
+    if (GuiButton({ btnX, btnY + BtnHeight + BtnSpacing, BtnWidth, BtnHeight }, Loc::T("RESTART"))) {
         Audio::PlayClick();
         isPaused = false;
         session.StartTraining(session.GetCurrentMode());
         DisableCursor();
     }
-    if (GuiButton({ btnX, btnY + (BtnHeight + BtnSpacing) * 2.0f, BtnWidth, BtnHeight }, "В МЕНЮ")) {
+    if (GuiButton({ btnX, btnY + (BtnHeight + BtnSpacing) * 2.0f, BtnWidth, BtnHeight }, Loc::T("MAIN MENU"))) {
         Audio::PlayClick();
         isPaused = false;
         session.EndSession(GameExitReason::UserQuit);

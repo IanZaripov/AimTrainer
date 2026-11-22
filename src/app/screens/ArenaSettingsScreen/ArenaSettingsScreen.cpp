@@ -2,6 +2,7 @@
 #include "ScreenManager.h"
 #include "UITheme.h"
 #include "UIWidgets.h"
+#include "Localization.h"
 #include <cmath>
 
 void ArenaSettingsScreen::Update(ScreenManager& manager) {
@@ -25,16 +26,16 @@ void ArenaSettingsScreen::Draw(Font uiFont, ScreenManager& manager) {
 
 void ArenaSettingsScreen::DrawTitle(Font uiFont) const {
     using namespace UITheme::Screens::Settings;
-    DrawTextEx(uiFont, "НАСТРОЙКИ АРЕНЫ", { TitleX, TitleY }, TitleFontSize, 1, UITheme::ACCENT);
+    DrawTextEx(uiFont, Loc::T("ARENA SETTINGS"), { TitleX, TitleY }, TitleFontSize, 1, UITheme::ACCENT);
 }
 
 bool ArenaSettingsScreen::DrawDistanceGroup(Font uiFont, Settings& settings) {
     using namespace UITheme::Screens::Settings;
     
-    UITheme::DrawTitledGroup(uiFont, { GroupX, ArenaSettings::DistGroupY, GroupWidth, ArenaSettings::DistGroupH }, "ДИСТАНЦИЯ ДО ЦЕЛЕЙ");
+    UITheme::DrawTitledGroup(uiFont, { GroupX, ArenaSettings::DistGroupY, GroupWidth, ArenaSettings::DistGroupH }, Loc::T("TARGET DISTANCE"));
     return UIWidgets::DrawSliderBox(
         uiFont, ArenaSettings::DistLabelX, ArenaSettings::DistLabelY, 
-        "Метры", 
+        Loc::T("Meters"), 
         &settings.arena.distance, 5.0f, 30.0f, 
         distBuffer, &distEdit, true
     );
@@ -43,7 +44,7 @@ bool ArenaSettingsScreen::DrawDistanceGroup(Font uiFont, Settings& settings) {
 bool ArenaSettingsScreen::DrawColorGroup(Font uiFont, Settings& settings) {
     using namespace UITheme::Screens::Settings;
     
-    UITheme::DrawTitledGroup(uiFont, { GroupX, ArenaSettings::ColorGroupY, GroupWidth, ArenaSettings::ColorGroupH }, "ЦВЕТ ШАРОВ");
+    UITheme::DrawTitledGroup(uiFont, { GroupX, ArenaSettings::ColorGroupY, GroupWidth, ArenaSettings::ColorGroupH }, Loc::T("TARGET COLOR"));
     Color colors[] = { { 0, 220, 255, 255 }, WHITE, YELLOW, PINK, ORANGE, RED, GREEN };
     
     return UIWidgets::DrawColorPickerRow(
@@ -55,16 +56,15 @@ bool ArenaSettingsScreen::DrawColorGroup(Font uiFont, Settings& settings) {
 bool ArenaSettingsScreen::DrawSizeGroup(Font uiFont, Settings& settings) {
     using namespace UITheme::Screens::Settings;
     
-    UITheme::DrawTitledGroup(uiFont, { GroupX, ArenaSettings::SizeGroupY, GroupWidth, ArenaSettings::SizeGroupH }, "РАЗМЕР ШАРОВ");
+    UITheme::DrawTitledGroup(uiFont, { GroupX, ArenaSettings::SizeGroupY, GroupWidth, ArenaSettings::SizeGroupH }, Loc::T("TARGET SIZE"));
     return UIWidgets::DrawSliderBox(
         uiFont, ArenaSettings::SizeLabelX, ArenaSettings::SizeLabelY, 
-        "Радиус (метры)", 
+        Loc::T("Radius (meters)"), 
         &settings.arena.targetRadius, 0.02f, 2.0f, 
         sizeBuffer, &sizeEdit, false
     );
 }
 
-// Draws the preview box and delegates rendering
 void ArenaSettingsScreen::DrawPreview(Font uiFont, const Settings& settings) const {
     using namespace UITheme::Screens::Settings;
 
@@ -97,14 +97,7 @@ void ArenaSettingsScreen::drawBackGroundAndFlorPreview(Rectangle previewBox) con
     );
 }
 
-// Calculates pixel size, draws the target circle, and the info text
-void ArenaSettingsScreen::DrawTargetPreview(Font uiFont, Rectangle previewBox, const Settings& settings) const {
-    float pxRadius = CalculatePixelRadius(settings);
-    
-    DrawTargetCircle(previewBox, settings, pxRadius);
-    DrawInfoText(uiFont, previewBox, settings, pxRadius);
-}
-
+// Calculates the visual radius based on FOV and distance
 float ArenaSettingsScreen::CalculatePixelRadius(const Settings& settings) const {
     float aspect = (float)GetRenderWidth() / (float)GetRenderHeight();
     float vFovRad = 2.0f * atanf(tanf((settings.fovDegrees * DEG2RAD) / 2.0f) / aspect);
@@ -118,6 +111,7 @@ float ArenaSettingsScreen::CalculatePixelRadius(const Settings& settings) const 
     return pxRadius;
 }
 
+// Draws the actual target circle
 void ArenaSettingsScreen::DrawTargetCircle(Rectangle previewBox, const Settings& settings, float pxRadius) const {
     using namespace UITheme::Screens::Settings;
     
@@ -127,10 +121,17 @@ void ArenaSettingsScreen::DrawTargetCircle(Rectangle previewBox, const Settings&
     DrawCircle(cx, cy, pxRadius, settings.arena.ballColor);
 }
 
+void ArenaSettingsScreen::DrawTargetPreview(Font uiFont, Rectangle previewBox, const Settings& settings) const {
+    float pxRadius = CalculatePixelRadius(settings);
+    
+    DrawTargetCircle(previewBox, settings, pxRadius);
+    DrawInfoText(uiFont, previewBox, settings, pxRadius);
+}
+
 void ArenaSettingsScreen::DrawInfoText(Font uiFont, Rectangle previewBox, const Settings& settings, float pxRadius) const {
     using namespace UITheme::Screens::Settings;
 
-    const char* infoText = TextFormat("Диаметр: %.1f см (%.0f px)", settings.arena.targetRadius * 200.0f, pxRadius * 2.0f);
+    const char* infoText = TextFormat(Loc::T("Diameter: %.1f cm (%.0f px)"), settings.arena.targetRadius * 200.0f, pxRadius * 2.0f);
     float tw = MeasureTextEx(uiFont, infoText, 18, 1).x;
     
     DrawTextEx(
