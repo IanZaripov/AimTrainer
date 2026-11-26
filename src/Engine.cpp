@@ -43,10 +43,16 @@ void Engine::Run() {
 }
 
 void Engine::InitWindowAndContext() {
-    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT | FLAG_FULLSCREEN_MODE);
-    InitWindow(0, 0, "Valorant Aim Trainer");
+    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT | FLAG_WINDOW_UNDECORATED);
+    
+    InitWindow(1280, 720, "Valorant Aim Trainer");
+    
+    int monitor = GetCurrentMonitor();
+    SetWindowSize(GetMonitorWidth(monitor), GetMonitorHeight(monitor));
+    SetWindowPosition(0, 0);
+
     SetTargetFPS(144);
-    SetExitKey(KEY_NULL);
+    SetExitKey(KEY_NULL); 
 }
 
 void Engine::LoadFontsResources() {
