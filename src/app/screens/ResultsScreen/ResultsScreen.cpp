@@ -3,6 +3,7 @@
 #include "UITheme.h"
 #include "raygui.h"
 #include "Localization.h"
+#include "UIWidgets.h"
 
 void ResultsScreen::Draw(Font uiFont, ScreenManager& manager) {
     auto& session = manager.GetSession();
@@ -92,12 +93,12 @@ void ResultsScreen::DrawAccuracyResult(Font font, float labelX, float valueX, fl
 void ResultsScreen::DrawButtons(Font uiFont, Rectangle panelRect, ScreenManager& manager, const TrainingSession& session) {
     using namespace UITheme::Screens::Results;
     
-    if (GuiButton({ panelRect.x + Btn1X, panelRect.y + BtnY, BtnWidth, BtnHeight }, Loc::T("RESTART"))) {
+    if (UIWidgets::Button({ panelRect.x + Btn1X, panelRect.y + BtnY, BtnWidth, BtnHeight }, Loc::T("RESTART"), uiFont)) {
         auto& mutableSession = manager.GetSession();
         mutableSession.StartTraining(GameMode::TIMED);
         manager.GoTo(ScreenID::PLAYING);
     }
-    if (GuiButton({ panelRect.x + Btn2X, panelRect.y + BtnY, BtnWidth, BtnHeight }, Loc::T("MAIN MENU"))) {
+    if (UIWidgets::Button({ panelRect.x + Btn2X, panelRect.y + BtnY, BtnWidth, BtnHeight }, Loc::T("MAIN MENU"), uiFont)) {
         manager.GoTo(ScreenID::ROUTINES);
     }
 }

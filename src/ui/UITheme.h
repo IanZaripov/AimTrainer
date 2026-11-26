@@ -78,6 +78,15 @@ namespace UITheme {
         }
     }
 
+    // --- Accent Decorations ---
+    namespace Accent {
+        constexpr float CornerTickLength = 10.0f;
+        constexpr float CornerTickThickness = 2.0f;
+        constexpr float ButtonAccentBarWidth = 3.0f;
+        constexpr float ButtonAccentBarPadding = 4.0f;
+        constexpr Color TickIdle = { 70, 80, 95, 255 };
+    }
+
     // --- Training Cards ---
     namespace Card {
         namespace Grid {

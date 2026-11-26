@@ -20,11 +20,7 @@ void TrainingCard::Draw(Font font, const Settings& settings) const {
 }
 
 void TrainingCard::DrawBase() const {
-    Color bg = hovered ? Color{ 30, 35, 45, 255 } : UITheme::PANEL;
-    Color border = hovered ? UITheme::ACCENT : UITheme::BORDER;
-    float thickness = hovered ? 2.0f : 1.0f;
-    DrawRectangleRec(rect, bg);
-    DrawRectangleLinesEx(rect, thickness, border);
+    UITheme::DrawCardBackground(rect, hovered);
 }
 
 void TrainingCard::DrawTitleBlock(Font font) const {

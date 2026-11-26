@@ -16,4 +16,5 @@ namespace UIWidgets {
     bool IsColorSelected(Color currentColor, Color paletteColor);
     void DrawColorButton(Rectangle btn, Color paletteColor, Color currentColor);
     bool IsColorButtonClicked(Rectangle btn);
+    bool Button(Rectangle rect, const char* text, Font font);
 }

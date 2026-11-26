@@ -38,7 +38,6 @@ private:
     ScreenID currentScreenID;
     ScreenID pendingScreenID;
     bool hasPendingScreen = false;
-
     bool shouldExit = false;
 
     void ApplyPendingScreenChange();

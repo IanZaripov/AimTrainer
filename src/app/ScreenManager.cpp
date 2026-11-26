@@ -2,6 +2,7 @@
 #include "UITheme.h"
 #include "raygui.h"
 #include "Audio.h"
+#include "UIWidgets.h"
 
 #include "RoutinesScreen.h"
 #include "MouseSettingsScreen.h"
@@ -71,33 +72,21 @@ void ScreenManager::DrawUI(Font uiFont) {
 }
 
 void ScreenManager::DrawTopBar(Font uiFont) {
-    DrawRectangle(0, 0, GetRenderWidth(), (int)UITheme::TopBar::Height, Color{ 20, 25, 30, 255 });
+    DrawRectangle(0, 0, GetRenderWidth(), (int)UITheme::TopBar::Height, Color{ 16, 19, 24, 255 });
     DrawLine(0, (int)UITheme::TopBar::Height, GetRenderWidth(), (int)UITheme::TopBar::Height, UITheme::ACCENT);
+    
+    DrawRectangle(0, 0, 4, (int)UITheme::TopBar::Height, UITheme::ACCENT);
 
-    if (GuiButton({ UITheme::TopBar::Nav1X, UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, Loc::T("Trainings"))) { 
-        Audio::PlayClick(); GoTo(ScreenID::ROUTINES); 
-    }
-    if (GuiButton({ UITheme::TopBar::Nav2X, UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, Loc::T("Arena"))) {
-        Audio::PlayClick(); GoTo(ScreenID::SETTINGS_ARENA);
-    }
-    if (GuiButton({ UITheme::TopBar::Nav3X, UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, Loc::T("Mouse"))) { 
-        Audio::PlayClick(); GoTo(ScreenID::SETTINGS_MOUSE); 
-    }
-    if (GuiButton({ UITheme::TopBar::Nav4X, UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, Loc::T("Crosshair"))) {
-        Audio::PlayClick(); GoTo(ScreenID::SETTINGS_CROSSHAIR);
-    }
-    if (GuiButton({ UITheme::TopBar::Nav5X, UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, Loc::T("Audio"))) {
-        Audio::PlayClick(); GoTo(ScreenID::SETTINGS_AUDIO); 
-    }
-    if (GuiButton({ UITheme::TopBar::Nav6X, UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, Loc::T("Language"))) { 
-        Audio::PlayClick(); GoTo(ScreenID::SETTINGS_LANGUAGE);
-    }
-    if (GuiButton({ UITheme::GetRightButtonX(), UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, Loc::T("EXIT"))){
-        shouldExit = true;
-    }
+    if (UIWidgets::Button({ UITheme::TopBar::Nav1X, UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, Loc::T("Trainings"), uiFont)) { Audio::PlayClick(); GoTo(ScreenID::ROUTINES); }
+    if (UIWidgets::Button({ UITheme::TopBar::Nav2X, UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, Loc::T("Arena"), uiFont))      { Audio::PlayClick(); GoTo(ScreenID::SETTINGS_ARENA); }
+    if (UIWidgets::Button({ UITheme::TopBar::Nav3X, UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, Loc::T("Mouse"), uiFont))       { Audio::PlayClick(); GoTo(ScreenID::SETTINGS_MOUSE); }
+    if (UIWidgets::Button({ UITheme::TopBar::Nav4X, UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, Loc::T("Crosshair"), uiFont))     { Audio::PlayClick(); GoTo(ScreenID::SETTINGS_CROSSHAIR); }
+    if (UIWidgets::Button({ UITheme::TopBar::Nav5X, UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, Loc::T("Audio"), uiFont))       { Audio::PlayClick(); GoTo(ScreenID::SETTINGS_AUDIO); }
+    if (UIWidgets::Button({ UITheme::TopBar::Nav6X, UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, Loc::T("Language"), uiFont))    { Audio::PlayClick(); GoTo(ScreenID::SETTINGS_LANGUAGE); }
+
     const char* title = "AIM TRAINER";
     float titleWidth = MeasureTextEx(uiFont, title, 24, 1).x;
     DrawTextEx(uiFont, title, { (GetRenderWidth() - titleWidth) / 2.0f, 18 }, 24, 1, WHITE);
 
-    if (GuiButton({ UITheme::GetRightButtonX(), UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, "ВЫХОД")) shouldExit = true;
+    if (UIWidgets::Button({ UITheme::GetRightButtonX(), UITheme::TopBar::ButtonY, UITheme::TopBar::ButtonW, UITheme::TopBar::ButtonH }, Loc::T("EXIT"), uiFont)) shouldExit = true;
 }

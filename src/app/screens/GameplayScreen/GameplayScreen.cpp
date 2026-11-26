@@ -4,6 +4,7 @@
 #include "raygui.h"
 #include "Audio.h"
 #include "Localization.h"
+#include "UIWidgets.h"
 
 void GameplayScreen::Update(ScreenManager& manager) {
     auto& session = manager.GetSession();
@@ -108,18 +109,18 @@ void GameplayScreen::DrawPauseButtons(Font uiFont, Rectangle panelRect, ScreenMa
     float btnX = panelRect.x + panelRect.width / 2.0f - BtnWidth / 2.0f;
     float btnY = panelRect.y + BtnStartYOffset;
 
-    if (GuiButton({ btnX, btnY, BtnWidth, BtnHeight }, Loc::T("RESUME"))) {
+    if (UIWidgets::Button({ btnX, btnY, BtnWidth, BtnHeight }, Loc::T("RESUME"), uiFont)) {
         Audio::PlayClick();
         isPaused = false;
         DisableCursor();
     }
-    if (GuiButton({ btnX, btnY + BtnHeight + BtnSpacing, BtnWidth, BtnHeight }, Loc::T("RESTART"))) {
+    if (UIWidgets::Button({ btnX, btnY + BtnHeight + BtnSpacing, BtnWidth, BtnHeight }, Loc::T("RESTART"), uiFont)) {
         Audio::PlayClick();
         isPaused = false;
         session.StartTraining(session.GetCurrentMode());
         DisableCursor();
     }
-    if (GuiButton({ btnX, btnY + (BtnHeight + BtnSpacing) * 2.0f, BtnWidth, BtnHeight }, Loc::T("MAIN MENU"))) {
+    if (UIWidgets::Button({ btnX, btnY + (BtnHeight + BtnSpacing) * 2.0f, BtnWidth, BtnHeight }, Loc::T("MAIN MENU"), uiFont)) {
         Audio::PlayClick();
         isPaused = false;
         session.EndSession(GameExitReason::UserQuit);

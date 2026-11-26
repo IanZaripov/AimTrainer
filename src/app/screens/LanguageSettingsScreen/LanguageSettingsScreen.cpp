@@ -3,6 +3,7 @@
 #include "UITheme.h"
 #include "raygui.h"
 #include "Localization.h"
+#include "UIWidgets.h"
 
 void LanguageSettingsScreen::Update(ScreenManager& manager) {
     if (isDirty) {
@@ -34,17 +35,18 @@ void LanguageSettingsScreen::DrawOptions(Font uiFont, Settings& settings) {
     bool isEng = (settings.language == Language::ENGLISH);
     bool isRus = (settings.language == Language::RUSSIAN);
 
-    if (GuiButton(btnEng, Loc::T("English"))) {
+    if (UIWidgets::Button(btnEng, Loc::T("English"), uiFont)) {
         settings.language = Language::ENGLISH;
         Loc::SetLanguage(Language::ENGLISH);
         isDirty = true;
     }
-    if (GuiButton(btnRus, Loc::T("Russian"))) {
+    if (UIWidgets::Button(btnRus, Loc::T("Russian"), uiFont)) {
         settings.language = Language::RUSSIAN;
         Loc::SetLanguage(Language::RUSSIAN);
         isDirty = true;
     }
 
-    if (isEng) DrawRectangleLinesEx(btnEng, 2.0f, UITheme::ACCENT);
-    if (isRus) DrawRectangleLinesEx(btnRus, 2.0f, UITheme::ACCENT);
+    // Selected indicator (small red bar under the active language)
+    if (isEng) DrawRectangle(btnEng.x, btnEng.y + btnEng.height - 2, (int)btnEng.width, 2, UITheme::ACCENT);
+    if (isRus) DrawRectangle(btnRus.x, btnRus.y + btnRus.height - 2, (int)btnRus.width, 2, UITheme::ACCENT);
 }
