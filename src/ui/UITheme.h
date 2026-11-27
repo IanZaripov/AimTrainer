@@ -97,6 +97,7 @@ namespace UITheme {
         constexpr float FontSize = 18.0f;
         constexpr float UnderlineThickness = 3.0f;
         constexpr float UnderlineOffset = 4.0f;
+        constexpr Color HoverBg = { 35, 42, 50, 255 };
     }
 
     // --- Training Cards ---

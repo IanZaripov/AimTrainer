@@ -10,7 +10,7 @@ public:
 
 private:
     bool isDirty = false;
-    char sensBuffer[16] = "0.255";
+    char sensBuffer[16] = "0.520";
     bool sensEditMode = false;
     char multBuffer[16] = "3.15";
     bool multEditMode = false;

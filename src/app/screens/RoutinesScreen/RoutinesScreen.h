@@ -16,10 +16,16 @@ public:
 private:
     std::vector<std::unique_ptr<TrainingCard>> cards;
 
-    void DrawTitle(Font uiFont) const;
-    void DrawCards(Font uiFont, const Settings& settings, GameCategory cat) const;
-    void DrawCategoryTabs(Font uiFont, ScreenManager& manager);
-
+    // Card layout and clicks
     void LayoutCards(GameCategory cat);
     void HandleCardClicks(ScreenManager& manager, GameCategory cat);
+    void DrawTitle(Font uiFont) const;
+    void DrawCards(Font uiFont, const Settings& settings, GameCategory cat) const;
+
+    // Category tabs
+    void HandleCategoryTabInput(ScreenManager& manager);
+    void DrawCategoryTabs(Font uiFont, ScreenManager& manager);
+    void DrawCategoryTab(Font uiFont, int index, GameCategory active);
+    void DrawTabLabel(Font uiFont, Rectangle rect, const char* label, bool isActive);
+    void DrawActiveTabUnderline(Rectangle rect);
 };
