@@ -75,12 +75,12 @@ void ResultsScreen::DrawTimeResult(Font font, float labelX, float valueX, float 
 
 void ResultsScreen::DrawSpawnedResult(Font font, float labelX, float valueX, float y, const TrainingSession& session) const {
     DrawTextEx(font, Loc::T("Targets spawned:"), { labelX, y }, UITheme::Screens::Results::StatFontSize, 1, UITheme::TEXT);
-    DrawTextEx(font, TextFormat("%d", session.GetSpawnedBalls()), { valueX, y }, UITheme::Screens::Results::StatFontSize, 1, WHITE);
+    DrawTextEx(font, TextFormat("%d", session.GetData().GetSpawnedBalls()), { valueX, y }, UITheme::Screens::Results::StatFontSize, 1, WHITE);
 }
 
 void ResultsScreen::DrawPoppedResult(Font font, float labelX, float valueX, float y, const TrainingSession& session) const {
     DrawTextEx(font, Loc::T("Targets destroyed:"), { labelX, y }, UITheme::Screens::Results::StatFontSize, 1, UITheme::TEXT);
-    DrawTextEx(font, TextFormat("%d", session.GetPoppedCount()), { valueX, y }, UITheme::Screens::Results::StatFontSize, 1, WHITE);
+    DrawTextEx(font, TextFormat("%d", session.GetData().GetPoppedCount()), { valueX, y }, UITheme::Screens::Results::StatFontSize, 1, WHITE);
 }
 
 void ResultsScreen::DrawAccuracyResult(Font font, float labelX, float valueX, float y, const TrainingSession& session) const {
@@ -95,7 +95,7 @@ void ResultsScreen::DrawButtons(Font uiFont, Rectangle panelRect, ScreenManager&
     
     if (UIWidgets::Button({ panelRect.x + Btn1X, panelRect.y + BtnY, BtnWidth, BtnHeight }, Loc::T("RESTART"), uiFont)) {
         auto& mutableSession = manager.GetSession();
-        mutableSession.StartTraining(session.GetCurrentMode(), session.GetCurrentCategory());
+        mutableSession.StartTraining(GameMode::TIMED);
         manager.GoTo(ScreenID::PLAYING);
     }
     if (UIWidgets::Button({ panelRect.x + Btn2X, panelRect.y + BtnY, BtnWidth, BtnHeight }, Loc::T("MAIN MENU"), uiFont)) {

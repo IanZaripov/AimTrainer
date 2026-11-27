@@ -22,7 +22,7 @@ void GameplayScreen::Update(ScreenManager& manager) {
     session.Update();
 
     if (!session.IsTrainingActive()) {
-        if (session.GetExitReason() == GameExitReason::TimeExpired) {
+        if (session.GetData().GetExitReason() == GameExitReason::TimeExpired) {
             manager.GoTo(ScreenID::RESULTS);
         } else {
             manager.GoTo(ScreenID::ROUTINES);
@@ -97,8 +97,8 @@ void GameplayScreen::DrawPauseStats(Font uiFont, Rectangle panelRect, const Trai
         textY += StatsRowSpacing;
     };
 
-    DrawStatRow(Loc::T("Time:"), TextFormat("%.1f", session.GetSessionTime()));
-    DrawStatRow(Loc::T("Score:"), TextFormat("%d", session.GetPoppedCount()));
+    DrawStatRow(Loc::T("Time:"), TextFormat("%.1f", session.GetData().GetSessionTime()));
+    DrawStatRow(Loc::T("Score:"), TextFormat("%d", session.GetData().GetPoppedCount()));
     DrawStatRow(Loc::T("Accuracy:"), TextFormat("%.1f%%", session.GetCurrentAccuracy()));
 }
 
@@ -117,7 +117,7 @@ void GameplayScreen::DrawPauseButtons(Font uiFont, Rectangle panelRect, ScreenMa
     if (UIWidgets::Button({ btnX, btnY + BtnHeight + BtnSpacing, BtnWidth, BtnHeight }, Loc::T("RESTART"), uiFont)) {
         Audio::PlayClick();
         isPaused = false;
-        session.StartTraining(session.GetCurrentMode(), session.GetCurrentCategory());
+        session.StartTraining(session.GetCurrentMode());
         DisableCursor();
     }
     if (UIWidgets::Button({ btnX, btnY + (BtnHeight + BtnSpacing) * 2.0f, BtnWidth, BtnHeight }, Loc::T("MAIN MENU"), uiFont)) {

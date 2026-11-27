@@ -53,6 +53,9 @@ set(AUDIO_FILES
 set(TRAINING_FILES
     src/training/TrainingSession.h
     src/training/TrainingSession.cpp
+    src/training/SessionData.h
+    src/training/SessionData.cpp
+    src/training/GameExitReason.h
     src/training/GameConfig.h
     src/training/GameMode.h
 )

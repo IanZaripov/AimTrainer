@@ -10,20 +10,7 @@
 #include "GameMode.h"
 #include "GameConfig.h"
 #include "TargetPool.h"
-
-enum class GameExitReason { None, UserQuit, TimeExpired };
-
-struct SessionData {
-    int   poppedCount   = 0;
-    int   spawnedBalls  = 0;
-    int   shotsFired    = 0;
-    int   hits          = 0;
-    float sessionTime   = 0.0f;
-    float trackTimeOnTarget = 0.0f;
-    float trackTimeTotal    = 0.0f;
-    bool  isActive      = false;
-    GameExitReason exitReason = GameExitReason::None;
-};
+#include "SessionData.h"
 
 struct CameraAngles {
     float yaw = 0.0f;
@@ -37,22 +24,15 @@ public:
     void Update();
     void Draw(Font uiFont) const;
 
-    bool IsTrainingActive() const { return session.isActive; }
     void StartTraining(GameMode mode, GameCategory category = GameCategory::NORMAL);
     void EndSession(GameExitReason reason);
 
     GameMode GetCurrentMode() const { return currentModeType; }
     GameCategory GetCurrentCategory() const { return currentCategory; }
-    GameExitReason GetExitReason() const { return session.exitReason; }
-    int GetPoppedCount() const { return session.poppedCount; }
-    int GetSpawnedBalls() const { return session.spawnedBalls; }
-    int GetShotsFired() const { return session.shotsFired; }
-    int GetHits() const { return session.hits; }
-    float GetSessionTime() const { return session.sessionTime; }
-    float GetCurrentAccuracy() const{
-            return activeMode->GetAccuracy(session.shotsFired, session.hits, session.spawnedBalls, 
-                                           session.trackTimeOnTarget, session.trackTimeTotal);
-    }
+    bool IsTrainingActive() const { return session.IsActive(); }
+    const SessionData& GetData() const { return session; }
+    
+    float TrainingSession::GetCurrentAccuracy() const;
 
 private:
     void UpdateCameraAngles();

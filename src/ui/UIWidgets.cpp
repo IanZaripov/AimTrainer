@@ -35,9 +35,15 @@ namespace UIWidgets {
 
         // Update buffer string if not currently editing
         if (!*editMode) {
-            if (isInt) snprintf(buffer, 16, "%d", (int)*value);
-            else if (precision == 3) snprintf(buffer, 16, "%.3f", *value);
-            else snprintf(buffer, 16, "%.2f", *value);
+            if (isInt){
+                snprintf(buffer, 16, "%d", (int)*value);
+            }
+            else if (precision == 3){
+                snprintf(buffer, 16, "%.3f", *value);
+            } 
+            else{
+                snprintf(buffer, 16, "%.2f", *value);
+            }
         }
 
         // Draw and handle TextBox
@@ -55,7 +61,6 @@ namespace UIWidgets {
 
     bool DrawColorPickerRow(float x, float y, Color* targetColor, const Color* palette, int paletteSize) {
         bool changed = false;
-
         for (int i = 0; i < paletteSize; i++) {
             Rectangle btn = GetColorButtonRect(x, y, i);
             

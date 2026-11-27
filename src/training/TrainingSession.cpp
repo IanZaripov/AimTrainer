@@ -21,7 +21,7 @@ TrainingSession::TrainingSession(Settings& s) : settings(s) {
 
 void TrainingSession::Init() {
     targetPool.DeactivateAll();
-    session = SessionData{};
+    session.Reset();
     camAngles = CameraAngles{};
 }
 
@@ -29,7 +29,7 @@ void TrainingSession::StartTraining(GameMode mode, GameCategory category) {
     Init();
     currentModeType = mode;
     currentCategory = category;
-    session.isActive = true;
+    session.Start();
     DisableCursor();
 
     switch (mode) {
@@ -41,27 +41,26 @@ void TrainingSession::StartTraining(GameMode mode, GameCategory category) {
     }
 
     activeMode->OnStart(targetPool, settings);
-    session.spawnedBalls += (int)targetPool.GetAll().size();
+    session.AddSpawned((int)targetPool.GetAll().size());
 }
 
 void TrainingSession::EndSession(GameExitReason reason) {
-    session.isActive = false;
-    session.exitReason = reason;
+    session.End(reason);
     EnableCursor();
 }
 
 void TrainingSession::Update() {
-    if (!session.isActive){
+    if (!session.IsActive()){
         return;
     }
 
     float dt = GetFrameTime();
-    session.sessionTime += dt;
+    session.AddTime(dt);
     hud.UpdateStats();
 
-    bool competitiveTimeUp = (currentCategory == GameCategory::COMPETITIVE && session.sessionTime >= GameConfig::Limits::SessionTime);
-    if (activeMode->IsFinished(session.sessionTime) || competitiveTimeUp) {
-        session.sessionTime = GameConfig::Limits::SessionTime;
+    bool competitiveTimeUp = (currentCategory == GameCategory::COMPETITIVE && session.GetSessionTime() >= GameConfig::Limits::SessionTime);
+    if (activeMode->IsFinished(session.GetSessionTime()) || competitiveTimeUp) {
+        session.SetSessionTime(GameConfig::Limits::SessionTime);
         EndSession(GameExitReason::TimeExpired);
         return;
     }
@@ -71,7 +70,7 @@ void TrainingSession::Update() {
     UpdateTracking(dt);
 
     int newSpawns = activeMode->OnUpdate(dt, targetPool, settings);
-    session.spawnedBalls += newSpawns;
+    session.AddSpawned(newSpawns);
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         HandleShoot();
@@ -93,36 +92,41 @@ void TrainingSession::UpdateCameraAngles() {
     camera.target = Vector3Add(camera.position, dir);
 }
 
+float TrainingSession::GetCurrentAccuracy() const {
+    return activeMode->GetAccuracy(session.GetShotsFired(), session.GetHits(), session.GetSpawnedBalls(), 
+                                    session.GetTrackTimeOnTarget(), session.GetTrackTimeTotal());
+}
+
 void TrainingSession::UpdateTracking(float dt) {
     if (!activeMode->UsesTracking()) return;
 
-    session.trackTimeTotal += dt;
+    session.AddTrackingTime(dt);
     Vector2 screenCenter = { (float)GetRenderWidth() / 2.0f, (float)GetRenderHeight() / 2.0f };
     Ray ray = GetScreenToWorldRay(screenCenter, camera);
 
     for (auto& t : targetPool.GetAll()) {
         if (!t.active) continue;
         if (GetRayCollisionSphere(ray, t.position, settings.arena.targetRadius).hit) {
-            session.trackTimeOnTarget += dt;
+            session.AddTrackingTimeOnTarget(dt);
         }
     }
 }
 
 void TrainingSession::HandleShoot() {
-    session.shotsFired++;
+    session.RegisterShot();
     Vector2 screenCenter = { (float)GetRenderWidth() / 2.0f, (float)GetRenderHeight() / 2.0f };
     Ray ray = GetScreenToWorldRay(screenCenter, camera);
 
     for (auto& t : targetPool.GetAll()) {
-        if (!t.active) continue;
+        if (!t.active){
+            continue;
+        }
         if (GetRayCollisionSphere(ray, t.position, settings.arena.targetRadius).hit) {
             t.Hit();
             Audio::PlayPop();
-            session.poppedCount++;
-            session.hits++;
-
+            session.RegisterHit();
             int newSpawns = activeMode->OnHit(targetPool, settings);
-            session.spawnedBalls += newSpawns;
+            session.AddSpawned(newSpawns);
             break;
         }
     }
@@ -135,5 +139,5 @@ void TrainingSession::Draw(Font uiFont) const {
     viewmodel.Draw(camera);
     EndMode3D();
 
-    hud.Draw(uiFont, settings.crosshair, session.poppedCount, GetCurrentAccuracy(), session.sessionTime);
+    hud.Draw(uiFont, settings.crosshair, session.GetPoppedCount(), GetCurrentAccuracy(), session.GetSessionTime());
 }
