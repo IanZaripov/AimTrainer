@@ -74,5 +74,8 @@
     "RESULTS": "RESULTS",
     "60 sec": "60 sec",
     "Targets spawned:": "Targets spawned:",
-    "Targets destroyed:": "Targets destroyed:"
+    "Targets destroyed:": "Targets destroyed:",
+    "NORMAL": "NORMAL",
+    "COMPETITIVE": "COMPETITIVE",
+    "Reaction": "Reaction"
 }

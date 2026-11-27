@@ -87,11 +87,23 @@ namespace UITheme {
         constexpr Color TickIdle = { 70, 80, 95, 255 };
     }
 
+    // --- Category Tabs ---
+    namespace CategoryTab {
+        constexpr float Y = 75.0f;
+        constexpr float Width = 180.0f;
+        constexpr float Height = 40.0f;
+        constexpr float Spacing = 10.0f;
+        constexpr float StartX = 40.0f;
+        constexpr float FontSize = 18.0f;
+        constexpr float UnderlineThickness = 3.0f;
+        constexpr float UnderlineOffset = 4.0f;
+    }
+
     // --- Training Cards ---
     namespace Card {
         namespace Grid {
             constexpr float X       = 40.0f;
-            constexpr float Y       = 150.0f;
+            constexpr float Y       = 185.0f;
             constexpr float Width   = 210.0f;
             constexpr float Height  = 350.0f;
             constexpr float Spacing = 20.0f;
@@ -134,7 +146,7 @@ namespace UITheme {
     namespace Screens {
         namespace Routines {
             constexpr float TitleX = 40.0f;
-            constexpr float TitleY = 100.0f;
+            constexpr float TitleY = 135.0f;
             constexpr float TitleFontSize = 20.0f;
         }
 

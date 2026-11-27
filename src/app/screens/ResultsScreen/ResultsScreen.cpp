@@ -95,7 +95,7 @@ void ResultsScreen::DrawButtons(Font uiFont, Rectangle panelRect, ScreenManager&
     
     if (UIWidgets::Button({ panelRect.x + Btn1X, panelRect.y + BtnY, BtnWidth, BtnHeight }, Loc::T("RESTART"), uiFont)) {
         auto& mutableSession = manager.GetSession();
-        mutableSession.StartTraining(GameMode::TIMED);
+        mutableSession.StartTraining(session.GetCurrentMode(), session.GetCurrentCategory());
         manager.GoTo(ScreenID::PLAYING);
     }
     if (UIWidgets::Button({ panelRect.x + Btn2X, panelRect.y + BtnY, BtnWidth, BtnHeight }, Loc::T("MAIN MENU"), uiFont)) {

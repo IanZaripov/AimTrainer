@@ -3,6 +3,7 @@
 #include "raylib.h"
 #include "Settings.h"
 #include "TrainingSession.h"
+#include "GameMode.h"
 #include "IScreen.h"
 
 enum class ScreenID { 
@@ -30,6 +31,8 @@ public:
     Settings& GetSettings() { return settings; }
     TrainingSession& GetSession() { return session; }
 
+    GameCategory GetRoutineCategory() const { return routineCategory; }
+    void SetRoutineCategory(GameCategory c) { routineCategory = c; }
 private:
     Settings settings;
     TrainingSession session;
@@ -37,6 +40,7 @@ private:
     
     ScreenID currentScreenID;
     ScreenID pendingScreenID;
+    GameCategory routineCategory = GameCategory::NORMAL;
     bool hasPendingScreen = false;
     bool shouldExit = false;
 

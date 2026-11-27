@@ -75,5 +75,8 @@
     "RESULTS": "РЕЗУЛЬТАТЫ",
     "60 sec": "60 сек",
     "Targets spawned:": "Сгенерировано шаров:",
-    "Targets destroyed:": "Уничтожено:"
+    "Targets destroyed:": "Уничтожено:",
+    "NORMAL": "ОБЫЧНЫЙ",
+    "COMPETITIVE": "СОРЕВНОВАТЕЛЬНЫЙ",
+    "Reaction": "Реакция"
 }

@@ -25,9 +25,10 @@ void TrainingSession::Init() {
     camAngles = CameraAngles{};
 }
 
-void TrainingSession::StartTraining(GameMode mode) {
+void TrainingSession::StartTraining(GameMode mode, GameCategory category) {
     Init();
     currentModeType = mode;
+    currentCategory = category;
     session.isActive = true;
     DisableCursor();
 
@@ -40,12 +41,7 @@ void TrainingSession::StartTraining(GameMode mode) {
     }
 
     activeMode->OnStart(targetPool, settings);
-    
-    int initialSpawns = 0;
-    for (const auto& t : targetPool.GetAll()) {
-        if (t.active) initialSpawns++;
-    }
-    session.spawnedBalls += initialSpawns;
+    session.spawnedBalls += (int)targetPool.GetAll().size();
 }
 
 void TrainingSession::EndSession(GameExitReason reason) {
@@ -63,7 +59,8 @@ void TrainingSession::Update() {
     session.sessionTime += dt;
     hud.UpdateStats();
 
-    if (activeMode->IsFinished(session.sessionTime)) {
+    bool competitiveTimeUp = (currentCategory == GameCategory::COMPETITIVE && session.sessionTime >= GameConfig::Limits::SessionTime);
+    if (activeMode->IsFinished(session.sessionTime) || competitiveTimeUp) {
         session.sessionTime = GameConfig::Limits::SessionTime;
         EndSession(GameExitReason::TimeExpired);
         return;

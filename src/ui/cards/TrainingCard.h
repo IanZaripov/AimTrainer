@@ -10,10 +10,12 @@ public:
 
     virtual void Update(Settings& settings);
     virtual void Draw(Font font, const Settings& settings) const;
-
+    
+    void SetRect(Rectangle r) { rect = r; }
     bool WasClicked() const { return clicked; }
     GameMode GetMode() const { return mode; }
     void ResetClicked() { clicked = false; }
+    
 
 protected:
     Rectangle rect;

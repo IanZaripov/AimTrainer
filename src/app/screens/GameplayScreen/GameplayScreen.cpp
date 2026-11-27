@@ -117,7 +117,7 @@ void GameplayScreen::DrawPauseButtons(Font uiFont, Rectangle panelRect, ScreenMa
     if (UIWidgets::Button({ btnX, btnY + BtnHeight + BtnSpacing, BtnWidth, BtnHeight }, Loc::T("RESTART"), uiFont)) {
         Audio::PlayClick();
         isPaused = false;
-        session.StartTraining(session.GetCurrentMode());
+        session.StartTraining(session.GetCurrentMode(), session.GetCurrentCategory());
         DisableCursor();
     }
     if (UIWidgets::Button({ btnX, btnY + (BtnHeight + BtnSpacing) * 2.0f, BtnWidth, BtnHeight }, Loc::T("MAIN MENU"), uiFont)) {

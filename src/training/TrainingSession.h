@@ -38,10 +38,11 @@ public:
     void Draw(Font uiFont) const;
 
     bool IsTrainingActive() const { return session.isActive; }
-    void StartTraining(GameMode mode);
+    void StartTraining(GameMode mode, GameCategory category = GameCategory::NORMAL);
     void EndSession(GameExitReason reason);
 
     GameMode GetCurrentMode() const { return currentModeType; }
+    GameCategory GetCurrentCategory() const { return currentCategory; }
     GameExitReason GetExitReason() const { return session.exitReason; }
     int GetPoppedCount() const { return session.poppedCount; }
     int GetSpawnedBalls() const { return session.spawnedBalls; }
@@ -63,6 +64,7 @@ private:
     Viewmodel   viewmodel;
     HUD         hud;
 
+    GameCategory currentCategory = GameCategory::NORMAL;
     GameMode    currentModeType = GameMode::STATIC;
     std::unique_ptr<TrainingMode> activeMode;
     

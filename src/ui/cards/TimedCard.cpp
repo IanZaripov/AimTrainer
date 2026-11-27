@@ -3,7 +3,7 @@
 #include "Localization.h"
 
 TimedCard::TimedCard(Rectangle r)
-    : TrainingCard(r, GameMode::TIMED, Loc::T("Timed"), nullptr, nullptr) {}
+    : TrainingCard(r, GameMode::TIMED, Loc::T("Reaction"), nullptr, nullptr) {}
 
 void TimedCard::Update(Settings& settings) {
     clickedDifficulty = false;
