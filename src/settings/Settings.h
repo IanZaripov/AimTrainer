@@ -1,7 +1,7 @@
 #pragma once
 #include "raylib.h"
-#include <fstream>
 #include "Localization.h"
+#include "json.hpp"
 
 struct MouseConfig {
     float valorantSens = 0.520f; 
@@ -20,7 +20,7 @@ struct CrosshairConfig {
 struct TargetConfig {
     Color ballColor = { 0, 220, 255, 255 };
     float distance = 15.0f;
-    float targetRadius = 0.30f; 
+    float targetRadius = 0.20f; 
     int   timedDifficulty = 1;
 };
 
@@ -32,19 +32,20 @@ struct AudioConfig {
 
 class Settings {
 private:
+    using json = nlohmann::json;
     // Load methods
-    void LoadMouse(std::ifstream& file);
-    void LoadCrosshair(std::ifstream& file);
-    void LoadArena(std::ifstream& file);
-    void LoadAudio(std::ifstream& file);
-    
+    void LoadGeneral(const json& j);
+    void LoadMouse(const json& j);
+    void LoadCrosshair(const json& j);
+    void LoadArena(const json& j);
+    void LoadAudio(const json& j);
     // Save methods
-    void SaveMouse(std::ofstream& file) const;
-    void SaveCrosshair(std::ofstream& file) const;
-    void SaveArena(std::ofstream& file) const;
-    void SaveAudio(std::ofstream& file) const;
-
-    // Validation
+    void SaveGeneral(json& j) const;
+    void SaveMouse(json& j) const;
+    void SaveCrosshair(json& j) const;
+    void SaveArena(json& j) const;
+    void SaveAudio(json& j) const;
+    //Validation
     void Sanitize();
 public:
     MouseConfig     mouse;
@@ -56,6 +57,6 @@ public:
     float fovDegrees = 103.0f;
     float headRadius = 0.11f; 
 
-    void Load(const char* filename = "settings.cfg");
-    void Save(const char* filename = "settings.cfg") const;
+    void Load(const char* filename = "settings.json");
+    void Save(const char* filename = "settings.json") const;
 };

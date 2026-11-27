@@ -10,7 +10,7 @@ raylib-5.5_win64_msvc16/
 *.vcxproj*
 *.sln
 *.user
-
+settings.json
 
 Thumbs.db
 .DS_Store
