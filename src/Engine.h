@@ -15,8 +15,13 @@ private:
     RenderTexture2D renderTarget = { 0 };
 
     void InitWindowAndContext();
-    void LoadFontsResources();
-    void SetupUI();
     void SetupRenderTarget();
+    void LoadResources();
+    void SetupUI();
     void Shutdown();
+
+    // Splash Screen & Warmup
+    void ShowLoadingScreen();
+    void DrawLoadingScreen(float time, float duration) const;
+    void WarmupShaders();
 };

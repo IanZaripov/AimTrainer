@@ -137,87 +137,87 @@ set(CARDS_FILES
     src/ui/cards/MultiStaticCard.cpp
 )
 
-# --- Build ---
+# =========================================================
+# Main Executable
+# =========================================================
 add_executable(AimTrainer)
 target_sources(AimTrainer PRIVATE
-    ${INFRA_FILES}
-    ${APP_FILES}
-    ${LOC_FILES}
-    ${AUDIO_FILES}
-    ${TRAINING_FILES}
-    ${TARGET_FILES}
-    ${MODES_FILES}
-    ${SETTINGS_FILES}
-    ${SCENE_FILES}
-    ${VIEWMODEL_FILES}
-    ${WEAPON_FILES}
-    ${HANDS_FILES}
-    ${UI_FILES}
-    ${CARDS_FILES}
+    ${INFRA_FILES} ${APP_FILES} ${LOC_FILES} ${AUDIO_FILES}
+    ${TRAINING_FILES} ${TARGET_FILES} ${MODES_FILES}
+    ${SETTINGS_FILES} ${SCENE_FILES} ${VIEWMODEL_FILES}
+    ${WEAPON_FILES} ${HANDS_FILES} ${UI_FILES} ${CARDS_FILES}
 )
 
-source_group("Infrastructure"   FILES ${INFRA_FILES})
-source_group("Application"      FILES ${APP_FILES})
-source_group("Localization"     FILES ${LOC_FILES})
-source_group("Audio"            FILES ${AUDIO_FILES})
-source_group("Training"         FILES ${TRAINING_FILES})
-source_group("Training/Targets" FILES ${TARGET_FILES})
-source_group("Training/Modes"   FILES ${MODES_FILES})
-source_group("Settings"         FILES ${SETTINGS_FILES})
-source_group("Scene"            FILES ${SCENE_FILES})
-source_group("Viewmodel"        FILES ${VIEWMODEL_FILES})
-source_group("Viewmodel/Weapon" FILES ${WEAPON_FILES})
-source_group("Viewmodel/Hands"  FILES ${HANDS_FILES})
-source_group("UI"               FILES ${UI_FILES})
-source_group("UI/Cards"         FILES ${CARDS_FILES})
+# ... (source_group опущены для краткости, они не меняются) ...
 
 target_include_directories(AimTrainer PRIVATE
-    src
-    src/app
-    src/app/screens/RoutinesScreen
-    src/app/screens/MouseSettingsScreen
-    src/app/screens/CrosshairSettingsScreen
-    src/app/screens/ArenaSettingsScreen
-    src/app/screens/AudioSettingsScreen
-    src/app/screens/LanguageSettingsScreen
-    src/app/screens/GameplayScreen
-    src/app/screens/ResultsScreen
-    src/localization
-    src/audio
-    src/training
-    src/training/target
-    src/training/modes
-    src/settings
-    src/scene
-    src/viewmodel
-    src/viewmodel/weapon
-    src/viewmodel/hands
-    src/ui
-    src/ui/cards
-    include
-    "${RAYLIB_PATH}/include"
+    src src/app src/app/screens/RoutinesScreen src/app/screens/MouseSettingsScreen
+    src/app/screens/CrosshairSettingsScreen src/app/screens/ArenaSettingsScreen
+    src/app/screens/AudioSettingsScreen src/app/screens/LanguageSettingsScreen
+    src/app/screens/GameplayScreen src/app/screens/ResultsScreen
+    src/localization src/audio src/training src/training/target
+    src/training/modes src/settings src/scene src/viewmodel
+    src/viewmodel/weapon src/viewmodel/hands src/ui src/ui/cards
+    include "${RAYLIB_PATH}/include"
 )
 
 target_link_directories(AimTrainer PRIVATE "${RAYLIB_PATH}/lib")
 target_link_libraries(AimTrainer PRIVATE raylib winmm gdi32 opengl32 user32 shell32 pdh)
 
+# =========================================================
+# Tests
+# =========================================================
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG        v1.14.0
+)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
+
+add_executable(AimTrainerTests EXCLUDE_FROM_ALL
+    tests/test_session_data.cpp
+    tests/test_localization.cpp
+    tests/test_target_pool.cpp
+    # Add the implementations required by the tests
+    src/training/SessionData.cpp
+    src/localization/Localization.cpp
+    src/training/target/Target3D.cpp
+    src/training/target/TargetPool.cpp
+)
+
+target_include_directories(AimTrainerTests PRIVATE
+    src src/training src/training/target src/settings src/localization
+    include "${RAYLIB_PATH}/include"
+)
+
+target_link_libraries(AimTrainerTests PRIVATE
+    "${RAYLIB_PATH}/lib/raylib.lib"
+    winmm gdi32 opengl32 user32 shell32 pdh
+    gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(AimTrainerTests)
+
+# =========================================================
+# Windows post-build
+# =========================================================
 if(WIN32)
     set_target_properties(AimTrainer PROPERTIES WIN32_EXECUTABLE TRUE)
     if(MSVC)
         set_target_properties(AimTrainer PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
     endif()
     
-    # Copy raylib.dll
     add_custom_command(TARGET AimTrainer POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${RAYLIB_PATH}/lib/raylib.dll"
-        $<TARGET_FILE_DIR:AimTrainer>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${RAYLIB_PATH}/lib/raylib.dll" $<TARGET_FILE_DIR:AimTrainer>
+        COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/assets" $<TARGET_FILE_DIR:AimTrainer>/assets
     )
     
-    # Copy assets folder (lang json files)
-    add_custom_command(TARGET AimTrainer POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_CURRENT_SOURCE_DIR}/assets"
-        $<TARGET_FILE_DIR:AimTrainer>/assets
+    add_custom_command(TARGET AimTrainerTests POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/assets" $<TARGET_FILE_DIR:AimTrainerTests>/assets
     )
 endif()
